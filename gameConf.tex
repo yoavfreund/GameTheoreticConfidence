@@ -23,6 +23,7 @@
 \newcommand{\vI}{\mathbf{I}}
 \newcommand{\vb}{\mathbf{b}}
 \newcommand{\vc}{\mathbf{c}}
+\newcommand{\vd}{\mathbf{d}}
 \newcommand{\vg}{\mathbf{g}}
 \newcommand{\vr}{\mathbf{r}}
 \newcommand{\vs}{\mathbf{s}}
@@ -42,11 +43,15 @@ We work in a transductive framework. In other words, we have $n$
 unlabeled examples (instances) $x_i \in X$, denoted
 $T=\{x_1,\ldots,x_n\}$.
 \item
-We assume that the correlation of each function $f \in F$ on the sample
-$T$ is at least $(1-\epsilon)$ for some $1>\epsilon>0$.
+We assume that some of the functions in $F$ have non-zero
+correlation with the true distribution over the labels, we denote
+these correlations (or a lower bound on the correlation) by
+\[
+\forall 1 \leq i \leq m\;\; c_i \leq \frac{1}{n} \sum_{x\in T} E_{y \sim D(x)}\left[ y\cdot f_i(x)\right]
+\]
 \item
-The goal of the algorithm is to find a prediction function $g:T \to
-[-1,+1]$ that maximizes the worst case correlation between $g$ and the
+The goal of the algorithm is to find a prediction function 
+$g:T \to [-1,+1]$ that maximizes the worst case correlation between $g$ and the
 true label.
 \end{itemize}
 
@@ -62,6 +67,9 @@ $\vz^T=(z_1^+,z_1^-,\ldots z_n^+,z_n^-)$
 Similarly, we use $g_i =g_i^+ - g_i^-$ to denote the predictions made
 by the algorithm. Again $0 \leq g_i^+,g_i^- \leq 1$ and 
 $\vg^T \doteq (g_1^+,g_1^-,\ldots, g_n^+,g_n^-)$.
+
+Finally we use the vector $\vc$ to denote the column vector of the
+function correlations $c_i$.
 
 The correlation between the prediction vector $\vg$ and the
 conditional probability $\vz$ is the inner product $\vz^T \vg$. The
@@ -96,16 +104,16 @@ m$ matrix:
 We can represent the $m$ constraints on $\vz$ defined by
 $(f_1,\ldots,f_m)$, as
 \[
-\vz^T \vF \geq (1-\epsilon)n \ones{m}
+\vz^T \vF \geq n \vc
 \]
-Where $\ones{m}$ denote a row vector of length $m$ all of which
-entries are equal to $1$.
 
 We represent the constraints $\vz \leq \ones{2n}$ as a larger-or-equal
 constraint
 \[
 \vz^T (-\vI) \geq -\ones{2n}
 \] 
+Where $\ones{2n}$ denote a row vector of length $2n$ all of which
+entries are equal to $1$.
 
 \newpage
 
@@ -120,14 +128,14 @@ The problem is
 
 \begin{eqnarray}
 \mbox{Find: }&\max_{\vg} \;\; \min_{\vz} \vz^T \vg \label{max-min-prog}\\
-\mbox{Such That: }& \vz^T \vA \geq \vc^T \mbox{ and } \vz \geq \vzero
+\mbox{Such That: }& \vz^T \vA \geq \vd^T \mbox{ and } \vz \geq \vzero
 \notag \\
 & -\vg \geq -\ones{2n} \mbox{ and } \vg \geq \vzero \notag
 \end{eqnarray}
 
 Where 
 \begin{equation}
-\vc^T = (n (1-\epsilon) \ones{m}, -\ones{2n})
+\vd^T = (n \vc^T, -\ones{2n})
 \end{equation}
 and $\vA$ is the  $2n \times (m+2n)$ matrix: 
 \begin{equation}
@@ -148,34 +156,61 @@ and $\vA$ is the  $2n \times (m+2n)$ matrix:
  \end{pmatrix}
 \end{equation}
 
-\subsection{Transforming problem into an LP}
+\subsection{Transforming the optimization problem into an LP}
 
 Suppose we fix $\vg$, the internal maximization problem is an LP:
 \begin{eqnarray}
 \mbox{Find: }&\min_{\vz} \vz^T \vg \label{min-LP}\\
-\mbox{Such That: }& \vz^T \vA \geq \vc^T \mbox{ and } \vz \geq \vzero \notag
+\mbox{Such That: }& \vz^T \vA \geq \vd^T \mbox{ and } \vz \geq \vzero \notag
 \end{eqnarray}
 
 We can write the maximization LP that is the dual to this minimization LP:
 \begin{eqnarray}
-\mbox{Find: }& \max_\vv \vc^T \vv \label{max-LP}\\
+\mbox{Find: }& \max_\vv \vd^T \vv \label{max-LP}\\
 \mbox{Such That: }& \vA \vv \leq \vg \mbox{ and } \vv \geq \vzero \notag
 \end{eqnarray}
 
+Plugging~(\ref{max-LP}) back into~(\ref{max-min-prog}) we get
+\begin{eqnarray}
+\mbox{Find: }& \max_\vv \vd^T \vv \label{combined1}\\
+\mbox{Such That: }& \vA \vv \leq \vg \mbox{ and } \vv \geq \vzero
+\notag \\
+\mbox{And:}& -\vg \geq -\ones{2n} \mbox{ and } \vg \geq \vzero \notag
+\end{eqnarray}
+Which is maximized when $\vg = \ones{2n}$ so we can substitute for
+$\vg$ and get:
+\begin{eqnarray}
+\mbox{Find: }& \max_\vv \vd^T \vv \label{combined2}\\
+\mbox{Such That: }& \vA \vv \leq \ones{2n} \mbox{ and } \vv \geq \vzero \notag
+\end{eqnarray}
+
+\section{Solving a simple case numerically}
+
+In order to gain some intuition about this problem we start by
+considering a very simple setup: threshold functions on the line.
+We define 
+\newcommand{\sign}{\mbox{sign}}
+\[
+f_{\theta}(x) = \sign(x-\theta)
+\]
+To start, consider a function set that contains a single function
+$F=\{f_0\}$, and suppose that the .
+
+\section{Towards an interpretation}
 We partition the vector $\vv$ into two parts: $\vv^T = (\vr^T,\vs^T)$,
 where $\vr$ is the $m$ dimensional vector corresponding to the $m$
 functions and $\vs$ is the $2n$ vector corresponding to the $n$ data
 points.  Using this notation we can rewrite the dual LP as follows:
 \begin{eqnarray}
-\mbox{Maximize: }& (1-\epsilon)n \|\vr\|_1  - \| \vs \|_1 \label{expanded-max-LP}\\
-\mbox{Such That: }& \vA \vr  - \vs \leq \vg \notag \\
+\mbox{Maximize: }& (n \vc^T \vr  - \| \vs \|_1 \label{expanded-max-LP}\\
+\mbox{Such That: }& \vF \vr  - \vs \leq \vg \notag \\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \notag
 \end{eqnarray}
 We can substitute the program~(\ref{expanded-max-LP})
 into~(\ref{max-min-prog}) and get the following maximization LP:
 \begin{eqnarray}
-\mbox{Maximize: }& (1-\epsilon)n \|\vr\|_1  - \| \vs \|_1 \label{Combined-LP-1}\\
-\mbox{Such That: }& \vA \vr  - \vs \leq \vg  \label{Combined-LP-2}\\
+\mbox{Maximize: }& n \vc^T \vr  - \| \vs \|_1 \label{Combined-LP-1}\\
+\mbox{Such That: }& \vF \vr  - \vs \leq \vg  \label{Combined-LP-2}\\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \label{Combined-LP-3} \\
 \mbox{ and } &  -\vg \geq -\ones{2n} \mbox{ and } \vg \geq \vzero \label{Combined-LP-4}
 \end{eqnarray}
@@ -187,17 +222,17 @@ $\vg$ are in~(\ref{Combined-LP-4}).
 
 We can therefor simplify the linear program to the following form:
 \begin{eqnarray}
-\mbox{Maximize: }& (1-\epsilon)n \|\vr\|_1  - \| \vs \|_1 \label{condensed-LP-1}\\
-\mbox{Such That: }& \vA \vr  - \vs \leq \ones{2n}  \label{Condensed-LP-2}\\
+\mbox{Maximize: }& n \vc^T \vr  - \| \vs \|_1 \label{condensed-LP-1}\\
+\mbox{Such That: }& \vF \vr  - \vs \leq \ones{2n}  \label{Condensed-LP-2}\\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \label{Condensed-LP-3} \\
 \end{eqnarray}
 
 For each $1 \leq i \leq 2n$ we have that
 \[
-s_i = \max \left(0,(\vA \vr)_i -1 \right)
+s_i = \max \left(0,(\vF \vr)_i -1 \right)
 \]
 
-From the definition of $\vA$ we get that fo all $1 \leq i \leq n$
+From the definition of $\vF$ we get that fo all $1 \leq i \leq n$
 \begin{eqnarray*}
 s_{2i-1} &=& \max \left(0,\sum_{j=1}^m f_j(x_i) r_j -1 \right) \\
 s_{2i} &=& \max \left(0,-\sum_{j=1}^m f_j(x_i) r_j -1 \right)
