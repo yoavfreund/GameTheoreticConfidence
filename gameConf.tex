@@ -8,6 +8,7 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newcommand{\qed}{\hfill\rule{7pt}{7pt}}
 \newenvironment{proof}{\noindent{\bf Proof:}}{\qed\medskip}
+\setcounter{MaxMatrixCols}{20}
 
 \title{Confidence assignment based on game theoretic analysis}
 \author{Yoav Freund}
@@ -18,13 +19,17 @@
 \newcommand{\corr}{\mbox{corr}}
 \newcommand{\Exy}[1]{E_{(x_i,y_i)}\left( #1 \right)} 
 \newcommand{\ones}[1]{\mathbbm{1}^{#1}}
-\newcommand{\vA}{\mathbf{A}}
-\newcommand{\vF}{\mathbf{F}}
-\newcommand{\vI}{\mathbf{I}}
-\newcommand{\vb}{\mathbf{b}}
-\newcommand{\vc}{\mathbf{c}}
-\newcommand{\vd}{\mathbf{d}}
-\newcommand{\vg}{\mathbf{g}}
+\newcommand{\vA}{\mathbf{A}}    % combined constraints Matrix
+\newcommand{\vd}{\mathbf{d}}    % combined constraints vector
+\newcommand{\vF}{\mathbf{F}}    % constraints defined by function
+                                % correlation bounds
+\newcommand{\vI}{\mathbf{I}}    % Unit Matrix
+\newcommand{\vb}{\mathbf{b}}    % target function coefficients
+\newcommand{\vu}{\mathbf{u}}    % upper bound on correlations
+\newcommand{\vl}{\mathbf{l}}    % lower bound on correlation
+\newcommand{\vg}{\mathbf{g}}    % algorithm's predictions
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
 \newcommand{\vr}{\mathbf{r}}
 \newcommand{\vs}{\mathbf{s}}
 \newcommand{\vv}{\mathbf{v}}
@@ -32,30 +37,65 @@
 \newcommand{\vzero}{\mathbf{0}}
 \newcommand{\vone}{\mathbf{1}}
 
-\begin{itemize}
-\item Suppose we have finite set of classification rules $F=(f_1,\ldots,f_m)$
-that map instances $x \in X$ to $y \in \{-1,+1\}$. 
-\item
-Let $D$ be a fixed but unknown (to the algorithm) distribution over
-$(x,y)$ pairs, where $x \in X$ and $y \in \{-1,+1\}$.
-\item
-We work in a transductive framework. In other words, we have $n$
-unlabeled examples (instances) $x_i \in X$, denoted
-$T=\{x_1,\ldots,x_n\}$.
-\item
-We assume that some of the functions in $F$ have non-zero
-correlation with the true distribution over the labels, we denote
-these correlations (or a lower bound on the correlation) by
+\section{Setup}
+We assume a transductive learning model. The algorithm is first given
+a labeled training set and a classifier set $C$. The algorithm uses
+the training set to identify a subset $F \subseteq C$ of ``good''
+classifiers. We will give two alternative definitions for the meaning
+of ``good''. Intuitively, both of them imply that the functions in $F$
+have errors smaller than that of random guessing.
+
+In addition to the training set, the algorithm gets a finite test set
+of unlabeled instances. The goal of the algorithm is to make the
+min/max optimal predictions on the test set. In other words, the
+predictions that would guarantee the smallest expected error for the
+worst case distribution over the labels that conforms with the
+knowledge that the functions in $F$ are ``good''.
+
+\begin{enumerate}
+\item {\bf Function set:} A finite set of classification rules
+  $F=(f_1,\ldots,f_m)$ that map instances $x \in X$ to $y \in \{-1,+1\}$.
+\item {\bf Test set:} $n$ unlabeled examples (instances) $x_i \in X$,
+  denoted $T=\{x_1,\ldots,x_n\}$. We assign to each $x_i$ equal
+  weight of $1/n$.
+\item {\bf Nature:} Nature chooses a conditional distribution over the
+  label associated with each test instance
 \[
-\forall 1 \leq i \leq m\;\; c_i \leq \frac{1}{n} \sum_{x\in T} E_{y \sim D(x)}\left[ y\cdot f_i(x)\right]
+z_i = \Exy{y_i | x_i}
 \]
+\item {\bf Good classifiers:} We make one of two types of assumption
+  on the functions in $F$:
+\begin{itemize}
+\item{\bf Good average performance:}
+We are given a normalized weighting over the functions
+$\{q_j\}_{j=1}^m$ such that
+\[
+\frac{1}{n} \sum_{i=1}^n \sum_{j=1}^m q_j f_j(x_i) z_i > l > 0
+\] 
+In words, the average correlation between a randomly chosen function
+operating on $x_i$ and the label selected by nature is at least $l$.
+
+This assumption matches the PAC-Bayesian analysis.
+
+\item{\bf Good individual performance:} We assume that we have upper
+  and lower bounds on the error of {\em each} of the functions $f \in
+  F$. We denote upper and lower bounds on these correlations by $l_j,u_j$:
+\[
+\forall 1 \leq j \leq m\;\; 
+l_j \leq 
+\frac{1}{n} \sum_{i=1}^n 
+\left[ y_i\cdot f_j(x_i)\right]  z_i
+\leq u_i
+\]
+\end{itemize}
 \item
 The goal of the algorithm is to find a prediction function 
-$g:T \to [-1,+1]$ that maximizes the worst case correlation between $g$ and the
-true label.
-\end{itemize}
+$g:(1,\ldots,n) \to [-1,+1]$ that maximizes the worst case (over
+$z_1,\ldots,z_n)$ of the correlation between $g$ and the
+true label: $\sum_{i=1}^n g_i z_i$
+\end{enumerate}
 
-\section{Formal Setup}
+\section{Setup using matrix notation}
 Let $z_i = \Exy{y_i | x_i}$ be the expected value of the label
 associated with instance $x_i$. Clearly $-1 \leq z_i \leq 1$. For
 reasons that have to do with the cannonical representation of linear
@@ -68,8 +108,9 @@ Similarly, we use $g_i =g_i^+ - g_i^-$ to denote the predictions made
 by the algorithm. Again $0 \leq g_i^+,g_i^- \leq 1$ and 
 $\vg^T \doteq (g_1^+,g_1^-,\ldots, g_n^+,g_n^-)$.
 
-Finally we use the vector $\vc$ to denote the column vector of the
-function correlations $c_i$.
+Finally we use the vectors $\vl,\vu$ to denote the column vectors 
+defining the lower and upper bounds on the correlation of each
+function in $F$ with the label.
 
 The correlation between the prediction vector $\vg$ and the
 conditional probability $\vz$ is the inner product $\vz^T \vg$. The
@@ -81,7 +122,7 @@ can formalize the optimization problem faced by the algorithm as
 \max_{\vg}\;\;\; \min_{\vz} \vz^T \vg
 \]
 Where $\vg,\vz \in [0,1]^n$ and $\vz$ is further constrained by the
-functions in $F$.
+upper and lower bounds on the correlations of the functions in $F$.
 
 We denote by $\vF$ the matrix the contains the prediction of
 $(f_1,\ldots,f_m)$ on the instances $(x_1,\ldots,x_n)$. To match the
@@ -101,60 +142,100 @@ m$ matrix:
  \end{pmatrix}
 \end{equation}
 
-We can represent the $m$ constraints on $\vz$ defined by
-$(f_1,\ldots,f_m)$, as
+We can represent the constraints on $\vz$ defined by
+$(f_1,\ldots,f_m)$, as follows:
+\begin{itemize}
+\item {\bf Average performance}
 \[
-\vz^T \vF \geq n \vc
+\vz^T \vF \vq \geq nl
 \]
-
-We represent the constraints $\vz \leq \ones{2n}$ as a larger-or-equal
-constraint
+\item {\bf Individual performance}
 \[
-\vz^T (-\vI) \geq -\ones{2n}
-\] 
-Where $\ones{2n}$ denote a row vector of length $2n$ all of which
-entries are equal to $1$.
-
-\newpage
+\vz^T \vF \geq n \vl \mbox{ and } \vz^T \vF \leq n \vu
+\]
+\end{itemize}
 
 \section{The optimization problem}
 
 We can rewrite the optimization problem in matrix notation as follows.
-We use $\vb,\vc,\ldots$ to denote column vectors.  We use the notation
-$(\vb^T,\vc^T)$ to denote the row vector which is the concatenation of
-$\vb^T$ and $\vc^T$.
+We use $\vb,\vd,\ldots$ to denote column vectors.  We use the notation
+$(\vb^T,\vd^T)$ to denote the row vector which is the concatenation of
+$\vd^T$ and $\vd^T$.
 
 The problem is
-
 \begin{eqnarray}
 \mbox{Find: }&\max_{\vg} \;\; \min_{\vz} \vz^T \vg \label{max-min-prog}\\
-\mbox{Such That: }& \vz^T \vA \geq \vd^T \mbox{ and } \vz \geq \vzero
-\notag \\
+\mbox{Such That: }& \vz^T \vA \geq \vd^T \mbox{ and } 
+\vz \geq \vzero \notag \\
 & -\vg \geq -\ones{2n} \mbox{ and } \vg \geq \vzero \notag
 \end{eqnarray}
-
-Where 
+Where $\ones{2n}$ denote a row vector of length $2n$ all of which
+entries are equal to $1$. The vector $\vd$ and the matrix $\vA$ are
+defined differently depending on the type of performance bounds that
+are given.
+\begin{enumerate}
+\item {\bf Average performance bound}
 \begin{equation}
-\vd^T = (n \vc^T, -\ones{2n})
+\vd^T=(nl,-\ones{2n}))
 \end{equation}
-and $\vA$ is the  $2n \times (m+2n)$ matrix: 
-\begin{equation}
-\vA = \left( \vF, -\vI \right) =
+We define the average prediction vector:
+\[
+\vp \doteq \vF \vq
+\]
+and $\vA$ is a $2n \times 2n+1$ matrix:
+\begin{small}
+\begin{eqnarray}
+\vA = \left( \vp, -\vI \right) 
+=
  \begin{pmatrix}
-   f_1(x_1) &  f_2(x_1) & \cdots &  f_m(x_1) & -1 & 0 & 0 & \cdots & 0
-   & 0 \\
-  -f_1(x_1) & -f_2(x_1) & \cdots & -f_m(x_1) & 0 & -1 & 0 & \cdots & 0
-  & 0 \\
-   f_1(x_2) &  f_2(x_2) & \cdots &  f_m(x_2) & 0 & 0 & -1 & \cdots & 0
-   & 0 \\
-  \vdots   & \vdots    & \ddots &  \vdots  & \vdots & \vdots & \vdots
-  & \ddots & \vdots & \vdots \\
-   f_1(x_n)  &  f_2(x_n)  & \cdots &   f_m(x_n) & 0  & 0 & 0 & \cdots
-   & -1 & 0 \\
-  -f_1(x_n)  & -f_2(x_n)  & \cdots &  -f_m(x_n) & 0  & 0 & 0 & \cdots
-  & 0 & -1 \\
+   \sum_{j=1}^m q_j f_j(x_1) & 
+  -1 & 0 & 0 & \cdots & 0 & 0 \\
+  -\sum_{j=1}^m q_j f_j(x_1) &  
+   0 & -1 & 0 & \cdots  & 0 & 0 \\
+   \sum_{j=1}^m q_j f_j(x_2) &
+   0 & 0 & -1 & \cdots & 0 & 0 \\
+   \vdots & 
+   \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+   \sum_{j=1}^m q_j f_j(x_n) &
+   0  & 0 & 0 & \cdots & -1 & 0 \\
+  -\sum_{j=1}^m q_j f_j(x_n) &
+   0  & 0 & 0 & \cdots & 0 & -1 \\
  \end{pmatrix}
+\end{eqnarray}
+\end{small}
+
+\item {\bf Individual performance bounds}
+\begin{equation}
+\vd^T = (n \vl^T, -n \vu^T, -\ones{2n})
 \end{equation}
+and $\vA$ is the  $2n \times (2m+2n)$ matrix: 
+\begin{small}
+\begin{eqnarray}
+\vA = \left( \vF, -\vF, -\vI \right) 
+=
+ \begin{pmatrix}
+   f_1(x_1)  & \cdots &  f_m(x_1) & 
+  -f_1(x_1)  & \cdots & -f_m(x_1) & 
+  -1 & 0 & 0 & \cdots & 0 & 0 \\
+  -f_1(x_1)  & \cdots & -f_m(x_1) & 
+   f_1(x_1)  & \cdots &  f_m(x_1) & 
+   0 & -1 & 0 & \cdots  & 0 & 0 \\
+   f_1(x_2) & \cdots &  f_m(x_2) & 
+  -f_1(x_2) & \cdots & -f_m(x_2) & 
+   0 & 0 & -1 & \cdots & 0 & 0 \\
+   \vdots   & \ddots &  \vdots  & 
+   \vdots   & \ddots &  \vdots  & 
+   \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+   f_1(x_n)  & \cdots &   f_m(x_n) & 
+  -f_1(x_n)  & \cdots &  -f_m(x_n) & 
+   0  & 0 & 0 & \cdots & -1 & 0 \\
+  -f_1(x_n)  & \cdots &  -f_m(x_n) & 
+   f_1(x_n)  & \cdots &   f_m(x_n) & 
+   0  & 0 & 0 & \cdots & 0 & -1 \\
+ \end{pmatrix}
+\end{eqnarray}
+\end{small}
+\end{enumerate}
 
 \subsection{Transforming the optimization problem into an LP}
 
@@ -193,8 +274,50 @@ We define
 \[
 f_{\theta}(x) = \sign(x-\theta)
 \]
-To start, consider a function set that contains a single function
-$F=\{f_0\}$, and suppose that the .
+
+To start, suppose that 
+\newcommand{\half}{\frac{1}{2}}
+\[
+T=\left\{-K+\half,-K+\frac{3}{2},\ldots,-\half,+\half,\ldots,K-\half \right\}
+\]
+The set $T$ contains $2K$ points, these partition the threshold
+functions into $2K+1$ equivalence sets which we can represent by 
+
+\[F=\left\{ f_{\theta} \left| 
+          \theta \in \{-K,-K+1,\ldots,0,\ldots,K-1,K\}
+         \right. \right\}
+\]
+the size of the function space is thus $m = 2K+1$.
+
+As constraints on the correlations we assume a lower bound $\alpha$ on
+the correlations of all of the functions. We assume no upper bounds on
+the correlations.
+
+We have therefor a special case of the LP~(\ref{combined2}) with the
+following settings. 
+\[
+\vd = (\alpha n \ones{m}, - n \ones{m} , -\ones{2n}) 
+\]
+\[
+\vA = \left( \vF, -\vF, -\vI \right) 
+\]
+\[
+\vF=
+ \begin{pmatrix}
+   +1 & -1 & -1 & \cdots & -1 & -1 \\
+   -1 & +1 & +1 & \cdots & +1 & +1 \\
+   +1 & +1 & -1 & \cdots & -1 & -1 \\
+   -1 & -1 & +1 & \cdots & +1 & +1 \\
+   +1 & +1 & +1 & \cdots & -1 & -1 \\
+   -1 & -1 & -1 & \cdots & +1 & +1 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+   +1 & +1 & +1 & \cdots & -1 & -1 \\
+   -1 & -1 & -1 & \cdots & +1 & +1 \\
+   +1 & +1 & +1 & \cdots & +1 & -1 \\
+   -1 & -1 & -1 & \cdots & -1 & +1 
+ \end{pmatrix}
+\]
+
 
 \section{Towards an interpretation}
 We partition the vector $\vv$ into two parts: $\vv^T = (\vr^T,\vs^T)$,
@@ -202,14 +325,14 @@ where $\vr$ is the $m$ dimensional vector corresponding to the $m$
 functions and $\vs$ is the $2n$ vector corresponding to the $n$ data
 points.  Using this notation we can rewrite the dual LP as follows:
 \begin{eqnarray}
-\mbox{Maximize: }& (n \vc^T \vr  - \| \vs \|_1 \label{expanded-max-LP}\\
+\mbox{Maximize: }& (n \vd^T \vr  - \| \vs \|_1 \label{expanded-max-LP}\\
 \mbox{Such That: }& \vF \vr  - \vs \leq \vg \notag \\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \notag
 \end{eqnarray}
 We can substitute the program~(\ref{expanded-max-LP})
 into~(\ref{max-min-prog}) and get the following maximization LP:
 \begin{eqnarray}
-\mbox{Maximize: }& n \vc^T \vr  - \| \vs \|_1 \label{Combined-LP-1}\\
+\mbox{Maximize: }& n \vd^T \vr  - \| \vs \|_1 \label{Combined-LP-1}\\
 \mbox{Such That: }& \vF \vr  - \vs \leq \vg  \label{Combined-LP-2}\\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \label{Combined-LP-3} \\
 \mbox{ and } &  -\vg \geq -\ones{2n} \mbox{ and } \vg \geq \vzero \label{Combined-LP-4}
@@ -222,7 +345,7 @@ $\vg$ are in~(\ref{Combined-LP-4}).
 
 We can therefor simplify the linear program to the following form:
 \begin{eqnarray}
-\mbox{Maximize: }& n \vc^T \vr  - \| \vs \|_1 \label{condensed-LP-1}\\
+\mbox{Maximize: }& n \vd^T \vr  - \| \vs \|_1 \label{condensed-LP-1}\\
 \mbox{Such That: }& \vF \vr  - \vs \leq \ones{2n}  \label{Condensed-LP-2}\\
 \mbox{ and } & \vr \geq \vzero \mbox{ and } \vs \geq \vzero \label{Condensed-LP-3} \\
 \end{eqnarray}
@@ -241,5 +364,6 @@ which implies
 \[
 s_{2i-1}+s_{2i} = \max \left(0,\left| \sum_{j=1}^m f_j(x_i) r_j \right| -1 \right)
 \]
+
 \end{document}
 
