@@ -1,0 +1,105 @@
+\documentclass{article}[12pt]
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{graphicx}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\qed}{\hfill\rule{7pt}{7pt}}
+\newenvironment{proof}{\noindent{\bf Proof:}}{\qed\medskip}
+\setcounter{MaxMatrixCols}{20}
+
+\title{Active Learning with Specialists}
+%\author{}
+\begin{document}
+
+\maketitle
+
+\section{Naive Idea}
+
+One simple minded approach to active learning using HedgeClipper is to
+query only those examples on which the current prediction is
+hedged. This seems like a natural extension of disagreement based
+active learning and is clearly more aggressive.
+
+The problem with this approach is that clipping an example means that
+the prediction on that example is confident. However, it does {\em
+  not} mean that this example is useless for further improvement of
+the combined classifier. Indeed, the prediction on an example might be
+wrong, and the correct label on the example can be useful in improving
+the prediction on {\em other}, possibly hedged, examples.
+
+\section{A different idea}
+
+\newcommand{\HH}{{\cal H}}
+\newcommand{\GG}{{\cal G}}
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ind}{{\mathbf 1}}
+
+Consider one sided specialists $h:X \to {0,i}$ where $1\leq i \leq
+k$. Consider a set of specialists $\HH$. Suppose the label set is
+$Y=\{1,2,\ldots,k\}$.
+
+Suppose $D=\{(x_1,y_1),(x_n,y_n)\}$ be a labeled data set. The
+correlation the specialist $h$ on  $D$ is defined to be:
+\[
+\corr(h,D) \doteq \frac{1}{n} \sum_{i=1}^n \ind(h(x_i)\neq 0) 
+\left[ \ind(h(x_i) = y_i) - \ind(h(x_i) \neq y_i) \right]
+\]
+
+For similicity we assume from now on that there are just two classes 
+$Y=\{-1,+1\}$ and the that specialists predictions are in $\{0,1\}$
+In this case the correlation simplifies to
+\[
+\corr(h,D) \doteq \frac{1}{n} \sum_{i=1}^n h(x_i) y_i
+\]
+
+We can associate with specialist $h$ the subset of $X$ on which
+$h(x)=1$, we denote this set by $A_h$. Considering $\HH$ as a set of
+sets we assume that $\HH$ is closed under intersection. For similicity
+assume  $\HH$  is finite.
+
+{\bf Key Idea:} We are going to use the specialists in two ways:
+\begin{enumerate}
+\item As weak rules that are combined using the HedgeClipper method.
+\item As Filters: When we use the specialist $h$ as a filter we query
+  only those examples on which $h(x)=1$.
+\end{enumerate}
+
+{\bf Key Observation:} Consider estimating the correlation of the
+specialist $h$. If we use only and all examples that were filtered
+using $f \in \HH$ such that $h \subseteq f$ we get an unbiased
+estimate.
+
+\section{Some more details}
+
+When we estimate $\corr(h)$ we can compute a confidence interval. This
+confidence interval can be computed using uniform bounds (VC
+dimension, Radamacher complexity etc. ) or using bootstrap based
+methods. For now lets assume that the correlation of the specialist
+$h$ is known to lie in the interval $[b(h),c(h)]$. If $b(h)\leq 0$
+then the specialist is useless.
+
+Denote by $\GG \subseteq \HH$ the set of $h \in \HH$ for which
+$b(h)>0$.
+
+The specialists set $h \in \GG$, together with the the corresponding
+lower bounds $b(h)$ define the linear program we solve with
+HedgeClipper.
+
+Consider the solution weight vector $\gamma^*$ over the
+specialists. Non-zero weights correspond to ``active constraints''
+while zero weights correspond to ``inactive constraints''
+
+We can also define ``almost active'' as specialists which can become
+tight after some tightening of the confidence interval.
+
+Suppose we use $h$ as a filter, labeling these examples will tighten
+the confidence intervals for all specialists $h' \subseteq h$. 
+
+We need some heuristic for choosing the filter $h$ so that one or more
+of the active or almost active hypotheses are a subset of $h$.
+
+\end{document}
+
