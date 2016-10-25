@@ -1,0 +1,383 @@
+\documentclass{article}
+
+% use Times
+\usepackage{times}
+
+% For figures
+\usepackage{graphicx, xcolor} % more modern
+%\usepackage{epsfig} % less modern
+\usepackage{subfigure} 
+
+\usepackage{caption}
+\usepackage{fullpage}
+
+% For citations
+\usepackage{natbib}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+%\usepackage{cleveref}
+\usepackage{csquotes}
+
+\usepackage{stmaryrd}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage[mathscr]{euscript}
+\usepackage[shortlabels]{enumitem}
+\setlist{nolistsep}
+\usepackage{array}
+\usepackage{diagbox}
+%\usepackage{subfig}
+\usepackage{float}
+
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+% Packages hyperref and algorithmic misbehave sometimes.  We can fix
+% this with the following command.
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+
+
+% \algloopdefx{for}[1]{\textbf{for} #1}
+
+\newtheorem{theorem}{Theorem}%[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{assumption}{Assumption}
+\newtheorem{example}{Example}
+\newtheorem{property}{Property}
+\setcounter{MaxMatrixCols}{20}
+
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}[1]{\mathbbm{1}^{#1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\ve}{\mathbf{e}}
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}} 
+\newcommand{\vG}{\mathbf{G}}
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vP}{\mathbf{P}} 
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vS}{\mathbf{S}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vy}{\mathbf{y}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\boldsymbol\alpha}
+\newcommand{\vbeta}{\boldsymbol\beta}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+
+
+\newcommand{\clip}{\mbox{clip}}
+
+\newcommand{\hy}{\tilde{y}}
+\newcommand{\hz}{\tilde{z}}
+\newcommand{\hw}{\tilde{w}}
+\newcommand{\hrho}{\tilde{\rho}}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Prtxt}{Pr}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}[1]{\mathbf{1}\left(#1\right)} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+
+\newcommand*{\qedinp}{\hfill\ensuremath{\blacksquare}} %in-place qed theorem box; black box
+\newcommand*{\qedinpw}{\hfill\ensuremath{\square}} % white box
+\newcommand{\deriv}[2]{\frac {d \left[ #1 \right]} {d #2}}
+\newcommand{\pderiv}[2]{\frac {\partial \left[ #1 \right]} {\partial #2}}
+\newcommand{\pdiff}[2]{\frac {\partial #1 } {\partial #2}}
+\newcommand{\pdiffdbl}[2]{\frac {\partial^2 #1 } {\partial #2^2}}
+\newcommand{\expp}[1]{\exp \left(#1\right)}
+\newcommand{\epshat}{\hat{\epsilon}}
+\newcommand{\sighat}{\hat{\sigma}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\newcommand{\authcmt}[2]{\textcolor{#1}{#2}}
+\newcommand{\akshay}[1]{\authcmt{red}{[AB: #1]}}
+\newcommand{\shay}[1]{\authcmt{green}{[SM: #1]}}
+\newcommand{\yoav}[1]{\authcmt{blue}{[YF: #1]}}
+
+
+
+\title{Active Learning with Specialists}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Constraint Set for $\vb$}
+
+
+Recall the definition of the potential, a univariate function: 
+\begin{align*}
+\Psi (m) := \max (\abs{m}, 1)
+\end{align*}
+Also recall the setup of our formulation: $n$ unlabeled data and $p$ ensemble classifiers. 
+Given a setting for $\vb$, the predictor chooses $\sigma \geq 0^p$ to minimize
+the slack function, which is a tight bound on the worst-case error (modulo a factor of 2):
+$$ \gamma (\sigma) = \gamma (\sigma,\vb) := - \vb^\top \sigma + \frac{1}{n}
+\sum_{j=1}^n \Psi ( \vx_{j}^\top \sigma ) $$
+Also, recall that given a weight vector $\sigma$, 
+the muffled formulation learns a classifier that that predicts on an unlabeled example $\vx \in \RR^p$ as: 
+\begin{align*}
+g_{\vx} (\sigma) := \max( -1, \min (\vx^\top \sigma , 1) ) := \mbox{clip}_{-1}^{1} (\vx^\top \sigma)
+\end{align*}
+Finally define the indices of clipped, hedged, and borderline points w.r.t. a weighting $\sigma \geq 0^p$ by: 
+\begin{align*}
+C (\sigma) = \lrsetb{j : \abs{\vx_{j}^\top \sigma} > 1}
+\quad , \quad
+H (\sigma) = \lrsetb{j : \abs{\vx_{j}^\top \sigma} < 1}
+\quad , \quad
+B (\sigma) = \lrsetb{j : \abs{\vx_{j}^\top \sigma} = 1}
+\end{align*}
+
+Suppose we query for the labels of a set of examples
+chosen independently at random from the complete set of unlabeled examples. 
+From this set of labeled examples we can compute upper and lower high
+probability bounds on each coordinate of $\vb$ (for example, using Wilson's score and Occam's Razor for a finite class). 
+We denote these upper and lower bounds by the $p$-vectors $\vv$ and $\vu$ and define a resulting box constraint set:
+\[
+B (\vv,\vu) := \lrsetb{ \vb \in [-1,1]^p : \vv \leq \vb \leq \vu}
+\]
+Let $\vb^*$ be the true label correlation vector, calculated with knowledge of all labels. 
+Then any future label querying to narrow the box constraint vectors to $\vv', \vu'$ will (w.h.p.) 
+still be such that $\vb^* \in B (\vv', \vu')$. 
+
+
+
+
+\section{Optimal Weights $\sigma^* (\vb)$ from $\vb$}
+
+For any $\vb \in B (\vv,\vu)$, 
+we can characterize a set containing the optimal weight vector(s), 
+using first-order subgradient optimality conditions. 
+
+The subdifferential set of the slack function is 
+\begin{align}
+\label{subdiffgammasig}
+\partial \gamma (\sigma) 
+= \left\{ \frac{1}{n} \lrp{ \sum_{j \in C(\sigma)} \vx_j \sgn(\vx_j^\top \sigma) 
++ \sum_{j \in B(\sigma)} c_j \vx_j \sgn(\vx_j^\top \sigma) } - \vb
+, \quad \forall c_j \in [0,1]  \right\}
+\end{align}
+%Note that the hedged set plays no role in $\partial \gamma (\sigma)$.
+Since the slack function is convex, 
+the sub-differential set \eqref{subdiffgammasig} at any optimal weighting $\sigma^* (\vb)$ contains $\vzero^p$. 
+In other words, for $\sigma^* (\vb)$ (written as $\sigma^*$ for convenience),
+\begin{align}
+\label{eq:gammasgexact}
+n \vb - \sum_{j : \vx_{j}^\top \sigma^* > 1} \vx_{j} + \sum_{j : \vx_{j}^\top \sigma^* < -1} \vx_{j} 
+&= \sum_{j : \abs{\vx_{j}^\top \sigma^*} = 1} c_j \vx_{j} \sgn(\vx_{j}^\top \sigma^*)
+\quad \mbox{for some values} \quad
+\lrsetb{c_j}_{j \in B(\sigma)} \in [0,1]
+\end{align} 
+
+Note that \eqref{eq:gammasgexact} is true for any $\sigma^*$. 
+The picture corresponding to \eqref{eq:gammasgexact} is given in Fig. \ref{fig:optsigma} (from our COLT '15 paper). 
+\begin{figure}
+\label{fig:optsigma}
+\centering
+\includegraphics[width=0.6\textwidth]{Opt-Sigma.pdf}
+\caption{\small An illustration of the optimal $\sigma^* \geq 0^p$. 
+The vector $n \vb$ is the difference between the sums of two categories of clipped examples: 
+those with high score ($\vx^\top \sigma^* > 1$) and low score ($< -1$).
+The effect of $B (\sigma^*)$ is neglected for simplicity. 
+}
+\end{figure}
+
+
+
+\subsection{Goal}
+\label{sec:goal}
+
+\emph{Our goal is to predict according to $\sigma^* (\vb^*)$, as these are the minimax optimal predictions 
+(when label supervision is in the form of classifier error rates).}
+
+
+
+\section{Deductions}
+
+Given any $\vb$, define the set of all optimal weight vectors as 
+$$ \Sigma (\vb) := \lrsetb{ \sigma^* (\vb) \geq \vzero^p \mbox{ satisfying } \eqref{eq:gammasgexact} } $$ 
+Convexity of the slack function tells us that 
+$\Sigma (\vb)$ is nonempty and convex. 
+%and that the slack function is constant over $\Sigma (\vb)$. 
+
+Therefore, the constraint set $B (\vv,\vu)$ containing $\vb$ corresponds to a convex set of $\sigma$ vectors $\Sigma (\vv, \vu)$, defined as follows: 
+\begin{align*}
+\Sigma (\vv, \vu) := \lrsetb{ \sigma \geq \vzero^p : \;\exists \vb \in B (\vv,\vu) \;\;s.t.\;\; \sigma \in \Sigma (\vb)}
+\end{align*}
+$\Sigma (\vv, \vu)$ represents the possible weight vectors we could use, since  $\vb^* \in B (\vv,\vu)$. 
+%Therefore, it is always safe to predict the label of examples that are clipped under $\sigma \in \Sigma (\vb^*)$. 
+
+%To make this concrete 
+Then from the definitions, $\sigma^* (\vb^*) \in \Sigma (\vv, \vu)$, so we can deduce the following: 
+\begin{prop}
+\label{prop:safeset}
+Define the following \textbf{safe} set $S$: 
+\begin{align*}
+S (\vv, \vu) := \lrsetb{ \vx \in \RR^p : \abs{ \vx^\top \sigma} \geq 1 \;\; \forall \sigma \in \Sigma (\vv, \vu) }
+\end{align*}
+Suppose $\sigma \in \Sigma (\vv, \vu)$. Then for any $\vx \in S (\vv, \vu)$, 
+$g_{\vx} (\sigma) = g_{\vx} (\sigma^* (\vb^*)) = \pm 1$. 
+\end{prop}
+So we need not query the labels of $\vx \in S (\vv, \vu)$, 
+because on such examples the optimal predictions (cf. Sec. \ref{sec:goal}) are already known.
+
+From the figure, the intuition is that when $B (\vv, \vu)$ is a small box, 
+then data with sufficiently high margin lie in $S (\vv, \vu)$. 
+
+\akshay{How can we efficiently check whether $\vx \in S (\vv, \vu)$, without false positives?}
+
+
+\section{Sketch of an Algorithm}
+
+Here we loosely specify an algorithm, which ignores efficiency considerations for now, 
+and makes the following assumption. 
+\begin{ass}
+$\gamma (\sigma^* (\vb^*)) = 0$. In other words, the optimal muffled predictions $g_{\vx} (\sigma^*)$ make zero error.
+\end{ass}
+Along with Prop. \ref{prop:safeset}, this means that without knowing $\vb^*$, we know the true label of any safe $\vx \in S (\vv, \vu)$. 
+
+
+The algorithm uses a batch size $m$, and proceeds in epochs $1, 2, \dots, T$. 
+
+\begin{algorithm}[]
+   \caption{Outline of an Active Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   %\STATE {\bfseries Input:} Size-$n$ unlabeled set $U$
+   \STATE Initialize $\vv^{0} = - \vone^p, \vu^{0} = \vone^p$. 
+   \FOR{$t = 1$ {\bfseries to} $T$}
+   \STATE \textbf{Keep sampling} unlabeled data until we sample $m$ examples $\notin S (\vv^{t-1}, \vu^{t-1})$. 
+   (At the end of this step, say we have sampled $n_t$ examples in $S (\vv^{t-1}, \vu^{t-1})$ ['safe']
+   and $m$ examples $\notin S (\vv^{t-1}, \vu^{t-1})$ ['unsafe'].)
+   \STATE \textbf{Construct} a labeled set of $m + n_t$ examples, by querying labels of the $m$ unsafe sampled examples, 
+   and labeling each of the $n_t$ safe ones $\vx$ with the label $\sgn (\vx^\top \sigma)$ for any $\sigma \in \Sigma (\vv^{t-1}, \vu^{t-1})$.
+   \STATE \textbf{Update} $\vv^{t-1}, \vu^{t-1}$ to $\vv^{t}, \vu^{t}$ using the constructed labeled set of $m + n_t$ examples. 
+   \ENDFOR
+   \STATE {\bfseries Output:} Classifier that predicts according to weights $\sigma^* (\vv^{T})$
+\end{algorithmic}
+\end{algorithm}
+
+Under what conditions does this approach query few labels? 
+%To explore this, define the level sets of the slack function as 
+%\begin{align*}
+%L_{\epsilon} = \lrsetb{ \sigma \geq 0^p : \gamma (\sigma) \leq \gamma (\sigma^*) + \epsilon }
+%\end{align*}
+This will not happen if, even after querying many labels and having $\vv \approx \vu$, 
+$S (\vv, \vu)$ is small.
+Instead, we want a small $B (\vv, \vu)$ to imply a large safe set $S (\vv, \vu)$; this would imply 
+that the above algorithm makes few label queries. 
+
+This would happen if the following quantity is small:
+\begin{align*}
+\frac{ 1 - Pr (S (\vv, \vu)) }{ \vnorm{\vv - \vu}_{\infty} }
+\end{align*}
+as $\vnorm{\vv - \vu}_{\infty} \to 0$. 
+
+There are many other possible quantities to focus on instead of the above. 
+Actually, we would like an explicit link to the disagreement coefficient $\theta$
+(``if $\theta \in O(1)$ then the above is small"), 
+so perhaps we should involve $\vb^*$ in the definition as well.
+
+
+
+
+
+
+%\section{Setup}
+%
+%Define the minimum slack as a function of $\vb$:
+
+%We seek the minimax
+%strategies for the game
+%\begin{align*}
+%\min_{\sigma \geq 0^p} \max_{\vb \in D} \lrb{ \gamma (\sigma,\vb) }
+%= 
+%\max_{\vb \in D} \min_{\sigma \geq 0^p} \lrb{ \gamma (\sigma,\vb) }
+%= 
+%\max_{\vb \in D} \;\beta (\vb)
+%\end{align*}
+
+%The predictor is playing the game on the left-hand side, 
+%in which the actual $\vb$ value is not known, but only its constraints. 
+%The adversary in the game again represents uncertainty, this time only measured against the granularity of the classifier space. 
+%The game can be played in reverse order when $\vb$ is known, in which case $\sigma^* (\vb) = \argmin_{\sigma \geq 0^p} \gamma (\sigma, \vb)$ 
+%is chosen to minimize the slack function. 
+%
+%In this case, 
+%\begin{align*}
+%\nabla \beta (\vb) = - \sigma^* (\vb) \leq \vzero^p
+%\end{align*}
+%
+%So in general, the maximizing $\vb$ is the lowest allowed, 
+
+
+%If $\vb^*$ is on the edge of the set D ($\vb^* \notin \mbox{relint}(D)$), then for each classifier $i$, $b_i^*$
+%Where the min and max are taken over the convex hull of the said set. 
+
+
+\end{document}
