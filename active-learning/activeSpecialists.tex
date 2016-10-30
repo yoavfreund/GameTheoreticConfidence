@@ -239,7 +239,7 @@ The picture corresponding to \eqref{eq:gammasgexact} is given in Fig. \ref{fig:o
 \begin{figure}
 \label{fig:optsigma}
 \centering
-\includegraphics[width=0.6\textwidth]{Opt-Sigma.pdf}
+%\includegraphics[width=0.6\textwidth]{Opt-Sigma.pdf}
 \caption{\small An illustration of the optimal $\sigma^* \geq 0^p$. 
 The vector $n \vb$ is the difference between the sums of two categories of clipped examples: 
 those with high score ($\vx^\top \sigma^* > 1$) and low score ($< -1$).
@@ -291,9 +291,114 @@ then data with sufficiently high margin lie in $S (\vv, \vu)$.
 
 \akshay{How can we efficiently check whether $\vx \in S (\vv, \vu)$, without false positives?}
 
+\section{Converging specialists}
 
-\section{Sketch of an Algorithm}
+Suppose specialists are functions that map the input space $X$ to the
+set $\{0,1\}$. Where $1$ can be interpreted as making a prediction and
+$0$ corresponds to abstaining from prediction. We call the set of
+points on which the $s(x)=1$ the {\em support} of $s$ Denoted
+$1(s)$. The set of labeled exampel in the support of $s$ is called the
+{\em evidence set} for $s$.
 
+We say that $S$ is a {\em converging} set of specialists wrt. the
+distribution $P$ over $X$ if for any $x \in X$ there is a
+sequence of specialists $s_1,s_2,\ldots$ such that for all $i>0$,
+$x\in 1(s_i)$, $1/(i+1) < P(1(s))< 1/i$  for all $y \in
+1(s)$\footnote{YF: Assuming that a metric $d(x,y)$ is defined over $X$ and
+  that the supports have a diameter converging to zero will probably
+  make the analysis easier, but I hope it is not needed.}
+
+Suppose $A$ is a subset of $X$. We define the restriction of $S$ to
+$A$ to be
+\[
+S(A) = \left\{s \cap A : s \in S \right\}
+\]
+We will use $S(X)$ and $S$ interchangeably.
+
+\section{An active learning algorithm}
+
+
+
+The algorithm recieves the following inputs:
+\begin{enumerate}
+\item A set of unlabeled examples $X={x_1,\ldots,x_n}$
+\item A converging set of specialists $S$.
+\item A evidence size parameter $k$.
+%\item A minimal margin parameter $\gamma>0$
+\end{enumerate}
+~\\
+~\\
+\noindent
+Here is a high-level description of the algorithm
+\begin{itemize}
+\item
+The algorithm execution is divided into {\em phases}. Phase $t$
+consists of a sampling step, followed by a constraint optimization
+step followed by a step defining the safe and unsafe sets for the
+following phase, denoted $C_{t+1}$ for the safe (confident) and
+$U_{t+1}$ for the unsafe.
+\item
+The sampling step in phase $t+1$ involves sampling the same number of
+examples $n_{t+1}$ uniformly at random from $X$ and another set of size
+$n_{t+1}$ from $U_{t+1}$. The choice of $n_t$ is yet to be determined,
+but it will probably be a stopping rule based on the tightening of the
+set of constraints.
+\item
+The labels sampled from $X$ are used as evidence for all of the
+specialists. The labels sampled form $U_{t+1}$ are used as evidence
+for specialists in $S(U_{t+1})$. \footnote{YF: The labels from any set
+  that contains $U_{t+1}$ can also be used, and this might speed up
+  convergence in applications, but it seems hard to analyze.}
+\item
+The set of constraints gets larger with each iteration. A constraint
+is removed only when a more restrictive constraint, involving the same
+specialist, is added.
+\item
+In each phase only a subset of the specialists, and the corresponding
+constraints, are considered ``active''. An active specialist $s$ is
+one for which the size of the evidence set is at least $k$. As the
+number of labels increases, so does the set of active specialists. 
+\end{itemize}
+
+\iffalse
+To describe the algorithm we need to define a few more things:
+\begin{itemize}
+  \item We use $L^a,L^p$ to denote the {\em active} and {\em
+    passive} labelled data sets.
+  \item Given $A \subseteq X$ and a size parameter $k$, we define
+    $S(A,L,k)$ to be the set of specialists $s \in S(A)$ whose support contains at
+    least $k$ points from the labeled set $L$: $|s \cap L_x|\geq
+    k$. ($L_x$ denotes the set of instances in $L$, without the labels).
+  \item 
+    
+  \item The upper/lower bound vectors $\vv,\vu$ are defined over all
+    specialists in both $S^a$ and $S^p$ that are supported on at least
+    $k$ examples 
+\end{itemize}
+The algorithm is described as follows.
+
+\begin{algorithm}[]
+   \caption{Outline of an Active Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   \STATE Initialize $L^p_0$ by querying elements of $X$ uniformly at
+   random. Initialize $L^a_0$ to be empty.
+   \FOR{$t = 1$ {\bfseries to} $T$}
+   \STATE \textbf{Define the active specialists} to be those
+   specialists that contain at least $k$ labeled
+   examples. Specifically, the passive specialists are $S_t^p = S(X,L^p_{t-1})$
+   \STATE \textbf{Keep sampling} unlabeled data until we sample $m$ examples $\notin S (\vv^{t-1}, \vu^{t-1})$. 
+   (At the end of this step, say we have sampled $n_t$ examples in $S (\vv^{t-1}, \vu^{t-1})$ ['safe']
+   and $m$ examples $\notin S (\vv^{t-1}, \vu^{t-1})$ ['unsafe'].)
+   \STATE \textbf{Construct} a labeled set of $m + n_t$ examples, by querying labels of the $m$ unsafe sampled examples, 
+   and labeling each of the $n_t$ safe ones $\vx$ with the label $\sgn (\vx^\top \sigma)$ for any $\sigma \in \Sigma (\vv^{t-1}, \vu^{t-1})$.
+   \STATE \textbf{Update} $\vv^{t-1}, \vu^{t-1}$ to $\vv^{t}, \vu^{t}$ using the constructed labeled set of $m + n_t$ examples. 
+   \ENDFOR
+   \STATE {\bfseries Output:} Classifier that predicts according to weights $\sigma^* (\vv^{T})$
+\end{algorithmic}
+\end{algorithm}
+\fi
+\iffalse
 Here we loosely specify an algorithm, which ignores efficiency considerations for now, 
 and makes the following assumption. 
 \begin{ass}
@@ -378,6 +483,6 @@ so perhaps we should involve $\vb^*$ in the definition as well.
 
 %If $\vb^*$ is on the edge of the set D ($\vb^* \notin \mbox{relint}(D)$), then for each classifier $i$, $b_i^*$
 %Where the min and max are taken over the convex hull of the said set. 
-
+\fi
 
 \end{document}
