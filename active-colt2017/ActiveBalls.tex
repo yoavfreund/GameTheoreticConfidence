@@ -4,6 +4,7 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{color}
 
 \title{Active learning using muffler}
 \author{Akshay Balsubramani, Yoav Freund, Shay Moran}
@@ -28,6 +29,8 @@
 
 \newcommand{\bias}{\text{bias}}
 \newcommand{\sign}{\text{sign}}
+
+\newcommand{\shay}[1]{\textcolor{red}{Shay: #1}}
 
 \begin{document}
 
@@ -87,7 +90,7 @@ any $\x \in \X$ and for any ball $B$ that covers $\x$ there exists
 another ball $B' \subset B$ that also covers $\x$ such that $|B'| = |B|-1$.
 \end{definition}
 
-We assume that $\rho$ is Lifshits
+We assume that $\rho$ is Lipschitz
 with parameter $\alpha$, i.e. for any two vectors $\vec{x}\neq\vec{y}$.
 
 $$\frac{\rho(\x)-\rho(\y)}{\|\x-\y\|_2} \leq \alpha$$
@@ -116,7 +119,6 @@ The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
 \end{lemma}
 
 \section{Actual algorithm}
-
 To be described here: an algorithm which, at each epoch, generates two
 samples: a sample drawn uniformly at random from the whole space, and
 a sample drawn uniformly at random from the set on which the current
