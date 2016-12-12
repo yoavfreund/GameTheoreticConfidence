@@ -1,0 +1,124 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\title{Active learning using muffler}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+\date{November 2016}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\I}{{\cal I}}
+\newcommand{\M}{{\cal M}}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\sign}{\text{sign}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+As a first step towards using Muffler for active learning, we describe
+a setup in which Muffler converges to the Bayes optimal rule.
+
+We operate in a restricted context which emulates the kNN 
+convergence rate analysis of Chaudhuri and Dasgupta.
+
+\section{Problem setup}
+
+The input space $\X$ is a finite set of points in $R^d$.
+The label of each point is drawn according to a conditional
+distribution over $\{-1,+1\}$. Instead of the conditional
+distribution, we use the conditional expectation
+$\rho(\x) \doteq E[Y | X=\x]$.
+
+The rules that we use are ``specialists'' that are balls of the form:
+\[
+B_{r,\cc}(\x) =
+\begin{cases}
+ 1 & \text{if } \| \cc- \x \| \leq r \\
+ 0 & \text{otherwise }
+\end{cases}
+\]
+
+If $B_{r,\cc}(\x) =1$ for some $\x \in \X$ we say that $B_{r,\cc}$
+{\em covers} $\x$. We call the set of all $\x \in \X$ that are covered
+by $B_{r,\cc}$ the {\em support} of $B_{r,\cc}$, we denote the size of
+the support of $B$ by $|B|$.
+
+We define the {\em bias} of a ball $B$ as the average of the
+conditional expectations over the support of $B$.
+$$
+\bias(B) \doteq \frac{1}{|B|} \sum_{\vv \in B} \rho(\vv)
+$$
+
+We use the following definitions.
+
+The first defines the size of the neighborhood of a point $\x$ that is
+consistent with the Bayes prediction on $\x$
+\begin{definition}[Neighborhood]
+We say that a point $\x$ has a $k,\gamma$ neighborhood if for any ball $B$ that
+covers $\x$ such that $|B| \leq k$ it holds that $|\bias(B)| > \gamma$
+and $\sign(\bias(B))=\sign(\rho(\x)$. 
+\end{definition}
+
+The second is a technical definition that (I believe) holds for $\X$ which contains points in
+general position.
+\begin{definition}[Decreasing support]
+The set $\X$ provides decreasing support for the set of balls if for
+any $\x \in \X$ and for any ball $B$ that covers $\x$ there exists
+another ball $B' \subset B$ that also covers $\x$ such that $|B'| = |B|-1$.
+\end{definition}
+
+We assume that $\rho$ is Lifshits
+with parameter $\alpha$, i.e. for any two vectors $\vec{x}\neq\vec{y}$.
+
+$$\frac{\rho(\x)-\rho(\y)}{\|\x-\y\|_2} \leq \alpha$$
+
+\section{Idealized Algorithm}
+
+We perform the analysis in two steps. First, we analyze an idealized
+algorithm $\I$
+which operates under the assumption that exact conditional
+probabilities are available. Then, in the second step, we remove the
+assumption of exact conditional probabilities, replace it with
+estimates based on a sample, and analyze the sample based algorithm $\M$.
+
+We define the set of all balls whose support size is at most $k$ by $S_k$.
+
+The parametrized algorithm $I(k)$ uses $S_k$ as the set of
+specialists.  It receives as input the exact bias $\bias(B)$ for all $B \in S_r$.
+
+The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
+
+\begin{lemma}
+  Suppse $B_1$ and $B_2$ are two balls that cover a point $\x$,
+  suppose also that $B_2 \subset B_1$ and that $|B_2| < |B_1|$, then
+  removing $B_1$ from the set of constraints does not change the
+  optimal prediction on $\x$.
+\end{lemma}
+
+\section{Actual algorithm}
+
+To be described here: an algorithm which, at each epoch, generates two
+samples: a sample drawn uniformly at random from the whole space, and
+a sample drawn uniformly at random from the set on which the current
+version space is not deterministic.
+\end{document}
