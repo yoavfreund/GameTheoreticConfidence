@@ -6,6 +6,11 @@
 \usepackage{amsmath}
 \usepackage{color}
 
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
 \title{Active learning using muffler}
 \author{Akshay Balsubramani, Yoav Freund, Shay Moran}
 \date{November 2016}
@@ -24,12 +29,13 @@
 \newcommand{\vv}{\vec{v}}
 \newcommand{\cc}{\vec{c}}
 
-\newcommand{\I}{{\cal I}}
-\newcommand{\M}{{\cal M}}
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}}
+\newcommand{\emprho}{\hat{\rho}}
 
 \newcommand{\bias}{\text{bias}}
 \newcommand{\sign}{\text{sign}}
-
 
 \newcommand{\shay}[1]{\textcolor{red}{Shay: #1}}
 \newcommand{\yoav}[1]{\textcolor{blue}{Yoav: #1}}
@@ -140,15 +146,74 @@ Our analysis consists of two parts:
 In this section we provide a variant of the Muffer algorithm that
 requires the labeling of far fewer examples than passive sampling.
 
-\yoav{Algorithm to be described here}
+We review and define some notation we use to describe the active learning algorithm
 
+\begin{itemize}
+\item $\X$ is the set of unlabeled algorithms which defines the
+  universe for the problem.
+\item $\K_i \subset \X$ is the set ``Known unknowns'' after iteration $i$, in
+  other words the set of ``unsafe'' points. $\K_0=\emptyset$.
+\item For any set $A\subseteq \X$ denote by $Q(A,n)$ to be the set of
+  $n$ labeled examples $(\x,y)$ generated as follows. $\x$ chosen
+  independently at random from the uniform distibution over
+  $A$. The label $y$ is then chosen independently at random according
+  to the distribution $\rho(\x)$. We say that the
+  labels in $Q(A,n)$ {\em support} a specialist $B \in S$ if $B
+  \subseteq A$.
+\item We define the restriction of a specialist set $S$ to a set of
+  examples $\K \subset \X$ as:
+  $$
+  S \restrictedto \K \doteq \left\{ B \cap \K \left| B \in S \right. \right\}
+  $$
+\end{itemize}
+
+\begin{algorithm}[]
+   \caption{An Active Learning Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   \STATE \textbf{\textcolor{blue}{Initialize}}   $\K_0=\emptyset$, $\SS_0 = S$,
+   \FOR{$i = 1,\ldots$ }
+   \STATE \textbf{Query} generate two new set of labeled examples:
+   STATE{$U_i = Q(\X,n)$}
+   \IF{$|\K_{i-1}|>0$}
+   \STATE{$F_i = Q(\K_{i-1},n)$ and $\SS_i = \SS_{i-1} \cup (S
+   \restrictedto \K_{i-1})$}
+   \ELSE
+   \STATE{$F_i = \emptyset,\; \SS_i=\SS_{i-1}$}
+   \ENDIF
+   \STATE \textbf{\textcolor{blue}{combine labeled data}}
+   \FOR{$B \in \SS_i$}
+   \STATE Define the labeled set for $B$ as:
+   $$ L_i(B) = \left(\cup_{j=1}^i U_i \bigcup \cup_{i: \{B \subset
+     \K_i\}} F_i)\right) \restrictedto B$$
+   \ENDFOR
+   \STATE \textbf{\textcolor{blue}{Compute Constraints}}
+   \FOR{$B \in \SS_i$}
+   \STATE{Compute the empirical mean label for $B$:
+     $$\emprho(B) = \frac{\sum_{(\x,y) \in L_i(B) }y}{|L_i(B)|}$$}
+   \STATE{Compute the error bound for $B$:
+     $$\Delta(B) = \sqrt{\frac{\ln 2i^2/\delta + (d+1) \ln
+         |L_i(B)|}{|L_i(B)|/2}} $$
+   Where $d$ is the dimension of the space and $\delta$ is the
+   confidence parameter.}
+   \STATE Set the confidence interval for $B$ to be 
+   of $C_i(B)=[\emprho(B) \pm \Delta(B)] \cap [-1,+1]$ 
+   \ENDFOR
+   \STATE \textbf{\textcolor{blue}{Solve}}
+   \STATE{Solve the linear constraints $\{L_i(B)\}$ and find, for each $\x
+   \in \X$ the segment of feasible solutions $f(\x)$. Define the new
+   set of known unknowns to be
+   $$ \K_i = \{\x | 0 \in f(\x)\} $$}
+   \ENDFOR
+\end{algorithmic}
+\end{algorithm}
 
 The analysis of the algorithm consists of two steps.
-First, we analyze an idealized algorithm $\I$
+First, we analyze an idealized algorithm
 which operates under the assumption that exact conditional
 probabilities are available. Then, in the second step, we remove the
 assumption of exact conditional probabilities, replace it with
-estimates based on a sample, and analyze the sample based algorithm $\M$.
+estimates based on a sample, and analyze the sample based algorithm.
 
 We define the set of all balls whose support size is at most $k$ by $S_k$.
 
@@ -157,11 +222,31 @@ specialists.  It receives as input the exact bias $\bias(B)$ for all $B \in S_r$
 
 The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
 
-\begin{lemma}
+The two main lemmas we use to analyze this algorithms are:
+\begin{lemma}[Subset domination]
   Suppse $B_1$ and $B_2$ are two balls that cover a point $\x$,
-  suppose also that $B_2 \subset B_1$ and that $|B_2| < |B_1|$, then
+  suppose also that $B_2 \subset B_1$ (strict subset), then
   removing $B_1$ from the set of constraints does not change the
   optimal prediction on $\x$.
 \end{lemma}
+
+An adaptive version of the VC bound:
+\begin{lemma}
+Suppose Denote $L$ is a set of labeled examples chosen IID from a
+joint distribution over $\X \times Y$. Suppose $S$ is a set of
+specialists of VC dimension $d$.
+Let $m(B)=|L \cap B|$ denote the number of elements of $L$ that are
+inside $B \in S$, let $\rho(B)$ be the mean of the labels in $\X \cap B$ and
+let$\emprho(B)$ be the empirical average of the labels in $L \cap B$. 
+
+Then for all $\delta>0$:
+$$
+Pr\left[ \exists B\in S \text{.s.t.}  |\rho(B) - \emprho(B)| >
+  \sqrt{\frac{\ln 2/\delta+d \ln m(B)}{m(B)/2}} \right] < \delta
+$$
+\end{lemma}
+
+
+
 
 \end{document}
