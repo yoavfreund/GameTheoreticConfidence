@@ -39,7 +39,7 @@
 
 \newcommand{\shay}[1]{\textcolor{red}{Shay: #1}}
 \newcommand{\yoav}[1]{\textcolor{blue}{Yoav: #1}}
-\newcommand{\akshay}[1]{\textcolor{green}{Akshay: #1}}
+\newcommand{\akshay}[1]{\textcolor{magenta}{Akshay: #1}}
 
 \begin{document}
 
@@ -153,17 +153,17 @@ Our analysis consists of two parts:
 
 \section{Active Learning}
 
-In this section we provide a variant of the Muffer algorithm that
+In this section we provide a variant of the Muffler algorithm that
 requires the labeling of far fewer examples than passive sampling.
 
-We review and define some notation we use to describe the active learning algorithm
+We review and define some notation we use to describe the active learning algorithm: 
 
 \begin{itemize}
-\item $\X$ is the set of unlabeled algorithms which defines the
+\item $\X$ is the set of unlabeled data which defines the
   universe for the problem.
-\item $\K_i \subset \X$ is the set ``Known unknowns'' after iteration $i$, in
+\item $\K_i \subset \X$ is the set of ``known unknowns'' after iteration $i$, in
   other words the set of ``unsafe'' points. $\K_0=\emptyset$.
-\item For any set $A\subseteq \X$ denote by $Q(A,n)$ to be the set of
+\item For any set $A\subseteq \X$, denote $Q(A,n)$ to be a set of
   $n$ labeled examples $(\x,y)$ generated as follows. $\x$ chosen
   independently at random from the uniform distibution over
   $A$. The label $y$ is then chosen independently at random according
@@ -173,7 +173,7 @@ We review and define some notation we use to describe the active learning algori
 \item We define the restriction of a specialist set $S$ to a set of
   examples $\K \subset \X$ as:
   $$
-  S \restrictedto \K \doteq \left\{ B \cap \K \left| B \in S \right. \right\}
+  S \restrictedto \K \doteq \left\{ B \in S : | B \cap \K | > 0 \right\}
   $$
 \end{itemize}
 
@@ -183,19 +183,19 @@ We review and define some notation we use to describe the active learning algori
 \begin{algorithmic}
    \STATE \textbf{\textcolor{blue}{Initialize}}   $\K_0=\emptyset$, $\SS_0 = S$,
    \FOR{$i = 1,\ldots$ }
-   \STATE \textbf{Query} generate two new set of labeled examples:
-   STATE{$U_i = Q(\X,n)$}
+   \STATE \textbf{\textcolor{blue}{Query}}: Generate two new sets of labeled examples, $U_i$ and $F_i$. 
+   \STATE{$U_i = Q(\X,n)$}
    \IF{$|\K_{i-1}|>0$}
-   \STATE{$F_i = Q(\K_{i-1},n)$ and $\SS_i = \SS_{i-1} \cup (S
-   \restrictedto \K_{i-1})$}
+   \STATE{$F_i = Q(\K_{i-1},n)$ and $\SS_i = \SS_{i-1} \cup (S \restrictedto \K_{i-1})$}
+   \akshay{This can be changed when we define a specialist hierarchy; as it stands, it seems to me that $\SS_0 = S$ throughout. }
    \ELSE
    \STATE{$F_i = \emptyset,\; \SS_i=\SS_{i-1}$}
    \ENDIF
    \STATE \textbf{\textcolor{blue}{combine labeled data}}
    \FOR{$B \in \SS_i$}
    \STATE Define the labeled set for $B$ as:
-   $$ L_i(B) = \left(\cup_{j=1}^i U_i \bigcup \cup_{i: \{B \subset
-     \K_i\}} F_i)\right) \restrictedto B$$
+   $$ L_i(B) = \left[ \cup_{j=1}^i U_j \bigcup \cup_{j \leq i: \{B \subseteq \K_j\}} F_j)\right] \restrictedto B$$
+   \akshay{I think here $L_i$ should just be the set in brackets, not ``$\restrictedto B$".}
    \ENDFOR
    \STATE \textbf{\textcolor{blue}{Compute Constraints}}
    \FOR{$B \in \SS_i$}
@@ -204,19 +204,24 @@ We review and define some notation we use to describe the active learning algori
    \STATE{Compute the error bound for $B$:
      $$\Delta(B) = \sqrt{\frac{\ln 2i^2/\delta + (d+1) \ln
          |L_i(B)|}{|L_i(B)|/2}} $$
-   Where $d$ is the dimension of the space and $\delta$ is the
+   where $d$ is the dimension of the space and $\delta$ is the
    confidence parameter.}
    \STATE Set the confidence interval for $B$ to be 
    of $C_i(B)=[\emprho(B) \pm \Delta(B)] \cap [-1,+1]$ 
    \ENDFOR
    \STATE \textbf{\textcolor{blue}{Solve}}
-   \STATE{Solve the linear constraints $\{L_i(B)\}$ and find, for each $\x
-   \in \X$ the segment of feasible solutions $f(\x)$. Define the new
-   set of known unknowns to be
+   \STATE{Solve the linear constraints $\{L_i(B)\}$ and find, for each $\x \in \X$, 
+   the segment of feasible solutions $f(\x)$; 
+   \akshay{I understand this to be the set of predictions $\subseteq [-1,1]$ on $\x$ that are possible minimax optimal muffled predictions.} 
+   Define the new set of known unknowns to be
    $$ \K_i = \{\x | 0 \in f(\x)\} $$}
+   \akshay{I believe you mean $f(\x)$ as defined above. In this case, 
+   the unsafe set I defined in the earlier writeup (by analogy with CAL-style algorithms; call it $N_i$) is a superset of $\K_i$, 
+   because $N_i$ includes any point $\x$ which can be hedged, not just the ones which can have score $0$. }
    \ENDFOR
 \end{algorithmic}
 \end{algorithm}
+
 
 The analysis of the algorithm consists of two steps.
 First, we analyze an idealized algorithm
@@ -227,12 +232,12 @@ estimates based on a sample, and analyze the sample based algorithm.
 
 We define the set of all balls whose support size is at most $k$ by $S_k$.
 
-The parametrized algorithm $I(k)$ uses $S_k$ as the set of
-specialists.  It receives as input the exact bias $\bias(B)$ for all $B \in S_r$.
+The parametrized algorithm $I(k)$ uses $S_k$ as the set of specialists. 
+It receives as input the exact bias $\bias(B)$ for all $B \in S_r$.
 
 The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
 
-The two main lemmas we use to analyze this algorithms are:
+The two main lemmas we use to analyze this algorithm are:
 \begin{lemma}[Subset domination]
   Suppse $B_1$ and $B_2$ are two balls that cover a point $\x$,
   suppose also that $B_2 \subset B_1$ (strict subset), then
@@ -240,18 +245,26 @@ The two main lemmas we use to analyze this algorithms are:
   optimal prediction on $\x$.
 \end{lemma}
 
+\akshay{I agree that this is good for the analysis. However I am not sure how to prove it. \\ \\
+Here is one idea: this will happen if $B_2$ is small enough (suppose e.g. 
+that the balls have support size $2^i$ for integer $i$; then each specialist's prediction is  
+weighted proportionally to this $2^i$ by the muffler aggregation, 
+so if not too many balls of the same size predict at $\x$, 
+then the optimal prediction on $\x$ is essentially determined by the smallest specialist predicting on it). 
+}
+
 An adaptive version of the VC bound:
 \begin{lemma}
-Suppose Denote $L$ is a set of labeled examples chosen IID from a
+Suppose $L$ is a set of labeled examples chosen IID from a
 joint distribution over $\X \times Y$. Suppose $S$ is a set of
 specialists of VC dimension $d$.
 Let $m(B)=|L \cap B|$ denote the number of elements of $L$ that are
 inside $B \in S$, let $\rho(B)$ be the mean of the labels in $\X \cap B$ and
-let$\emprho(B)$ be the empirical average of the labels in $L \cap B$. 
+let $\emprho(B)$ be the empirical average of the labels in $L \cap B$. 
 
 Then for all $\delta>0$:
 $$
-Pr\left[ \exists B\in S \text{.s.t.}  |\rho(B) - \emprho(B)| >
+Pr\left[ \exists B\in S \text{ s.t. }  |\rho(B) - \emprho(B)| >
   \sqrt{\frac{\ln 2/\delta+d \ln m(B)}{m(B)/2}} \right] < \delta
 $$
 \end{lemma}
