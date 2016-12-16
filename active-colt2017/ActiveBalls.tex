@@ -200,7 +200,7 @@ We review and define some notation we use to describe the active learning algori
    \STATE \textbf{\textcolor{blue}{Compute Constraints}}
    \FOR{$B \in \SS_i$}
    \STATE{Compute the empirical mean label for $B$:
-     $$\emprho(B) = \frac{\sum_{(\x,y) \in L_i(B) }y}{|L_i(B)|}$$}
+     $$\emprho(B) = \frac{\sum_{(\x,y) \in L_i(B)}y}{|L_i(B)|}$$}
    \STATE{Compute the error bound for $B$:
      $$\Delta(B) = \sqrt{\frac{\ln 2i^2/\delta + (d+1) \ln
          |L_i(B)|}{|L_i(B)|/2}} $$
