@@ -178,14 +178,16 @@ examples with $\x$ as the input can have different labels.
 It is trivial that this algorithm will asymptotically converge to the
 Bayes optimal rule. The rate of convergence at a point $\x$ depends on 
 the rate at which $\gamma_k(\x)$ increases as $k$ decreases.
-
-\shay{I am not sure why we assume a finite $\X$. 
-Shouldn't we use the the standard assumptions usually made in the kNN setting?}
-
-\yoav{I am doing it because it makes the analysis simpler, finite
-  number of instances, finite number of ball-induced subsets etc. On
-  the other hand, we lose nothing, assuming non of our bounds depends
-  on the size of $\X$.}
+%
+%\shay{I am not sure why we assume a finite $\X$. 
+%Shouldn't we use the the standard assumptions usually made in the kNN setting?}
+%
+%\yoav{I am doing it because it makes the analysis simpler, finite
+%  number of instances, finite number of ball-induced subsets etc. On
+%  the other hand, we lose nothing, assuming non of our bounds depends
+%  on the size of $\X$.}
+%  
+%  \shay
 
 \pagebreak
 \section{Active Learning}
@@ -200,6 +202,10 @@ We review and define some notation we use to describe the active learning algori
   universe for the problem.
 \item $\K_i \subset \X$ is the set of ``known unknowns'' after iteration $i$, in
   other words the set of ``unsafe'' points. $\K_0=\emptyset$.
+\shay{I am a bit confused. Shouldn't at the beginning the set of ``unsafe''
+points be everything? At the beginning we have no knowledge and therefore can not be ``sure''
+of anything\ldots}
+  
 \item For any set $A\subseteq \X$, denote $Q(A,n)$ to be a set of
   $n$ labeled examples $(\x,y)$ generated as follows. $\x$ chosen
   independently at random from the uniform distibution over
@@ -208,7 +214,7 @@ We review and define some notation we use to describe the active learning algori
   labels in $Q(A,n)$ {\em support} a specialist $B \in S$ if $B
   \subseteq A$.
   \shay{The last definition does not make sense to me:
-  $Q(A,n)$ is a distribution over labeled samples of length $n$.
+  $Q(A,n)$ is a distribution over labeled samples of size $n$.
   Therefore, it does not make sense to consider the ``labels in $Q(A,n)$''.
   We may consider the labels of some sample $R\sim Q(A,n)$,
   but then the wording "labels in $Q(A,n)$ support a specialist $B$\ldots"
@@ -217,6 +223,14 @@ We review and define some notation we use to describe the active learning algori
   }
   \yoav{$Q(A,n)$ is a set of $n$ labeled examples. In other words, it
     is a random set, not a distribution over labeled examples.}
+  \shay{I meant the same thing: by a sample I mean a sequence
+  of labeled examples. Thus, $Q(A,n)$ is a distribution over samples.}
+  \shay{Perhaps this will explain better my previous comment:
+  Fix some set $A$, and let $R$ be a random sample drawn according to $Q(A,n)$.
+ I see two possible interpretations for the definition "labels in $Q(A,n)$ support a specialist $B$'':
+ (i) All the points in $B$ appear as examples in $R$,
+ (ii) $B\subseteq A$.
+ I guess you mean the second one, but I find the wording confusing. }
 \item We define the restriction of a specialist set $S$ to a set of
   examples $\K \subset \X$ as:
   $$
