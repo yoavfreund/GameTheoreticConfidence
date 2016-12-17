@@ -6,6 +6,15 @@
 \usepackage{amsmath}
 \usepackage{color}
 
+\usepackage{geometry}
+\geometry{a4paper,
+  total={170mm,220mm},
+  marginparwidth=50mm,
+left=10mm,
+right=55mm,
+top=20mm,
+}
+
 % For algorithms
 \usepackage{algorithm}
 \usepackage{algorithmic}
@@ -20,6 +29,9 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{assumption}[theorem]{assumption}
 \newtheorem{definition}[theorem]{Definition}
+
+
+
 
 \newcommand{\err}{\mbox{err}}
 \newcommand{\X}{{\cal X}}
@@ -39,9 +51,12 @@
 
 
 \newcommand{\new}[1]{\textcolor{red}{#1}}
-\newcommand{\shay}[1]{\textcolor{red}{Shay: #1}}
-\newcommand{\yoav}[1]{\textcolor{blue}{Yoav: #1}}
-\newcommand{\akshay}[1]{\textcolor{magenta}{Akshay: #1}}
+
+\newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akhay}{magenta}{#1}}
 
 \begin{document}
 
@@ -83,9 +98,37 @@ $$
 \bias(B) \doteq \frac{1}{|B|} \sum_{\vv \in B} \rho(\vv)
 $$
 
-We use the following definitions.
+\section{Idealized algorithm}
 
-The first definition characterizes the size of the neighborhood of a
+Our analysis has two steps. First, we use an Idealized algorithm,
+which has access to the actual bias of the specialists in $S_k$. We
+use the idealized algorithm to characterize the convergence of
+Muffler to the Bayes optimal rule as $k$, the minimal weight of the balls
+decreases to one.
+
+After the analysis of the idealized algorithm, we will define and
+analyze the actiual active learning algorithm which has access only to
+queried labels
+
+\begin{algorithm}[]
+   \caption{An Idealized Muffler Learning Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   \FOR{$k= |\X|,|\X|-1,\ldots,1$ }
+   \STATE \textbf{\textcolor{blue}{Compute Constraints}}
+   \STATE{Define the constraint set as
+     $L_k = \{\rho(B)=\bar{\rho}(B) | B \in S_k$}
+   \STATE \textbf{\textcolor{blue}{Solve}}
+   \STATE{Find the optimal muffler solution for the equality
+     constraints $\{L_k\}$ and find, for each $\x \in \X$, 
+   the prediction $f_k(\x) = \sign(\rho(x))$; }
+   \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\section{Neighborhood size}
+
+The following definition characterizes the rate of convergence size of the neighborhood of a
 point $\x$ that is consistent with the Bayes prediction on $\x$
 \begin{definition}[Neighborhood support]
 Let $p(\x)$ be the Bayes optimal prediction at the point $\x$. In
@@ -121,12 +164,6 @@ the furthest point in it from its center is removed.  Does it make sense?}
 \yoav{Yes, sounds good, the only small refinement is that you need to
   show that there is always a way to do this which does not remove the
   special point $\x$.}
-\iffalse
-We assume that $\rho$ is Lipschitz
-with parameter $\alpha$, i.e. for any two vectors $\vec{x}\neq\vec{y}$.
-
-$$\frac{\rho(\x)-\rho(\y)}{\|\x-\y\|_2} \leq \alpha$$
-\fi
 
 \section{Passive learning}
 
@@ -145,17 +182,12 @@ the rate at which $\gamma_k(\x)$ increases as $k$ decreases.
 \shay{I am not sure why we assume a finite $\X$. 
 Shouldn't we use the the standard assumptions usually made in the kNN setting?}
 
-\iffalse
-Our analysis consists of two parts:
-\begin{itemize}
-\item {\bf Sampling and convergence:} In this part we use large
-  deviation bounds to compute a confidence interval for the bias of
-  each ball. The length of the confidence interval is not uniform and
-  is a function of the number of examples
-  
-\end{itemize}
-\fi
+\yoav{I am doing it because it makes the analysis simpler, finite
+  number of instances, finite number of ball-induced subsets etc. On
+  the other hand, we lose nothing, assuming non of our bounds depends
+  on the size of $\X$.}
 
+\pagebreak
 \section{Active Learning}
 
 In this section we provide a variant of the Muffler algorithm that
@@ -183,14 +215,48 @@ We review and define some notation we use to describe the active learning algori
   does not make sense: it depends only on the distribution $Q(A,n)$, and
   not on a particular sample from it.
   }
+  \yoav{$Q(A,n)$ is a set of $n$ labeled examples. In other words, it
+    is a random set, not a distribution over labeled examples.}
 \item We define the restriction of a specialist set $S$ to a set of
   examples $\K \subset \X$ as:
   $$
-  S \restrictedto \K \doteq \left\{ B \in S : | B \cap \K | > 0 \right\}.
+  S \restrictedto \K \doteq \left\{ B \cap \K : B \in S \right\}
   $$
-  \shay{Wouldn't $S \restrictedto \K \doteq \left\{ B \cap \K : V\in S \right\}$ work?}
+  %\shay{Wouldn't $S \restrictedto \K \doteq \left\{ B \cap \K : B \in S \right\}$ work?}
 \end{itemize}
 
+
+\pagebreak
+Yoav: I moved the comments out of the algorithm because side comments
+don't seem to work with ``algorithm''
+
+   \akshay{This can be changed when we define a specialist hierarchy;
+     as it stands, it seems to me that $\SS_0 = S$ throughout. }
+   \yoav{$S \restrictedto \K_{i-1}$ is not equal to $S$ in most
+     cases. For example suppose that  $\K_{i-1}$ is the intersection
+     of a ball will $\X$. Then $S \restrictedto \K_{i-1}$ contains all
+     intersections of this ball with some other ball, and an
+     intersection of two balls is not a ball (in general).}
+
+    \akshay{I think here $L_i$ should just be the set in brackets, not
+     ``$\restrictedto B$".}
+   \yoav{In the sense of the prediction error, this does not matter,
+     because outside of $B$ the prediction is zero. However we want to
+     use the conditional probability, so we need to divide by the size
+     of $L_i$ and $L_i$ must contain only the points inside $B$}
+   \akshay{I understand this to be the set of predictions $\subseteq [-1,1]$ on $\x$ that are possible minimax optimal muffled predictions.} 
+   \yoav{That is correct, and it is important because the optimal
+     solution is constant on each atom of the algebra defined by the
+     balls, while an arbitrary solution does not need to be a constant.}
+   \akshay{I believe you mean $f(\x)$ as defined above. In this case, 
+   the unsafe set I defined in the earlier writeup (by analogy with CAL-style algorithms; call it $N_i$) is a superset of $\K_i$, 
+   because $N_i$ includes any point $\x$ which can be hedged, not just
+   the ones which can have score $0$. }
+   \yoav{I will have to think moew about this, but I think you are right. The
+     question is what can be said about the set of hedged examples of
+     the idealized algorithm.}
+
+\pagebreak
 \begin{algorithm}[]
    \caption{An Active Learning Algorithm}
    \label{alg:activealg}
@@ -201,7 +267,6 @@ We review and define some notation we use to describe the active learning algori
    \STATE{$U_i = Q(\X,n)$}
    \IF{$|\K_{i-1}|>0$}
    \STATE{$F_i = Q(\K_{i-1},n)$ and $\SS_i = \SS_{i-1} \cup (S \restrictedto \K_{i-1})$}
-   \akshay{This can be changed when we define a specialist hierarchy; as it stands, it seems to me that $\SS_0 = S$ throughout. }
    \ELSE
    \STATE{$F_i = \emptyset,\; \SS_i=\SS_{i-1}$}
    \ENDIF
@@ -209,7 +274,6 @@ We review and define some notation we use to describe the active learning algori
    \FOR{$B \in \SS_i$}
    \STATE Define the labeled set for $B$ as:
    $$ L_i(B) = \left[ \cup_{j=1}^i U_j \bigcup \cup_{j \leq i: \{B \subseteq \K_j\}} F_j)\right] \restrictedto B$$
-   \akshay{I think here $L_i$ should just be the set in brackets, not ``$\restrictedto B$".}
    \ENDFOR
    \STATE \textbf{\textcolor{blue}{Compute Constraints}}
    \FOR{$B \in \SS_i$}
@@ -226,16 +290,12 @@ We review and define some notation we use to describe the active learning algori
    \STATE \textbf{\textcolor{blue}{Solve}}
    \STATE{Solve the linear constraints $\{L_i(B)\}$ and find, for each $\x \in \X$, 
    the segment of feasible solutions $f(\x)$; 
-   \akshay{I understand this to be the set of predictions $\subseteq [-1,1]$ on $\x$ that are possible minimax optimal muffled predictions.} 
    Define the new set of known unknowns to be
    $$ \K_i = \{\x | 0 \in f(\x)\} $$}
-   \akshay{I believe you mean $f(\x)$ as defined above. In this case, 
-   the unsafe set I defined in the earlier writeup (by analogy with CAL-style algorithms; call it $N_i$) is a superset of $\K_i$, 
-   because $N_i$ includes any point $\x$ which can be hedged, not just the ones which can have score $0$. }
+     
    \ENDFOR
 \end{algorithmic}
 \end{algorithm}
-
 
 The analysis of the algorithm consists of two steps.
 First, we analyze an idealized algorithm
@@ -251,13 +311,46 @@ It receives as input the exact bias, ``$\bias(B)$'', for all $B \in S_r$.
 
 The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
 
-The two main lemmas we use to analyze this algorithm are:
-\begin{lemma}[Subset domination]
-  Suppse $B_1$ and $B_2$ are two balls that cover a point $\x$,
-  suppose also that $B_2 \subset B_1$ (strict subset), then
-  removing $B_1$ from the set of constraints does not change the
-  optimal prediction on $\x$.
+The main lemmas we use to analyze this algorithm are:
+\begin{lemma}[small set domination]
+  Let $S_k(\x)$ contain all $B \in S_k$ such that $\x \in B$, and
+  suppose $\gamma_k(\x)>0$. Then the prediction of the idealized
+  muffler on $\x$ is correct.
 \end{lemma}
+
+Which follows from the following
+
+\begin{lemma}[Subset Domination]
+Suppose $B_1 \subset B_2$ are two balls that cover a point $\x$ and
+suppose that the constraints have opposite polarity: $\bias(B_1)>a>
+>0>b>\bias(B_2)$ or $\bias(B_1)<a<0<b<\bias(B_2)$.  Then the
+prediction of Muffler on $\x$ remains uncanged if the constraint
+corresponding to $B_2$ is eliminated.
+\end{lemma}
+
+{\bf Sketch of Proof:}
+Assume w.l.o.g. that the first condition holds:
+$\bias(B_1)>a>0>b>\bias(B_2)$. As $\X$ is finite these conditions can
+be written as:
+$$
+\sum_{i=1}^n \bias(\x_i) > na
+\text{ and }
+\sum_{i=1}^m \bias(\x_i) < mb
+$$
+where $m>n$.
+But that is equivalent to the conditions
+$$
+\sum_{i=1}^n \bias(\x_i) > na
+\text{ and }
+\sum_{i=n+1}^m \bias(\x_i) < mb-na
+$$
+In other words, if $i \leq n$, which means that $\x_i \in B_1$, then
+the constraint on $B_2$ is irrelevant
+
+\yoav{I realize that this argument is incomplete, because the
+  influence on $b$ can be through other balls. However, I believe that
+if {\em all} balls of size at most $k$ containing $\x$ made the
+correct predictions, than they mask all larger balls.}
 
 \akshay{I agree that this is good for the analysis. However I am not sure how to prove it. \\ \\
 Here is one idea: this will happen if $B_2$ is small enough (suppose e.g. 
