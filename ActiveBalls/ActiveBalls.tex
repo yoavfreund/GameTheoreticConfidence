@@ -166,9 +166,9 @@
 
 \newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
 %\newcommand{\comment}[3]{}
-\newcommand{\shay}[1]{\comment{Shay}{red}{}}
-\newcommand{\yoav}[1]{\comment{Yoav}{blue}{}}
-\newcommand{\akshay}[1]{\comment{Akhay}{magenta}{}}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{magenta}{#1}}
 
 \begin{document}
 
@@ -342,6 +342,10 @@ on that test point alone, without considering the others.
 The $\vF$-dependent part of the slack function also depends separately on each test point's ensemble prediction. 
 Figure \ref{fig:optstrats} depicts these three functions. 
 
+
+
+
+
 \section{Ball Specialists}
 
 We restrict our attention to a special case which corresponds,
@@ -351,14 +355,14 @@ roughly, to nearest neighbor methods.
     The rules that we use are ``specialists'' that are balls. The set
     $\B$ contains all rules of the form 
     \[
-    B_{r,\cc,\sigma}(\x) =
+    B_{r,\cc,s}(\x) =
     \begin{cases}
-      \sigma & \text{if } \| \cc- \x \| \leq r \\
+      s & \text{if } \| \cc- \x \| \leq r \\
     0 & \text{otherwise }
     \end{cases}
     \]
     Where $r \geq 0$ is the radius of the ball, $\cc \in R^d$ is the
-    center of the ball and $\sigma \in \{-1,+1\}$ is the polarity of the ball.
+    center of the ball and $s \in \{-1,+1\}$ is the polarity of the ball.
     We will drop the subscripts of $B$ when clear from context.
   \item
     We use $\vx \in B$ to indicate that $B(\vx) \neq 0$.
@@ -396,36 +400,35 @@ roughly, to nearest neighbor methods.
 \end{enumerate}
 
 \newcommand{\edge}{\gamma}
-\newcommand{\SepsGamSig}{\SS_{\epsilon,\edge}^{\sigma}}
+\newcommand{\SepsGamSig}{\SS_{\epsilon,\edge}^{s}}
 \newcommand{\SepsGam}{\SS_{\epsilon,\edge}}
-\newcommand{\SepsGamMinusSig}{\SS_{\epsilon,\edge}^{-\sigma}}
+\newcommand{\SepsGamMinusSig}{\SS_{\epsilon,\edge}^{-s}}
 
 We denote the set of all balls by $\SS$. For any $\epsilon,\edge>0$
-and $\sigma \in \{-1,+1\}$ we define the set of $(\epsilon,\edge,\sigma)$-
+and $s \in \{-1,+1\}$ we define the set of $(\epsilon,\edge,s)$-
 good balls $\SepsGamSig \subset \SS$ to be:
 \[
 \SepsGamSig \doteq \left\{B \in \SS \left| p(B) \geq \epsilon,
-\sigma \bias(B) > \edge \right. \right\}
+s \bias(B) > \edge \right. \right\}
 \]
 
-\newcommand{\XepsGamSig}{\X_{\epsilon,\edge}^{\sigma}}
+\newcommand{\XepsGamSig}{\X_{\epsilon,\edge}^{s}}
 \newcommand{\XepsGam}{\X_{\epsilon,\edge}}
 
-We define the set of $(\epsilon,\edge,\sigma)$-good {\em instances} to be:
+We define the set of $(\epsilon,\edge,s)$-good instances to be:
 \[
 \XepsGamSig \doteq \left\{\x \in R^d \left|
 \begin{array}{l}
-\exists B \in \SepsGamSig \mbox{ s.t. } \vx \in B \mbox{ and } \\
-\forall B \in \SepsGamMinusSig \mbox{ s.t. } \vx \in B,\;\;
-\exists B' \in \SepsGamSig \mbox{ s.t. } \vx \in B' \mbox{ and } B'
+\exists B \in \SepsGamSig \mbox{ s.t. } \x \in B \mbox{ and } \\
+\forall B \in \SepsGamMinusSig \mbox{ s.t. } \x \in B,\;\;
+\exists B' \in \SepsGamSig \mbox{ s.t. } \x \in B' \mbox{ and } B'
 \subset B
 \end{array}
 \right. \right\}
 \]
 
 \newcommand{\sol}{{\bf SOL}}
-Finally, we relate these definitions back to the linear program. For a given
-$\epsilon,\edge$ we define $\SepsGam = \SepsGam^{+1} \cup \SepsGam^{-1}$
+For a given $\epsilon,\edge$ we define $\SepsGam = \SepsGam^{+1} \cup \SepsGam^{-1}$
 
 \newcommand{\erreg}{\err_{\epsilon,\gamma}}
 
@@ -440,12 +443,100 @@ the error of this solution by $\erreg \doteq \err(\sol(\SepsGam))$.
   \]
 \end{assumption}
 
+
+\section{Good Examples are Clipped}
+
+Finally, we relate these definitions back to the slack function optimization problem. 
+A definition that is useful is:
+\begin{defn}
+For $s = \pm 1$, define 
+\begin{align*}
+T_{\epsilon, \gamma}^{s} (\x) := \lrsetb{ B \in \SepsGam^{s} \mbox{ s.t. } \x \in B}
+\end{align*}
+\end{defn}
+
+\subsection{Two Change-of-Basis Lemmas}
+
+\begin{lemma}
+\label{lem:replacespec}
+Suppose the slack function over a set of specialists $\SepsGam^{s}$ is minimized by giving each example $x$ a score of $S^* (x)$. 
+Take any $B \in \SepsGam^{s}$, and suppose that $\exists B' \in \SepsGam^{s} \mbox{ s.t. } B' \subset B \mbox{ and } B' (x) \neq B (x) \;\;\forall x \in B'$. 
+
+Define the specialist $C$ predicting only on $B \setminus B'$ according to $B$. 
+Then the slack function over the specialist class 
+$$ \SepsGam^{s} \setminus \lrsetb{B} \cup \lrsetb{C} $$
+has the same minimizer, with each example's score being $S^* (x)$. 
+\end{lemma}
+\begin{proof}
+%It remains only to show that any $B \in T_{\epsilon, \gamma}^{s} (\x)$ can be replaced by a specialist predicting on $B \setminus B'$, without affecting the slack function optimum.
+Note that $B'$ and $B$ influence the slack function only through the corresponding weights put on them by the algorithm $\sigma_{B'}, \sigma_{B} \geq 0$. 
+Suppose the predictions of $B', B$ are $\vh_{B'}, \vh_{B} \in \RR^{n}$. 
+Recall that $h_{B', i} = \frac{1}{p (B')} B' (x_i)$ where $B' (x_i) \in \lrsetb{-1, 0, 1}$. 
+Then $B, B'$ are represented together in the optimization by $\sigma_{B'} \vh_{B'} + \sigma_{B} \vh_{B}$. 
+This vector can be rewritten in terms of the two hypotheses $B'$ and $C$, where $C$ predicts according to $B$ on its domain $B \setminus B'$. 
+\begin{align*}
+\sigma_{B'} h_{B', i} + \sigma_{B} h_{B, i} 
+&= \frac{\sigma_{B'}}{p (B')} B' (x_i) + \frac{\sigma_{B}}{p (B)} B (x_i) \\ 
+&= \lrp{ \frac{\sigma_{B'}}{p (B')} - \frac{\sigma_{B}}{p (B)} } B' (x_i) \ifn(x_i \in B') + \frac{\sigma_{B}}{p (B)} B (x_i) \ifn(x_i \in B \setminus B') \\ 
+&= \lrp{ \sigma_{B'} - \sigma_{B} \frac{p (B')}{p (B)} } h_{B', i} + \sigma_{B} \frac{p (C)}{p (B)} h_{C, i} 
+\end{align*}
+Thus optimizing with $\vh_{B'}$ and $\vh_{B}$ is equivalent to optimizing with $\vh_{B'}$ and $\vh_{C}$, and the conclusion follows.
+\end{proof}
+
+\begin{lemma}
+\label{lem:replacesamesign}
+For $s = \pm 1$, suppose the slack function over a set of specialists $\SepsGam^{s}$ is minimized by giving each example $x$ a score of $S^* (x)$. 
+Take any $B, B' \in \SepsGam^{s}$ with the same polarity, 
+and define the specialists $C, C', C''$ predicting with this polarity on $(B \setminus B'), (B' \setminus B), (B \cap B')$ respectively. 
+Then the slack function over the specialist class 
+$$ \SepsGam^{s} \setminus \lrsetb{B, B'} \cup \lrsetb{C, C', C''} $$
+has the same minimizer, with each example's score being $S^* (x)$. 
+\end{lemma}
+\begin{proof}
+Similar to above.
+\end{proof}
+
+
+
+
+
+\subsection{Main Result}
+
+\begin{lemma}
+For any $\epsilon > 0, \gamma > 0, s = \pm 1$, take any $\x \in \XepsGamSig$. 
+If $\sigma^* \geq \vzero^{\abs{\SepsGam^{s}}}$ is the minimizer of the slack function over good specialists $\SepsGam^{s}$, 
+and $\vx \in \RR^{\abs{\SepsGam^{s}}}$ is the vector of these specialists' predictions on $\x$, 
+\begin{align}
+s \vx^\top \sigma^* \geq 1
+\end{align}
+\end{lemma}
+\begin{proof}
+For the given $\vx$, by definition of $\XepsGamSig$, 
+any $B \in T_{\epsilon, \gamma}^{-s} (\x)$ has a corresponding $B' \subset B$ such that $B' \in T_{\epsilon, \gamma}^{s} (\x)$. 
+Lemma \ref{lem:replacespec} shows that the slack function problem is equivalent to one where $B$ is replaced in the ensemble by a specialist corresponding to $C := B \setminus B'$, 
+which does not contain $\x$. 
+Replacing each $B \in T_{\epsilon, \gamma}^{-s} (\x)$ in this way removes it from $T_{\epsilon, \gamma}^{-s} (\x)$ but conserves $T_{\epsilon, \gamma}^{s} (\x)$, 
+to catalyze replacement of other elements of $T_{\epsilon, \gamma}^{-s} (\x)$. 
+(Note that $C$ may not be in $\SepsGam^{s}$ because we could have $p(C) \leq \epsilon$.)
+When all $B \in T_{\epsilon, \gamma}^{-s} (\x)$ are replaced, $T_{\epsilon, \gamma}^{-s} (\x)$ is empty, 
+but $T_{\epsilon, \gamma}^{s} (\x)$ is identical, 
+and contains all specialists in the new basis that predict on $\x$. 
+
+Lemma \ref{lem:replacesamesign} shows that any intersecting pair of specialists in $T_{\epsilon, \gamma}^{s} (\x)$ can be replaced by three disjoint specialists of the same polarity without changing the minimization solution. 
+Performing this replacement repeatedly, we eventually arrive at a basis in which exactly one specialist predicts on $x$, and potentially on other examples as well, for which it must be the only predictor. Call this specialist $h$.
+Putting weight on $h$ will always lower the slack function if the examples in its support are hedged, proving the result.
+\end{proof}
+
+\akshay{Not sure about this because $h$ may have bias $< 0$ even though its parent specialists do not. }
+
+
+
 \section{Intuition}
 Here is some rough intuition.
 One can think of $\SepsGam^{+1}$ and $\SepsGam^{-1}$ as competing teams
 of specialists, those in the first team predict $+1$ (when they don't abstain)
 while those in the other predict $-1$. Consider a particular point
-$\vx$, and consider subset of the spcialists in $\SepsGam$ that
+$\vx$, and consider subset of the specialists in $\SepsGam$ that
 predict (i.e. do not abstain) on $\vx$.
 
 It is intuitively clear that if all of the predicting specialists
