@@ -382,25 +382,23 @@ roughly, to nearest neighbor methods.
     $$
     \bias(B) \doteq E_{(\x,y)\sim\D}\left( y|\x \in B \right)
     $$
-\iffalse    
-  \item
-    Similarly, we define the bias of a particular instance $\x \in
-    R^d$ as
-    $$
-    \bias(\x) = E_{(\x,y)\sim\D}\left( l|\x \right)
-    $$
-  \item
-    The training sample $T=((x_1,y_1),\ldots,(x_n,y_n))$ is chosen IID
-    according to the distribution $\D$. We denote by $\eD$ the
-    empirical distribution that is defined by the sample. We denote
-    the empirical probability and the empirical bias of the ball $B$
-    by $\ep(B)$ and $\ebias(B)$ respectively. Where $\eD$ takes the
-    place of $\D$ in the definitions.
-\fi
-  \item
-    We define the {\em Bayes optimal} rule for the distribution $\D$
-    to be $O(\x) = \sign(\bias(\x))$ and the Bayes optimal error to
-    be $\err^* = \err(O(\x))$
+  %% \item
+  %%   Similarly, we define the bias of a particular instance $\x \in
+  %%   R^d$ as
+  %%   $$
+  %%   \bias(\x) = E_{(\x,y)\sim\D}\left( l|\x \right)
+  %%   $$
+  %% \item
+  %%   The training sample $T=((x_1,y_1),\ldots,(x_n,y_n))$ is chosen IID
+  %%   according to the distribution $\D$. We denote by $\eD$ the
+  %%   empirical distribution that is defined by the sample. We denote
+  %%   the empirical probability and the empirical bias of the ball $B$
+  %%   by $\ep(B)$ and $\ebias(B)$ respectively. Where $\eD$ takes the
+  %%   place of $\D$ in the definitions.
+  %% \item
+  %%   We define the {\em Bayes optimal} rule for the distribution $\D$
+  %%   to be $O(\x) = \sign(\bias(\x))$ and the Bayes optimal error to
+  %%   be $\err^* = \err(O(\x))$
 \end{enumerate}
 
 \newcommand{\edge}{\gamma}
@@ -449,26 +447,33 @@ the bias). We denote the set of all constraints associated with
 $\SepsGam^s$ by $\ConstrepsGam^s$.
 
 For a point $\vx$ and a set of constraints $\CC$ we denote the optimal
-solution of the min-max problem by $\vz^*(\x,\CC)$
+solution of the min-max problem at the point $\x$ by $\vz^*(\x,\CC)$
 
 \begin{lemma}
   Fix any $\epsilon,\gamma>0$, $s \in \{-1,+1\}$ and for all
   $\x \in \XepsGamSig$:
   \[
-  \sigma^*(\x,\ConstrepsGamSig) = \sigma^*(\x,\ConstrepsGam^{\pm})
+  \vz^*(\x,\ConstrepsGamSig) = \vz^*(\x,\ConstrepsGam^{\pm})
   \]
 \end{lemma}
+\yoav{There is still something missing from the proof. If
+  $\vz^*(\x,\ConstrepsGam^{\pm})>0$. Then the effect of minimizing
+    $\|\vz\|_1$ and the effect of any rule $(b,B) \in
+    \ConstrepsGam^{-}$ is the same: it is to minimize $\vz(\x)$. So the
+    removal of $(b,B)$ is truly redundant. However, it is possible
+    that $\vz^*(\x,\ConstrepsGam^{\pm})=0$ in which case a more
+      delicate argument is needed.}
 
 \begin{proof}
   An alternative form of game~(\ref{game1eq}) is
 
 \begin{align}
-\displaystyle 
+\displaystyle  \label{game2eq}
 \vz^* = \argmin_{\substack{ \vz \in [-1,1]^n ,
     \\ \frac{1}{n} \vF \vz \in [\vb_l,\vb_u]}} \;\; \|\vz\|_1
 \end{align}
 
-Without loss of generalite, set $s=+1$ and fix any $\x$.
+Without loss of generality, set $s=+1$ and fix any $\x$.
 
 Let $(B,b)$, $b<0$ be any element of $\ConstrepsGam^{-}$
 such that $\x \in B$.
@@ -476,15 +481,26 @@ such that $\x \in B$.
 As $\x \in \XepsGam^{+}$, we know that there exists another ball
 $(D,d) \in \ConstrepsGam^{+}$ such that $d>0$ and $\x \in D$ and $D \subset B$.
 
-The conditions imposed by $B$ and $D$ are:
+Define the variables $d',b'$ as
 \[
-\sum_{\y \in B} \bias(\y) \leq b < 0 \;\mbox{ and }\;\sum_{\y \in D} \bias(\y) \geq d > 0
+d' \doteq \sum_{\y \in D} \vz^*(\y,\ConstrepsGam^{\pm})   \;\;\; b' \doteq \sum_{\y \in B} \vz^*(\y,\ConstrepsGam^{\pm})
+\]
+Using those we can write the conditions as
+\[
+d'\geq d \;\; \mbox{ and } b' \leq b
+\]
+Or alternatively, as
+\[
+d' \geq d \;\; \mbox{ and } b'-d' \leq b-d
+\]
+The second condition does not involve $\x$ so the removal of the condition $(B,b)$ from $\ConstrepsGam^{\pm}$ does not change the solution:
+\[
+\vz^*(\x,\ConstrepsGam^{\pm}) = \vz^*(\x,\ConstrepsGam^{\pm} \setminus \{(B,b)\} ) 
 \]
 
+As this holds simultaneously for all $(B,b) \in \ConstrepsGam^{-}$ the statement of the Lemma follows
 \end{proof}
   
-
-
 \section{Convergence}
 
 
