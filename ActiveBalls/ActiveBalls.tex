@@ -382,23 +382,6 @@ roughly, to nearest neighbor methods.
     $$
     \bias(B) \doteq E_{(\x,y)\sim\D}\left( y|\x \in B \right)
     $$
-  %% \item
-  %%   Similarly, we define the bias of a particular instance $\x \in
-  %%   R^d$ as
-  %%   $$
-  %%   \bias(\x) = E_{(\x,y)\sim\D}\left( l|\x \right)
-  %%   $$
-  %% \item
-  %%   The training sample $T=((x_1,y_1),\ldots,(x_n,y_n))$ is chosen IID
-  %%   according to the distribution $\D$. We denote by $\eD$ the
-  %%   empirical distribution that is defined by the sample. We denote
-  %%   the empirical probability and the empirical bias of the ball $B$
-  %%   by $\ep(B)$ and $\ebias(B)$ respectively. Where $\eD$ takes the
-  %%   place of $\D$ in the definitions.
-  %% \item
-  %%   We define the {\em Bayes optimal} rule for the distribution $\D$
-  %%   to be $O(\x) = \sign(\bias(\x))$ and the Bayes optimal error to
-  %%   be $\err^* = \err(O(\x))$
 \end{enumerate}
 
 \newcommand{\edge}{\gamma}
@@ -409,18 +392,36 @@ roughly, to nearest neighbor methods.
 \newcommand{\ConstrepsGam}{\CC_{\epsilon,\edge}}
 \newcommand{\ConstrepsGamMinusSig}{\CC_{\epsilon,\edge}^{-s}}
 
-We denote the set of all balls by $\SS$. For any $\epsilon,\edge>0$
+\section{Degrees of Safety}
+We say that a point $\x$ is {\em safe} if we can confidently identify
+the label of $\x$. We distinguish three levels of safety of
+increasing strength: version-space (VS) safety, pairwise (PW) safety and
+asymptotic (A) safety. We define each one in turn.
+
+First, we need some notation. We denote the set of all balls by $\SS$. For any $\epsilon,\edge>0$
 and $s \in \{-1,+1\}$ we define the set of $(\epsilon,\edge,s)$-
 good balls $\SepsGamSig \subset \SS$ to be:
 \[
 \SepsGamSig \doteq \left\{B \in \SS \left| p(B) \geq \epsilon,
 s\; \bias(B) > \edge \right. \right\}
 \]
+We define $\SepsGam^{\pm} \doteq \SepsGam^{+} \cup \SepsGam^{-}$
+
+Denote by $V(\SepsGam^{\pm})$ the set of all point-wise biases $\vz$
+that satisfy the constraints defined by $\SepsGam^{\pm}$
+
+\begin{itemize}
+\item {\bf Version space (VS) safety}\\
+We are $(\epsilon,\edge,s)$-{\bf VS safe} on $\x$ if $s\sign(z(\x)) \geq 0$
+for all $\vz$ that satisfy  $ \frac{1}{n} \vF \vz \geq \vb$.
 
 \newcommand{\XepsGamSig}{\X_{\epsilon,\edge}^{s}}
 \newcommand{\XepsGam}{\X_{\epsilon,\edge}}
 
-We define the set of $(\epsilon,\edge,s)$-good instances to be:
+\item
+{\bf Pair-Wise (PW) safety}\\
+We define the set of $(\epsilon,\edge,s)$-{\bf PW safe} instances
+to be 
 \[
 \XepsGamSig \doteq \left\{\x \in R^d \left|
 \begin{array}{l}
@@ -432,11 +433,20 @@ We define the set of $(\epsilon,\edge,s)$-good instances to be:
 \right. \right\}
 \]
 
+\item
+{\bf Asymptotic (A) Safety}\\ We say that $\x$ is $(\epsilon,\edge,s)$- {\bf A-safe} if
+it is $(\epsilon,\gamma',s)$-{\bf PW safe} for all $0<\epsilon' \leq
+\epsilon$ and $0<\gamma' \leq \gamma$ and for the same polarity $s$.
+\end{itemize}
+
+
+
+%We use $\XepsGam^{\pm}$ to denote $\XepsGam^{+} \cup \XepsGam^{-}$
+
+
+\iffalse
 \newcommand{\sol}{{\bf SOL}}
 
-For a given $\epsilon,\edge$ we define $\SepsGam^{\pm} \doteq \SepsGam^{+}
-\cup \SepsGam^{-}$
-and $\XepsGam^{\pm} \doteq \XepsGam^{+} \cup \XepsGam^{-}$
 
 \newcommand{\erreg}{\err_{\epsilon,\gamma}}
 
@@ -649,5 +659,6 @@ the empirical probability of all $B \in \SepsGam$ is bounded below by
 $\epsilon/2$ and the bias is bounded below by $\gamma/2$
 
 etc etc
+\fi
 
 \end{document}
