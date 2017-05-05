@@ -384,6 +384,9 @@ roughly, to nearest neighbor methods.
     $$
 \end{enumerate}
 
+
+
+
 \newcommand{\edge}{\gamma}
 \newcommand{\SepsGamSig}{\SS_{\epsilon,\edge}^{s}}
 \newcommand{\SepsGam}{\SS_{\epsilon,\edge}}
@@ -440,8 +443,29 @@ it is $(\epsilon,\gamma',s)$-{\bf PW safe} for all $0<\epsilon' \leq
 \end{itemize}
 
 
-
 %We use $\XepsGam^{\pm}$ to denote $\XepsGam^{+} \cup \XepsGam^{-}$
+
+
+
+
+\section{Rewriting the Constraint Set}
+
+For the purposes of the analysis, it will often be useful to use the following fact. 
+For any $(\epsilon,\edge,s)$-PW-safe point $ x $,
+the constraint set can always be rewritten to contain no hypotheses predicting with the opposite polarity. 
+This follows from the following simple fact.
+\akshay{Please rewrite this if the notation is still not satisfactory. I went to the opposite extreme as last time, making it as general as possible.}
+
+\begin{prop}
+If for any functions of the labeling $a (\vz), b (\vz)$ we have constraints $a (\vz) + b (\vz) \leq 0$ and $a (\vz) \geq 0$, 
+then $b (\vz) \leq 0$.
+\end{prop}
+
+In the definition of $PW$-safety, $a(\vz)$ corresponds to the masking (smaller) specialist $B'$, and $b(\vz)$ the complementary specialist that predicts on $B \setminus B'$ with the polarity of $B$.
+
+
+
+
 
 
 \iffalse
@@ -569,9 +593,9 @@ Thus optimizing with $\vh_{B'}$ and $\vh_{B}$ is equivalent to optimizing with $
 \label{lem:replacesamesign}
 For $s = \pm 1$, suppose the slack function over a set of specialists $\SepsGam^{s}$ is minimized by giving each example $x$ a score of $S^* (x)$. 
 Take any $B, B' \in \SepsGam^{s}$ with the same polarity, 
-and define the specialists $C, C', C''$ predicting with this polarity on $(B \setminus B'), (B' \setminus B), (B \cap B')$ respectively. 
+and define the specialists $C, C'$ predicting with this polarity on $(B \Delta B'), (B \cap B')$ respectively. 
 Then the slack function over the specialist class 
-$$ \SepsGam^{s} \setminus \lrsetb{B, B'} \cup \lrsetb{C, C', C''} $$
+$$ \SepsGam^{s} \setminus \lrsetb{B, B'} \cup \lrsetb{C, C'} $$
 has the same minimizer, with each example's score being $S^* (x)$. 
 \end{lemma}
 \begin{proof}
@@ -643,6 +667,12 @@ constant, we have reached the Bayes rule.
 
 We can therefor call $\x \in \XepsGam$ the ``unknown unknown'', while
 the complement of $\x$ are the ``known unknown''.
+
+
+
+
+
+
 
 \section{From true dist to empirical}
 
