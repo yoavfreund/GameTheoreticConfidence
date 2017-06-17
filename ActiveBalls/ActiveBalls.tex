@@ -353,11 +353,13 @@ Figure \ref{fig:optstrats} depicts these three functions.
 We restrict our attention to a special case which corresponds,
 roughly, to nearest neighbor methods.
 \begin{enumerate}
-  \item The input space is $R^d$.~\footnote{We use an arrow notation $\x$ to
-    differentiate between $\x \in R^d$ and $\vx$ which denotes a row
-    of the matrix $\vF$.}
+\item The input space $\X$ is a finite set in $R^d$. We assume a
+  uniform distribution over $\X$.~\footnote{We use an arrow notation
+    $\x$ to differentiate between $\x \in R^d$ and $\vx$ which denotes
+    a row of the matrix $\vF$.}
+  \item
     The rules that we use are ``specialists'' that are balls. The set
-    $\B$ contains all rules of the form 
+    $\B$ contains all rules of the form
     \[
     B_{r,\cc,s}(\x) =
     \begin{cases}
@@ -371,21 +373,15 @@ roughly, to nearest neighbor methods.
   \item
     We use $\x \in B$ to indicate that $B(\x) \neq 0$.
   \item
-    We denote by $\D$ the distribution of examples $(\x,y) \sim R^d
-    \times \{-1,+1\}$.
-  \item
     We denote the {\em probability} of a ball $B$ by $p(B) \doteq
-    P_{\x \sim \D}(\x \in B)$
+    \frac{|B|}{|\X|}$
   \item
     We use the term {\em bias} of a ball to refer to the conditional
     expectation of the label for a ball by
     $$
-    \bias(B) \doteq E_{(\x,y)\sim\D}\left( y|\x \in B \right)
+    \bias(B) \doteq E\left( y|\x \in B \right)
     $$
 \end{enumerate}
-
-
-
 
 \newcommand{\edge}{\gamma}
 \newcommand{\SepsGamSig}{\SS_{\epsilon,\edge}^{s}}
@@ -396,7 +392,7 @@ roughly, to nearest neighbor methods.
 \newcommand{\ConstrepsGamMinusSig}{\CC_{\epsilon,\edge}^{-s}}
 
 \section{Degrees of Safety}
-We say that a point $\x$ is {\em safe} if we can confidently identify
+We say that a point $\x \in \X$ is {\em safe} if we can confidently identify
 the label of $\x$. We distinguish three levels of safety of
 increasing strength: version-space (VS) safety, pairwise (PW) safety and
 asymptotic (A) safety. We define each one in turn.
@@ -413,13 +409,15 @@ We define $\SepsGam^{\pm} \doteq \SepsGam^{+} \cup \SepsGam^{-}$
 Denote by $V(\SepsGam^{\pm})$ the set of all point-wise biases $\vz$
 that satisfy the constraints defined by $\SepsGam^{\pm}$
 
-\begin{itemize}
-\item {\bf Version space (VS) safety}\\
-We are $(\epsilon,\edge,s)$-{\bf VS safe} on $\x$ if $s\sign(z(\x)) \geq 0$
-for all $\vz$ that satisfy  $ \frac{1}{n} \vF \vz \geq \vb$.
-
 \newcommand{\XepsGamSig}{\X_{\epsilon,\edge}^{s}}
 \newcommand{\XepsGam}{\X_{\epsilon,\edge}}
+\newcommand{\XpesGamPol}{\X_{\epsilon,\edge}^{\mbox{pol}}}
+
+\begin{itemize}
+\item {\bf Version space (VS) safety}\\
+We are $(\epsilon,\edge,s)$-{\bf VS safe} on $\x$ if $s\cdot\sign(\vz^*(\x)) \geq 0$
+for $\vz^*$ that satisfy  $\frac{1}{n} \vF \vz^* \geq \vb$ and are
+min/max optimal.
 
 \item
 {\bf Pair-Wise (PW) safety}\\
@@ -443,252 +441,18 @@ it is $(\epsilon,\gamma',s)$-{\bf PW safe} for all $0<\epsilon' \leq
 \end{itemize}
 
 
-%We use $\XepsGam^{\pm}$ to denote $\XepsGam^{+} \cup \XepsGam^{-}$
+\section{Draft of proof}
 
+Our goal is to prove that pairwise safety implies Version Space
+safety.
 
+{\bf Constraint set reformulation:}\\
+Fix $\XepsGamSig$ and let $B' \subset B$ be a pair of balls as
+specified in the definition of $\XepsGamSig$\ . In other words, $\x \in
+B, \x \in B'$, $B \in \SepsGamMinusSig\ $ and $B' \in \SepsGamSig$.
 
-
-\section{Rewriting the Constraint Set}
-
-For the purposes of the analysis, it will often be useful to use the following fact. 
-For any $(\epsilon,\edge,s)$-PW-safe point $ x $,
-the constraint set can always be rewritten to contain no hypotheses predicting with the opposite polarity. 
-This follows from the following simple fact.
-\akshay{Please rewrite this if the notation is still not satisfactory. I went to the opposite extreme as last time, making it as general as possible.}
-
-\begin{prop}
-If for any functions of the labeling $a (\vz), b (\vz)$ we have constraints $a (\vz) + b (\vz) \leq 0$ and $a (\vz) \geq 0$, 
-then $b (\vz) \leq 0$.
-\end{prop}
-
-In the definition of $PW$-safety, $a(\vz)$ corresponds to the masking (smaller) specialist $B'$, and $b(\vz)$ the complementary specialist that predicts on $B \setminus B'$ with the polarity of $B$.
-
-
-
-
-
-
-\iffalse
-\newcommand{\sol}{{\bf SOL}}
-
-
-\newcommand{\erreg}{\err_{\epsilon,\gamma}}
-
-With each polarity $s \in \{-1,+1\}$ and each ball
-$B \in \SepsGam^s$ we associate a single constraint $s\; \bias(B) \geq b
-\geq \gamma$. (We ignore the constraints that are an upper bound on
-the bias). We denote the set of all constraints associated with
-$\SepsGam^s$ by $\ConstrepsGam^s$.
-
-For a point $\vx$ and a set of constraints $\CC$ we denote the optimal
-solution of the min-max problem at the point $\x$ by $\vz^*(\x,\CC)$
-
-\begin{lemma}
-  Fix any $\epsilon,\gamma>0$, $s \in \{-1,+1\}$ and for all
-  $\x \in \XepsGamSig$:
-  \[
-  \vz^*(\x,\ConstrepsGamSig) = \vz^*(\x,\ConstrepsGam^{\pm})
-  \]
-\end{lemma}
-\yoav{There is still something missing from the proof. If
-  $\vz^*(\x,\ConstrepsGam^{\pm})>0$. Then the effect of minimizing
-    $\|\vz\|_1$ and the effect of any rule $(b,B) \in
-    \ConstrepsGam^{-}$ is the same: it is to minimize $\vz(\x)$. So the
-    removal of $(b,B)$ is truly redundant. However, it is possible
-    that $\vz^*(\x,\ConstrepsGam^{\pm})=0$ in which case a more
-      delicate argument is needed.}
-
-\begin{proof}
-  An alternative form of game~(\ref{game1eq}) is
-
-\begin{align}
-\displaystyle  \label{game2eq}
-\vz^* = \argmin_{\substack{ \vz \in [-1,1]^n ,
-    \\ \frac{1}{n} \vF \vz \in [\vb_l,\vb_u]}} \;\; \|\vz\|_1
-\end{align}
-
-Without loss of generality, set $s=+1$ and fix any $\x$.
-
-Let $(B,b)$, $b<0$ be any element of $\ConstrepsGam^{-}$
-such that $\x \in B$.
-
-As $\x \in \XepsGam^{+}$, we know that there exists another ball
-$(D,d) \in \ConstrepsGam^{+}$ such that $d>0$ and $\x \in D$ and $D \subset B$.
-
-Define the variables $d',b'$ as
+If $s=+1$ these constraints can be written as
 \[
-d' \doteq \sum_{\y \in D} \vz^*(\y,\ConstrepsGam^{\pm})   \;\;\; b' \doteq \sum_{\y \in B} \vz^*(\y,\ConstrepsGam^{\pm})
+\sum
 \]
-Using those we can write the conditions as
-\[
-d'\geq d \;\; \mbox{ and } b' \leq b
-\]
-Or alternatively, as
-\[
-d' \geq d \;\; \mbox{ and } b'-d' \leq b-d
-\]
-The second condition does not involve $\x$ so the removal of the condition $(B,b)$ from $\ConstrepsGam^{\pm}$ does not change the solution:
-\[
-\vz^*(\x,\ConstrepsGam^{\pm}) = \vz^*(\x,\ConstrepsGam^{\pm} \setminus \{(B,b)\} ) 
-\]
-
-As this holds simultaneously for all $(B,b) \in \ConstrepsGam^{-}$ the statement of the Lemma follows
-\end{proof}
-  
-\section{Convergence}
-
-
-\begin{assumption} The error $\erreg$ is well defined for all
-  $\epsilon,\gamma>0$ and
-  \[
-  \lim_{\epsilon \to 0, \gamma \to 0} \erreg = \err^*
-  \]
-\end{assumption}
-
-
-
-
-
-
-\section{Good Examples are Clipped}
-
-Finally, we relate these definitions back to the slack function optimization problem. 
-A definition that is useful is:
-\begin{defn}
-For $s = \pm 1$, define 
-\begin{align*}
-T_{\epsilon, \gamma}^{s} (\x) := \lrsetb{ B \in \SepsGam^{s} \mbox{ s.t. } \x \in B}
-\end{align*}
-\end{defn}
-
-\subsection{Two Change-of-Basis Lemmas}
-
-\begin{lemma}
-\label{lem:replacespec}
-Suppose the slack function over a set of specialists $\SepsGam^{s}$ is minimized by giving each example $x$ a score of $S^* (x)$. 
-Take any $B \in \SepsGam^{s}$, and suppose that $\exists B' \in \SepsGam^{s} \mbox{ s.t. } B' \subset B \mbox{ and } B' (x) \neq B (x) \;\;\forall x \in B'$. 
-
-Define the specialist $C$ predicting only on $B \setminus B'$ according to $B$. 
-Then the slack function over the specialist class 
-$$ \SepsGam^{s} \setminus \lrsetb{B} \cup \lrsetb{C} $$
-has the same minimizer, with each example's score being $S^* (x)$. 
-\end{lemma}
-\begin{proof}
-%It remains only to show that any $B \in T_{\epsilon, \gamma}^{s} (\x)$ can be replaced by a specialist predicting on $B \setminus B'$, without affecting the slack function optimum.
-Note that $B'$ and $B$ influence the slack function only through the corresponding weights put on them by the algorithm $\sigma_{B'}, \sigma_{B} \geq 0$. 
-Suppose the predictions of $B', B$ are $\vh_{B'}, \vh_{B} \in \RR^{n}$. 
-Recall that $h_{B', i} = \frac{1}{p (B')} B' (x_i)$ where $B' (x_i) \in \lrsetb{-1, 0, 1}$. 
-Then $B, B'$ are represented together in the optimization by $\sigma_{B'} \vh_{B'} + \sigma_{B} \vh_{B}$. 
-This vector can be rewritten in terms of the two hypotheses $B'$ and $C$, where $C$ predicts according to $B$ on its domain $B \setminus B'$. 
-\begin{align*}
-\sigma_{B'} h_{B', i} + \sigma_{B} h_{B, i} 
-&= \frac{\sigma_{B'}}{p (B')} B' (x_i) + \frac{\sigma_{B}}{p (B)} B (x_i) \\ 
-&= \lrp{ \frac{\sigma_{B'}}{p (B')} - \frac{\sigma_{B}}{p (B)} } B' (x_i) \ifn(x_i \in B') + \frac{\sigma_{B}}{p (B)} B (x_i) \ifn(x_i \in B \setminus B') \\ 
-&= \lrp{ \sigma_{B'} - \sigma_{B} \frac{p (B')}{p (B)} } h_{B', i} + \sigma_{B} \frac{p (C)}{p (B)} h_{C, i} 
-\end{align*}
-Thus optimizing with $\vh_{B'}$ and $\vh_{B}$ is equivalent to optimizing with $\vh_{B'}$ and $\vh_{C}$, and the conclusion follows.
-\end{proof}
-
-\begin{lemma}
-\label{lem:replacesamesign}
-For $s = \pm 1$, suppose the slack function over a set of specialists $\SepsGam^{s}$ is minimized by giving each example $x$ a score of $S^* (x)$. 
-Take any $B, B' \in \SepsGam^{s}$ with the same polarity, 
-and define the specialists $C, C'$ predicting with this polarity on $(B \Delta B'), (B \cap B')$ respectively. 
-Then the slack function over the specialist class 
-$$ \SepsGam^{s} \setminus \lrsetb{B, B'} \cup \lrsetb{C, C'} $$
-has the same minimizer, with each example's score being $S^* (x)$. 
-\end{lemma}
-\begin{proof}
-Similar to above.
-\end{proof}
-
-\subsection{Main Result}
-
-\begin{lemma}
-For any $\epsilon > 0, \gamma > 0, s = \pm 1$, take any $\x \in \XepsGamSig$. 
-If $\sigma^* \geq \vzero^{\abs{\SepsGam^{s}}}$ is the minimizer of the slack function over good specialists $\SepsGam^{s}$, 
-and $\x \in \RR^{\abs{\SepsGam^{s}}}$ is the vector of these specialists' predictions on $\x$, 
-\begin{align}
-s \x^\top \sigma^* \geq 1
-\end{align}
-\end{lemma}
-\begin{proof}
-For the given $\x$, by definition of $\XepsGamSig$, 
-any $B \in T_{\epsilon, \gamma}^{-s} (\x)$ has a corresponding $B' \subset B$ such that $B' \in T_{\epsilon, \gamma}^{s} (\x)$. 
-Lemma \ref{lem:replacespec} shows that the slack function problem is equivalent to one where $B$ is replaced in the ensemble by a specialist corresponding to $C := B \setminus B'$, 
-which does not contain $\x$. 
-Replacing each $B \in T_{\epsilon, \gamma}^{-s} (\x)$ in this way removes it from $T_{\epsilon, \gamma}^{-s} (\x)$ but conserves $T_{\epsilon, \gamma}^{s} (\x)$, 
-to catalyze replacement of other elements of $T_{\epsilon, \gamma}^{-s} (\x)$. 
-(Note that $C$ may not be in $\SepsGam^{s}$ because we could have $p(C) \leq \epsilon$.)
-When all $B \in T_{\epsilon, \gamma}^{-s} (\x)$ are replaced, $T_{\epsilon, \gamma}^{-s} (\x)$ is empty, 
-but $T_{\epsilon, \gamma}^{s} (\x)$ is identical, 
-and contains all specialists in the new basis that predict on $\x$. 
-
-Lemma \ref{lem:replacesamesign} shows that any intersecting pair of specialists in $T_{\epsilon, \gamma}^{s} (\x)$ can be replaced by three disjoint specialists of the same polarity without changing the minimization solution. 
-Performing this replacement repeatedly, we eventually arrive at a basis in which exactly one specialist predicts on $x$, and potentially on other examples as well, for which it must be the only predictor. Call this specialist $h$.
-Putting weight on $h$ will always lower the slack function if the examples in its support are hedged, proving the result.
-\end{proof}
-
-\akshay{Not sure about this because $h$ may have bias $< 0$ even though its parent specialists do not. }
-
-
-
-\section{Intuition}
-Here is some rough intuition.
-One can think of $\SepsGam^{+}$ and $\SepsGam^{-}$ as competing teams
-of specialists, those in the first team predict $+1$ (when they don't abstain)
-while those in the other predict $-1$. Consider a particular point
-$\x$, and consider subset of the specialists in $\SepsGam$ that
-predict (i.e. do not abstain) on $\x$.
-
-It is intuitively clear that if all of the predicting specialists
-are members one team, that the solution $\sol$ will predict with the
-same label as that team.
-
-A less intuitive fact is that there are points for which there are
-predictors from both teams but are still guaranteed to predict
-according to one of the teams. These are the elements of
-$\XepsGamSig$. Suppose $\sigma=+1$ and $\x \XepsGam^{+}$. There
-might be specialists $B \in \SepsGam^{-}$such that $\x \in B$, but
-for each such specialist there is another specialist $B' \in
-\SepsGam^{+}$ such that $\x \in B'$ {\em and} $B' \subset
-B$. Intuitively, the opinion of the more specialized specialist masks
-the opinion of the more general one.
-
-In terms of the game, the points in $\XepsGam$ are clipped points. I
-am not sure whether points outside of $\XepsGam$ can also be clipped.
-
-Predictions on $\x \in \XepsGam$ can change only if there is some
-$\epsilon' \leq \epsilon$ and $\gamma'\leq \gamma$ such that for some 
-$B \in \SS_{\epsilon',\gamma'}$ $B$ belongs to the opposite
-team. Thus if we have reached the probability radius $\rho$ such that
-for all $B$ where $\x \in B$ and $p(B)<\rho$ the sign of $B(vx)$ is
-constant, we have reached the Bayes rule.
-
-We can therefor call $\x \in \XepsGam$ the ``unknown unknown'', while
-the complement of $\x$ are the ``known unknown''.
-
-
-
-
-
-
-
-\section{From true dist to empirical}
-
-Suppose now that we take a sample of $n$ points, and suppose that, at
-each point of time, we have a sample of labels associated with
-these points.
-
-We can define the sets above relative to the empirical distribution
-over $R^d$ but using the {\em true} distribution over the conditional
-$p(y|\x)$.
-
-Fixing $\epsilon$ and $\gamma$ we get, using uniform convergence, that
-the empirical probability of all $B \in \SepsGam$ is bounded below by
-$\epsilon/2$ and the bias is bounded below by $\gamma/2$
-
-etc etc
-\fi
-
 \end{document}
