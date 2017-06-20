@@ -141,6 +141,9 @@
 \newcommand{\vzero}{\mathbf{0}}
 \newcommand{\vone}{\mathbf{1}}
 
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
 \newcommand{\cH}{\mathcal{H}}
 \newcommand{\cX}{\mathcal{X}}
 \newcommand{\cY}{\mathcal{Y}}
@@ -441,18 +444,98 @@ it is $(\epsilon,\gamma',s)$-{\bf PW safe} for all $0<\epsilon' \leq
 \end{itemize}
 
 
-\section{Draft of proof}
+\section{Pairwise safety implies version space safety}
 
-Our goal is to prove that pairwise safety implies Version Space
-safety.
+\newcommand{\AllSet}{{\cal A}(\x,\epsilon,\edge)}
+\newcommand{\MinSet}{{\cal M}(\x,\epsilon,\edge)}
 
-{\bf Constraint set reformulation:}\\
-Fix $\XepsGamSig$ and let $B' \subset B$ be a pair of balls as
-specified in the definition of $\XepsGamSig$\ . In other words, $\x \in
-B, \x \in B'$, $B \in \SepsGamMinusSig\ $ and $B' \in \SepsGamSig$.
-
-If $s=+1$ these constraints can be written as
+Fix a point $\x$ and the parameters $(\epsilon,edge,s)$.
+Let $\AllSet$ be the sets of all balls $B$ that contain $\x$, have weight $\epsilon>0$
+and edge $\gamma$ with respect to {\em some} polarity $s \in
+\{-1,+1\}$. In other words:
 \[
-\sum
+\AllSet \doteq \left\{ B \left|
+\frac{|B|}{|\X|} \geq \epsilon\;\;\mbox{ and }\;\;
+\exists s \in \{-1,+1\}\;\; \mbox{ such that }\;\; \frac{s}{|B|}
+\sum_{\x \in B} \vz(\x) \geq \edge \right. \right\}
 \]
+
+Consider the partial order of containment defined over the balls in
+$\AllSet$.
+Let the ``set of minima'' $\MinSet \subseteq \AllSet$ be the set of balls that are
+minimial with respect to this partial order. An alternative
+specification of pairwise safety is that that all balls in $\MinSet$
+set have the same polarity $s$. More formally, $\x$ is
+$(\epsilon,\edge,s)$-pairwise safe if and only if
+\[
+\forall B \in \MinSet,\;\;\; \frac{s}{|B|} \sum_{\x \in B} \vz(\x) \geq \edge 
+ \]
+
+Before proving that Pairwise Safety implies Version Space safety, we
+need the following technical lemma:
+
+
+\begin{lemma}
+  Let $\cA=\{A_1,A_2,\ldots,A_n\}$ be a finite collection of non-empty sets over a finite
+  domain. Then there exist a set of at most $n$ points
+  $x_1,\ldots,x_m$ such that each set in $\cA$, contains exactly one point.
+\end{lemma}
+\begin{proof}
+  Denote by $\cC$ a collection of sets. We use the notation $\cap \cC$
+  to denote the intersection of the sets in $\cC$.
+
+  The proof is constructive and recursive. We start with $\cC=\cA$ and
+  continue until $\cC$ is empty.
+  
+  At each stage of the recursion we distinguish two cases:
+  \begin{enumerate}
+    \item $\cap \cC \neq \emptyset$. In this case
+      We choose $\x$ from the intersection of all sets and we are
+      done.
+    \item $\cap \cC = \emptyset$. In this case we partition $\cC$ into
+      two disjoint collections $\cD$ and $\cF$, such that $\cap \cD
+      \neq \emptyset$ and for all $A \in \cF$, $\cap \cD \cap A =
+      \emptyset$. Note that $x \in A$ for all $A \in \cD$ and $x \notin A$
+      for $A \in \cF$. We choose an arbitrary $x$ element from $\cap
+      \cD$ and we can remove $\cD$ from consideration
+      and continue recursively with $\cC = \cF$.
+
+      The construction of the collection $\cD$ is greedy. We start
+      with an arbitrary set $A_1$ in $\cC$, by assumption, this set is
+      not empty. We then repeatedly add sets to $\cD$ as long as their
+      addition does not result in $\cap \cD \neq \emptyset$. As $\cap
+      \cC=\emptyset$ we know that this process must at some point before
+      $\cD=\cC$. We define $\cD$ to be a collection of sets whose
+      intersection is not empty such that the addition of any set will
+      make the intersection empty.
+
+      In other words, any point $x$ chosen from $\cap \cD$ is a member
+      of $A \in \cD$ and is not a member of $ \in \cF$
+    \end{enumerate}
+\end{proof}
+
+We will not prove the theorem:
+\begin{theorem}
+  If $\vx$ is pairwise safe for some $\epsilon,\edge,s$ then it is version space safe. 
+\end{theorem}
+
+x
+\begin{proof}
+
+The proof is by contradiction.
+
+  
+Assume that $\vx$ is $(\epsilon,\edge,s)$-PW safe but that it is not
+$(\epsilon,\edge,s)$-VS safe. In other words, there exists
+a min-max optimal adversarial strategy $\vz^*$ which satisfies all of the
+pair-wise constraints regarding $\vx$ but for which $s \cdot
+\vz^*(\vx)<0$.
+
+We will show that, under these conditions, there is another
+adversarial strategy $\vz'$ which guarantees a better value for the
+adversary and satisfies all of the constraints.
+
+\end{proof}
+
+
 \end{document}
