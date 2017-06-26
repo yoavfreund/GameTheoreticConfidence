@@ -1,0 +1,269 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+%\usepackage{fullpage}
+%\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+%\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage[mathscr]{euscript}
+
+
+\usepackage{geometry}
+%% \geometry{a4paper,
+%%   total={170mm,220mm},
+%%   marginparwidth=80mm,
+%% left=5mm,
+%% right=85mm,
+%% top=20mm,
+%% }
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+\title{Non-Parametric Active Learning}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+\setcounter{MaxMatrixCols}{20}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Prtxt}{Pr}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\D}{{\cal D}}
+\newcommand{\B}{{\cal B}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}} % Specialists
+\newcommand{\CC}{{\cal C}}  % constraints
+
+\newcommand{\outcome}{z}
+\newcommand{\empoutcome}{\hat{\outcome}}
+\newcommand{\polarity}{p}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}{\mathbf{1}} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+
+\newcommand{\pdis}[1]{P_{dis}\left(#1\right)}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}[1]{\mathbbm{1}^{#1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vI}{\mathbf{I}}  
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vl}{\mathbf{l}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}}   
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\vec{\alpha}}
+\newcommand{\vbeta}{\vec{\beta}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cO}{\mathcal{O}}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\ebias}{\widehat{\text{bias}}}
+
+\newcommand{\eD}{\hat{\D}}
+\newcommand{\ep}{\hat{p}}
+
+\newcommand{\sign}{\text{sign}}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{magenta}{#1}}
+
+\begin{document}
+
+\maketitle
+\section{Introduction}
+
+The analysis of Active Learning using Muffler seems to run into a dead
+end. Specifically, the elegant local condition we call ``Pairwise
+safe'' is insufficient to guarantee version space consistency.
+
+In this paper we suggest a different approach to the problem of active
+learning using balls. Instead of using the min/max solution given by
+Muffler, we consider an Occam's razor approach by which we make the
+simplest prediction possible given the constraints.
+
+\section{Ball Specialists}
+
+We restrict our attention to a special case which corresponds,
+roughly, to nearest neighbor methods.
+\begin{enumerate}
+\item The input space $\X$ is a finite set in $R^d$. We assume a
+  uniform distribution over $\X$.
+  \item
+    The rules that we use are ``specialists'' that are balls. The set
+    $\B$ contains all rules of the form
+    \[
+    B_{r,\cc,s}(\x) =
+    \begin{cases}
+      s & \text{if } \| \cc- \x \| \leq r \\
+    0 & \text{otherwise }
+    \end{cases}
+    \]
+    Where $r \geq 0$ is the radius of the ball, $\cc \in R^d$ is the
+    center of the ball and $s \in \{-1,+1\}$ is the polarity of the ball.
+    We will drop the subscripts of $B$ when clear from context.
+  \item
+    We use $\x \in B$ to indicate that $B(\x) \neq 0$.
+  \item
+    We denote the {\em probability} of a ball $B$ by $p(B) \doteq
+    \frac{|B|}{|\X|}$
+  \item
+    We use the term {\em bias} of a ball to refer to the conditional
+    expectation of the label for a ball by
+    $$
+    \bias(B) \doteq E\left( y|\x \in B \right)
+    $$
+  \item We denote the empirical bias of the ball $B$ by $\ebias(B)$.
+  \item Using uniform convergence bounds we define for each ball $B$
+    a confidence interval:
+    $[l,h]=[\ebias(B)-\Delta,\ebias(B)+\Delta]$.
+    if $l>0$ we say that $B$ imposes a {\em positive constraint}, if
+    $h<0$ we say that $B$ imposes a {\em negative constraint}, i
+    $l\leq 0 \leq h$ we say that $B$ does not impose a constraint.
+\end{enumerate}
+
+\section{The algoithm}
+
+\subsection{Defining safe sets}
+
+Given a set of constraints, and given a polarity  $s \in
+\{-1,+1\}$ we define a point $\x$ as a $s$-safe if
+the following holds
+\begin{itemize}
+\item There is an $s$ constraint that contains $\x$.
+\item For any $-s$ constraint $C$ that contains $\x$, there exists an
+  $s$ constraint $D$ such that $D \subset C$. 
+\end{itemize}
+
+Points that are neither positive nor negative safe are called
+``unsafe''
+
+\subsection{Active Learning}
+
+At each stage of Active Learning we query the label of two sets, each
+of size $n$
+\begin{itemize}
+\item {\bf Uniform Set :} select points uniformly at random from the whole
+  domain.
+\item {\bf Active Set :} select points uniformaly at random from the unsafe
+  set.
+\end{itemize}
+
+The Uniform sets from different stages are combined to form one
+large label set. The active set from each stage is considered
+separately.
+
+The bias of each constraint is calculated with respect to the
+cumulative uniform sample, and with respect to each one of the active
+sets. Each of these sets defines a contraint on a subset of the $z_i$'s 
+
+
+
+\end{document}

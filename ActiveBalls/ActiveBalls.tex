@@ -41,6 +41,7 @@
 \date{November 2016}
 
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{assumption}[theorem]{assumption}
@@ -514,28 +515,104 @@ need the following technical lemma:
     \end{enumerate}
 \end{proof}
 
-We will not prove the theorem:
-\begin{theorem}
+For a long time I (YF) thought that the following is true, but it is not.
+\begin{claim}
   If $\vx$ is pairwise safe for some $\epsilon,\edge,s$ then it is version space safe. 
-\end{theorem}
+\end{claim}
 
-x
+{\bf Counter Example}\\
+\noindent
+Consider a space with 4 points, and associate with the points the
+adversarial values: $z_1,z_2,z_3,z_4$ consider the following three
+constraints:
+\begin{eqnarray}
+  P_1:& \frac{1}{2}(z_1+z_2) \geq 0.1\\
+  P_2:& \frac{1}{2}(z_2+z_3) \geq 0.1\\
+  N_1:& \frac{1}{4}(z_1+z_2+z_3+z_4) \leq -0.25
+\end{eqnarray}
+
+Solving just for the two positive constraints: $P_1,P_2$ we find that
+the min/max solution is $z_1=z_3=0$ and $z_2=0.2$.
+
+All three points: $1,2,3$ are pairwise safe. The negative constraint
+is a super-set of the positive constaints. However, $z_1,z_3$ are not
+version-space safe. To see that consider the negative constraint
+$N_1$. As $z_4\geq -1$ we get that:
+\begin{eqnarray*}
+  z_1+z_2+z_3+z_4 \leq -1 \\
+  z_1+z_2+z_3 \leq 0 
+\end{eqnarray*}
+But for the solution for $P_1,P_2$ yields $z_1+z_2+z_3=0.2>0$, so that
+solution is not valid when $N_1$ is added. A solution that holds is
+$z_1=z_3=-0.2$, $z_2=0.2$.
+
+But in that solution the signs of $z_2,z_3$ have been flipped.
+
+
+\iffalse
 \begin{proof}
 
-The proof is by contradiction.
+We denote a constraint by a pair $(A,p)$ where $A$ is a subset of the
+examples (corresponding to a specialist) and the constrain is $p\in
+\{-1,+1\}$ is the polarity of the constraint. Let $\vz(\x)$ be the
+$\x$ coordinate of the adversarial vector. We denote by $S(\vz,A)$ the sum
+of the coordinates of $\vz$ corresponding to the set $A$:
+\[
+S(\vz,A) \doteq \sum_{\y \in A} \vz(\y)
+\]
+The constraint corresponding to $(A,p)$ is
+\[
+p \cdot S(\vz,A) \geq \edge
+\]
 
-  
-Assume that $\vx$ is $(\epsilon,\edge,s)$-PW safe but that it is not
-$(\epsilon,\edge,s)$-VS safe. In other words, there exists
-a min-max optimal adversarial strategy $\vz^*$ which satisfies all of the
-pair-wise constraints regarding $\vx$ but for which $s \cdot
-\vz^*(\vx)<0$.
+We denote by $C(\x)$ the set of constraints $(A,p)$ such that $\x \in
+A$. We denote by $C^s(\x)$ the constraints with polarity $s$, i.e. the
+subset of $C(\x)$ for which $p=s$.
 
-We will show that, under these conditions, there is another
-adversarial strategy $\vz'$ which guarantees a better value for the
-adversary and satisfies all of the constraints.
+We denote by $M(\x)$ the set of minimal sets in $C(\x)$ (where the
+order is defined by containment). the example $\x$ is pairwise-safe if
+and only if $M(\x) \subseteq C^+(\x)$ or $M(\x) \subseteq
+C^-(\x)$. For the rest of the proof we will assume the first is the
+case, i.e. the minimal constraints are all positive.
 
+Let $\vz^*$ be a min-max solution of the game. In other words, all the
+constraints are satisfied and $\|\vz\|_1$ is minimized.
+
+We will show that if $\x$ is pairwise safe then $s \cdot \vz^*(\x)$,
+i.e. $\x$ is version-space safe.
+
+We do this in two steps. First, we show it under the assumption that
+{\em all} of the constraints on $\vz(\x)$ are positive, i.e. if
+$C(\x)=C^+(\x)=M(\x)$. Second, we show that adding negative
+constraints {\em that are not minimal} does not change the constraints
+on $\vz^*(\x)$
+
+{\bf First step}\\
+\noindent
+If all of the contraints are positive, then the constraint on
+$\vz(\vx)$ all have the form $\vz(\vx) \geq a_i$. These constraints
+are equivalent to the single constraint $\vz(\vx) \geq m$ where
+$m \doteq \max(a_i)$
+
+Minimizing the $L_1$ norm restricted to $\vz(\x)$ is equivalent to
+minimizing $|\vz(\x)|$.  We have two cases: if $m \leq 0$ then the
+minimum is achievd at $\vz^*(\x)=0$. If $m > 0$ then the minimum is
+achieved at $\vz^*(\x)=m$. In either case, $\vz^*(\x) \geq 0$ and
+$\vx$ is version space safe.
+
+
+{\bf Second step}\\
+Suppose $\vz$ is the optimal solution for the positive constraints. We
+will add the negative constraints one at a time and show that the
+optimal solution remains $\vz$.
+
+Let $(B,-) \in C^-(\x)$ be a negative constraint of $\vz(\x)$. By
+pairweise safety, there must exist $(A,+) \in C^+(\x)$ such that $A
+\subset B$. As $A \subset B$ we can rewrite the negative condition as follows:
+\[
+-\edge \geq S(\vz,B) = S(\vz,A) + S(\vz,B \cap A^c)
+\]
 \end{proof}
-
+\fi
 
 \end{document}
