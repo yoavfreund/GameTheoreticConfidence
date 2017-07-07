@@ -166,6 +166,11 @@
 \newcommand{\eD}{\hat{\D}}
 \newcommand{\ep}{\hat{p}}
 
+\newcommand{\samp}{S}
+\newcommand{\usamp}{\underline{S}}
+
+\newcommand{\eps}{\epsilon}
+
 \newcommand{\sign}{\text{sign}}
 \newcommand{\new}[1]{\textcolor{red}{#1}}
 
@@ -213,14 +218,27 @@ roughly, to nearest neighbor methods.
     We use $\x \in B$ to indicate that $B(\x) \neq 0$.
   \item
     We denote the {\em probability} of a ball $B$ by $p(B) \doteq
-    \frac{|B|}{|\X|}$
+    \frac{|B|}{|\X|}$.
+  \item Given a sample $\samp$, we denote by empirical probability of the ball $B$ by \new{$p_{\samp}(B)$}.
   \item
     We use the term {\em bias} of a ball to refer to the conditional
     expectation of the label for a ball by
-    $$
-    \bias(B) \doteq E\left( y|\x \in B \right)
-    $$
-  \item We denote the empirical bias of the ball $B$ by $\ebias(B)$.
+    \[
+    \bias(B) \doteq E\left( y|\x \in B \right).
+    \]
+  \item \new{Given a sample $\samp=\{(\x_1,y_1)\ldots,(\x_n,y_n)\}$, 
+  we define the (empirical) bias of the ball $B$ w.r.t $\samp$ as 
+  \[
+  \bias_{\samp}(B) \doteq \frac{1}{k}\sum_{i:\x_i\in B}{y_i},
+  \]
+  where $k \doteq \lvert\{ i : \x_i\in B\}\rvert$.
+  \item Given an unlabeled sample $\usamp=\{\x_1,\ldots,\x_n\}$
+  we define the bias of the ball $B$ w.r.t $\usamp$ as 
+  \[
+  \bias_{\usamp}(B) \doteq \frac{1}{k}\sum_{i:\x_i\in B}{E\left( y|\x_i\right)},
+  \]
+  where $k \doteq \lvert\{ i : \x_i\in B\}\rvert$.}
+  %\item We denote the empirical bias of the ball $B$ by $\ebias(B)$.
   \item Using uniform convergence bounds we define for each ball $B$
     a confidence interval:
     $[l,h]=[\ebias(B)-\Delta,\ebias(B)+\Delta]$.
@@ -228,6 +246,41 @@ roughly, to nearest neighbor methods.
     $h<0$ we say that $B$ imposes a {\em negative constraint}, i
     $l\leq 0 \leq h$ we say that $B$ does not impose a constraint.
 \end{enumerate}
+
+\section{Uniform convergence bounds for sepcialists.}
+\subsection{Uniform convergence of measure}
+
+\begin{theorem}
+\new{Let $\B$ be a family of specialists of VC dimension $d$ 
+over $\X$. Then:
+\[\Pr_{\samp\sim p^n}\bigl[\sup_{B\in\B}\lvert p(B) - p_{\samp}(B)\rvert \geq \eps \bigr] \leq \delta,
+%\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
+\]
+where $\eps = O\Bigl(\sqrt{\frac{d+\log(1/\delta)}{n}}\Bigr)$.}
+\end{theorem}
+
+\subsection{Uniform convergence of bias}
+\begin{theorem}
+\new{Let $\B$ be a family of specialists of VC dimension $d$, 
+let $\usamp = \{\x_1,\ldots,\x_n\}$ be an unlabeled sample,
+and let $y_1,\ldots,y_n$ be a random independent sample of labels 
+(each $y_i$ is sampled from $p(y_i \vert \x_i)$).
+Denote by $\samp$ the labeled sample $\{(\x_1,y_1),\ldots,(\x_n,y_n)\}$.
+Then:
+\[\Pr_{y_i\sim p(y\vert \x_i)}\bigl[\sup_{B\in\B}\lvert \bias_{\samp}(B) -  \bias_{\usamp}(B)\rvert \geq \eps \bigr] \leq \delta,
+%\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
+\]
+where $\eps = O\Bigl(\sqrt{\frac{d\log n+\log(1/\delta)}{n}}\Bigr)$.}
+%Then, the event:
+%?For every specialist S: the absolute difference between its empirical bias and its true bias of S is at most sqrt{ (10d log n + log (1/delta) )/ k }?
+%has probability at most delta.
+\end{theorem}
+
+\shay{as far as I understand, 
+we want to show that $\bias_{\samp}(B)$ is close to $\bias(B)$, w.h.p over $\samp$.
+However, from our current uniform convergence statements we just get
+that $\bias_{\samp}(B)$ is close to $\bias_{\usamp}(B)$,
+and that $p(B)$ is closed to $p_{\samp}(B)$.  }
 
 \section{The algoithm}
 
@@ -263,6 +316,9 @@ separately.
 The bias of each constraint is calculated with respect to the
 cumulative uniform sample, and with respect to each one of the active
 sets. Each of these sets defines a contraint on a subset of the $z_i$'s 
+
+
+
 
 
 
