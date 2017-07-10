@@ -1,0 +1,111 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+%\usepackage{fullpage}
+%\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+%\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage[mathscr]{euscript}
+
+
+\usepackage{geometry}
+%% \geometry{a4paper,
+%%   total={170mm,220mm},
+%%   marginparwidth=80mm,
+%% left=5mm,
+%% right=85mm,
+%% top=20mm,
+%% }
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+\title{Non-Parametric active Learning, a short history}
+\author{Yoav Freund}
+\newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{magenta}{#1}}
+
+\begin{document}
+
+\maketitle
+
+During COLT2017 I had the opportunity to talk with Samory Kpotufe and
+learn of the history of non-parametric active learning. This is a
+summary of what I leaned.
+
+An initial nonparametric result of Castro and
+Nowak~\cite{castro2008minimax} considers situations where the Bayes
+decision boundary ${x : E[Y |X = x] = 1/2}$ is given by a smooth curve
+which bisects the X space.
+
+Minsker~\cite{minsker2012plug} analyzes a tree partitioning active
+learning algorithm whose analysis is based on two assumptions:
+
+\begin{itemize}
+  \item The Tsybakov's low noise assumption. Which bounds the size of the set
+    on which the conditional expectation of of $y \in \{-1,+1\}$ is close to
+    zero. Specifically, if we denote $\eta(x) \doteq E(y|x)$, then the
+    Tsybakov low noise assumption is there there exist $B,\gamma >0$ such
+    that
+    \[
+    \forall t>0 P(x: |\eta(x)|\leq t) \leq B t^{\gamma}
+    \]
+    Intuitively, this characterizes the behaviour of the noise close
+    to the boundary.
+  \item
+    The H{\"o}lder condition, which characterizes the
+    complexity of the decision boundary: $\eta(x)=0$. Note that this
+    characterization is very restrictive, it is defined over a bounded
+    range  ($[0,1]^d$ is used here) and requirs that $\eta(x)$ is
+    differentiable and is close to the Taylor expansion around any point.
+
+    The $(\beta,K,[0,1]^d)$-H{\"o}lder condition is
+    that $\eta$ is $\lfloor \beta \rfloor$ times continuously
+    differentiable and that for all $x,x_1 \in [0,1]^d$:
+    \[
+    |\eta(x_1)-T_x(x_1)| \leq K \|x-x_1\|_{\infty}^{\beta}
+    \]
+\end{itemize}
+
+The algorithm is based on using an estimator of $\eta(x)$ and querying
+the examples where the confidence bounds around the estimator contain
+$0$. The actual details are not clear to me....
+
+An earlier work is that of
+Koltchinskii~\cite{koltchinskii2010rademacher} uses the concept of a
+local Rademacher Condition, which is the Rademacher condition when the
+concepts are restricted to the set of rules that are in the current
+version space. He shows that, under Tsybakov's conditions, there is an
+exponential speedup using active learning. The algorithm involves
+finding finite covers of the version space and considering as the
+active set any point where there is a function that predicts
+positively as well as a function that predicts negatively.
+The computational complexity of this approach is unclear.
+
+In~\cite{kpotufe2015hierarchical,andrea2017adaptivity} Samory Kpotufe
+et. al. describe hierarchical partitioning methods for active learning.
+(To be continued).
+
+\bibliography{refs}{}
+\bibliographystyle{plain}
+
+\end{document}
