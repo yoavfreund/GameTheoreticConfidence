@@ -219,25 +219,13 @@ roughly, to nearest neighbor methods.
   \item
     We denote the {\em probability} of a ball $B$ by $p(B) \doteq
     \frac{|B|}{|\X|}$.
-  \item Given a sample $\samp$, we denote by empirical probability of the ball $B$ by \new{$p_{\samp}(B)$}.
+  \item Given a sample $\samp$, we denote by empirical probability of the ball $B$ by $p_{\samp}(B)$.
   \item
     We use the term {\em bias} of a ball to refer to the conditional
     expectation of the label for a ball by
     \[
     \bias(B) \doteq E\left( y|\x \in B \right).
     \]
-  \item \new{Given a sample $\samp=\{(\x_1,y_1)\ldots,(\x_n,y_n)\}$, 
-  we define the (empirical) bias of the ball $B$ w.r.t $\samp$ as 
-  \[
-  \bias_{\samp}(B) \doteq \frac{1}{k}\sum_{i:\x_i\in B}{y_i},
-  \]
-  where $k \doteq \lvert\{ i : \x_i\in B\}\rvert$.
-  \item Given an unlabeled sample $\usamp=\{\x_1,\ldots,\x_n\}$
-  we define the bias of the ball $B$ w.r.t $\usamp$ as 
-  \[
-  \bias_{\usamp}(B) \doteq \frac{1}{k}\sum_{i:\x_i\in B}{E\left( y|\x_i\right)},
-  \]
-  where $k \doteq \lvert\{ i : \x_i\in B\}\rvert$.}
   %\item We denote the empirical bias of the ball $B$ by $\ebias(B)$.
   \item Using uniform convergence bounds we define for each ball $B$
     a confidence interval:
@@ -248,39 +236,78 @@ roughly, to nearest neighbor methods.
 \end{enumerate}
 
 \section{Uniform convergence bounds for sepcialists.}
-\subsection{Uniform convergence of measure}
+\subsection{Uniform convergence of measures}
 
-\begin{theorem}
-\new{Let $\B$ be a family of specialists of VC dimension $d$ 
-over $\X$. Then:
-\[\Pr_{\samp\sim p^n}\bigl[\sup_{B\in\B}\lvert p(B) - p_{\samp}(B)\rvert \geq \eps \bigr] \leq \delta,
+\begin{theorem}\label{thm:uc1}
+Let $\B$ be a family of specialists of VC dimension $d$,
+let $\eps,\delta>0$, 
+and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+\[\Pr_{\samp\sim p^n}\Bigl[\exists {B\in\B}:~\lvert p_{\samp}(B) -  p(B)\rvert \geq \sqrt{\frac{100d + \log(1/\delta)}{n}} \Bigr] \leq \delta.
 %\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
 \]
-where $\eps = O\Bigl(\sqrt{\frac{d+\log(1/\delta)}{n}}\Bigr)$.}
 \end{theorem}
 
-\subsection{Uniform convergence of bias}
+\subsection{Uniform convergence of biases}
 \begin{theorem}
-\new{Let $\B$ be a family of specialists of VC dimension $d$, 
-let $\usamp = \{\x_1,\ldots,\x_n\}$ be an unlabeled sample,
-and let $y_1,\ldots,y_n$ be a random independent sample of labels 
-(each $y_i$ is sampled from $p(y_i \vert \x_i)$).
-Denote by $\samp$ the labeled sample $\{(\x_1,y_1),\ldots,(\x_n,y_n)\}$.
+Let $\B$ be a family of specialists of VC dimension $d$, 
+let $\eps,\delta>0$,
+and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
 Then:
-\[\Pr_{y_i\sim p(y\vert \x_i)}\bigl[\sup_{B\in\B}\lvert \bias_{\samp}(B) -  \bias_{\usamp}(B)\rvert \geq \eps \bigr] \leq \delta,
+\[\Pr_{\samp\sim p^n}\Bigl[\exists {B\in\B}:~\lvert \bias_{\samp}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k(B)} }\Bigr] \leq \delta,
 %\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
 \]
-where $\eps = O\Bigl(\sqrt{\frac{d\log n+\log(1/\delta)}{n}}\Bigr)$.}
+where $k(B) = \lvert\{ i : x_i\in B \}\rvert$.
 %Then, the event:
 %?For every specialist S: the absolute difference between its empirical bias and its true bias of S is at most sqrt{ (10d log n + log (1/delta) )/ k }?
 %has probability at most delta.
 \end{theorem}
 
-\shay{as far as I understand, 
-we want to show that $\bias_{\samp}(B)$ is close to $\bias(B)$, w.h.p over $\samp$.
-However, from our current uniform convergence statements we just get
-that $\bias_{\samp}(B)$ is close to $\bias_{\usamp}(B)$,
-and that $p(B)$ is closed to $p_{\samp}(B)$.  }
+\begin{proof}
+We follow the double sampling argument.
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $E_1$ denote the event whose probability we want to bound:
+\[
+E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }\text{"}, 
+\]
+,and let $E_2$ denote the event:
+\[
+E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }\text{"},
+\]
+where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
+The proof follows from the following two lemmas:
+\begin{lemma}\label{lem:aux1}
+\[\Pr[E_1]\leq 4\Pr[E_2]\]
+\end{lemma}
+\begin{lemma}
+\[\Pr[E_2]\leq \delta\]
+\end{lemma}
+
+\paragraph{Proof of Lemma~\ref{lem:aux1}.}
+%First note that we may restrict ourselves to the event
+%that $k_1(B)$, $k_2(b)$, and $n\cdot p(b)$ are all within distance
+%$\sqrt{n(100d+\log(1/\delta))}$ from each other, simultanously for every $B\in\B$.
+%Indeed, by Theorem~\ref{thm:uc1} the probability it is not the case is at most $2\delta$.
+%In the remaining of this proof we condition on this event 
+%but for ease of notation omit spelling it out explicitly.
+
+It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
+Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
+namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 4\Pr[E_2]$.
+
+Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/4.\]
+Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$.
+We distinguish between two cases: $p(B)$ is large and $p(B)$ is small.
+The case when $p(B)$ is sufficiently large (at least $1/n$) is fine (I think).
+Therefore, assume $p(B)$ is small, say $p(B) \leq 1/1000n$.
+Further assume that $\bias(B) = 0.8$,  that $\bias_{\samp_1}(B)=0$, and that $k_1(B)$
+is sufficiently large so the $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$.
+Now, since $p(B) \leq 1/1000n$ it follows that $k_2(B)=0$ with probability at least $0.99$.
+Now, it is plausible to define $\bias_{\samp_2}(B)=0$ when $k_2(B)=0$,
+and therefore we get that $\bias_{\samp_2}=\bias_{\samp_1}=0$ with probability at least $0.99$ and so the event $E_2$ occurs with probability less than $0.01$,
+unlike what we wanted.
+\end{proof}
 
 \section{The algoithm}
 
