@@ -271,7 +271,7 @@ E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq
 \]
 ,and let $E_2$ denote the event:
 \[
-E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }\text{"},
+E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{\min(k_1(B),k_2(B))} }\text{"},
 \]
 where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
 The proof follows from the following two lemmas:
@@ -289,6 +289,9 @@ The proof follows from the following two lemmas:
 %Indeed, by Theorem~\ref{thm:uc1} the probability it is not the case is at most $2\delta$.
 %In the remaining of this proof we condition on this event 
 %but for ease of notation omit spelling it out explicitly.
+
+\yoav{I plan to follow the steps in Devroye, Gyorfi, Lugosi Proof of
+  the Borel Cantelli theorem}
 
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
 Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
