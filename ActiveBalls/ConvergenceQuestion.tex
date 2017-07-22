@@ -189,26 +189,28 @@
 Let $H$ be a set of functions from $X$ to $\{0,1\}$. Let $D$ be a
 joint distribution over $X \times \{-1,+1\}$.
 
-Suppose we have a sample $S$ of size $m$: $(x_1,y_1),\ldots,(x_m,y_m)$.
+Suppose we have a sample $S$ of size $m$:
+$(x_1,y_1),\ldots,(x_m,y_m)$. We define the {\em size} of $h\in H$ relative
+to the sample $S$ to be $|h(S)| \doteq X\sum_{i=1}^m h(x_i)$
 ~\\
 ~\\
 
 {\bf The non-standard part:}
 We want to bound the deviation betweeen the true conditional expectation
-$E(Y|h(X)=1)$ and the empirical conditional that is defined to be
-$\hat{E}(Y | h(X)=1) \doteq (1/|h(S)|) \sum_{i:h(x_i)=1} y_i$ where $|S(h)|\doteq\sum_{i=1}^m
-h(x_i)$. We want the bound on the magnitude of the 
-deviation to decrease like  $|h(S)|^{-1/2}$, and increase logarithmically
-on $m$.
+$E(Y|h(X)=1)$ and the empirical conditional expectation defined to be
+$\hat{E}(Y | h(X)=1) \doteq \left(\sum_{i=1}^m h(x_i) y_i\right)/|h(S)|$.
+We want to replace the factor $m^{-1/2}$ in the magnitude of the
+deviation by a term of the form  $|h(S)|^{-1/2}$,
+
 ~\\
 ~\\
 
 {\bf for a single function this is easy:} Let $H=\{h\}$ be a singleton, then
-conditioning on $|h(S)|$ is trivial. As the random variable $|h(S)|$ is
-independent of the $y_i$s, we can think of the process of accumulating
-the sum $\sum_{i:h(x_i)=1} y_i$ as one where we first choose $|h(S)|$
-according to some distribution and then generate $|h(S)|$ examples. We
-can therefor use Hoeffding bound to get:
+conditioning on the size $|h(S)|$ is trivial. As the
+labels $y_i$ are independent of the size, we can calculate the sum
+$\sum_{i=1}^m h(x_i) y_i$ by first choose $|h(S)|$
+according to some distribution and then summing $|h(S)|$ IID examples
+examples. We can therefor use Hoeffding bound to get:
 \[
 P \left( | E(Y|h(X)=1) -
 \hat{E}(Y | h(X)=1) | > \frac{2 \ln 1/\delta}{\sqrt{|h(S)|}} \right)
@@ -221,10 +223,10 @@ P \left( | E(Y|h(X)=1) -
 the form 
 \[
 P \left( \exists h \in H\;\; \mbox{ s.t. }\;\; | E(Y|h(X)=1) -
-\hat{E}(Y | h(X)=1) | > \frac{2 \ln 1/\delta + d \ln m }{\sqrt{|h(S)|}} \right)
+\hat{E}(Y | h(X)=1) | > c \frac{2 \ln 1/\delta + d \ln m }{\sqrt{|h(S)|}} \right)
 \leq \delta
 \]
-where $d$ is the VC dimension of $H$ and $m$ is the total number of
-examples.
+where $d$ is the VC dimension of $H$, $m$ is the total number of
+examples and $c$ is a positive constant.
 
 \end{document}
