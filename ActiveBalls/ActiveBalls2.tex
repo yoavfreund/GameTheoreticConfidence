@@ -201,6 +201,17 @@ roughly, to nearest neighbor methods.
 \begin{enumerate}
 \item The input space $\X$ is a finite set in $R^d$. We assume a
   uniform distribution over $\X$.
+  \item We consider labels $y\in \{-1,+1\}$. For There is a fixed but
+    unknown conditional probability defined over $\X$, i.e. $P(Y=+1 |
+    X=\x)$. Our goal is to estimate whether $P(Y=+1|X=\x)$ is smaller
+    or larger than $1/2$.
+  \item
+    The notation is simpler if we use expected values instead of
+    probabilities. We use the term {\em bias} of a ball to refer to the conditional
+    expectation of the label for a ball by
+    \[
+    \bias(\x) \doteq P(Y=+1|X=\x) - P(Y=-1|X=\x)
+    \]
   \item
     The rules that we use are ``specialists'' that are balls. The set
     $\B$ contains all rules of the form
@@ -219,14 +230,28 @@ roughly, to nearest neighbor methods.
   \item
     We denote the {\em probability} of a ball $B$ by $p(B) \doteq
     \frac{|B|}{|\X|}$.
-  \item Given a sample $\samp$, we denote by empirical probability of the ball $B$ by $p_{\samp}(B)$.
   \item
-    We use the term {\em bias} of a ball to refer to the conditional
+    We define term {\em bias} of a ball to refer to the conditional
     expectation of the label for a ball by
     \[
     \bias(B) \doteq E\left( y|\x \in B \right).
     \]
-  %\item We denote the empirical bias of the ball $B$ by $\ebias(B)$.
+  \item We define a sample $\samp$ as a sequence of labeled examples:
+    \[\samp= \left\langle (\x_1,y_1),(\x_2,y_2),\ldots,(\x_m,y_m)
+    \right\rangle \]
+    Where $\x_i$ are chosen uniformly at random (with replacement)
+    from $\X$ and $y_i$ are chosen according to the (unknown)
+    conditional distribution of the label given $\x$.
+  \item Given a sample $\samp$, we define the number of instances in
+    $(\x,y) \in \samp$ such that $\x \in B$ to be the {\em size} of
+    $B$ according to the sample $\samp$ and denote it by $k_{\samp}$. We define
+    the {\em empirical probability} of the ball $B$ according to
+    $\samp$ by $p_{\samp}(B) \doteq k_{\samp}(B)/|\samp|$.
+  \item Given a sample $\samp$ we define the estimate of the
+    $\bias(B)$ to be
+    \[
+    \ebias_{\samp}(B) = \frac{\sum_{i=1}^m y_i B(\x_i)}{\sum_{i=1}^m B(\x_i)}
+    \]
   \item Using uniform convergence bounds we define for each ball $B$
     a confidence interval:
     $[l,h]=[\ebias(B)-\Delta,\ebias(B)+\Delta]$.
@@ -238,6 +263,28 @@ roughly, to nearest neighbor methods.
 \section{Uniform convergence bounds for sepcialists.}
 \subsection{Uniform convergence of measures}
 
+\yoav{I think a multiplicative bound on the measure of the ghost
+  sample would be more useful for bounding the deviation of the bias.}
+
+\begin{theorem}\label{thm:uc1}
+Let $\B$ be a family of specialists of VC dimension $d$,
+let $\eps,\delta>0$, 
+and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
+  k_{\samp_2}(B) < \frac{k_{\samp_1}(B)}{8}  \Bigr] \leq 2n^d \log(k_{\samp_1}(B)) e^{-\frac{1}{3} k_{\samp_1}(B)}
+\]
+\end{theorem}
+
+\begin{proof}
+  Sketch of proof. We use Chernoff bound instead of Hoeffding bound to
+  bound the ratio.
+
+  We assume the true value of $p(B)$ to be of the form $2^{-i}$ for
+  some $i$ and prove that as the ratio is 8, there exists some $i$ for which
+  $p_{\samp_1}(B) \geq 2p(B)$ and $p_{\samp_2}(B) \leq p(B)/2$
+\end{proof}
+
+\iffalse
 \begin{theorem}\label{thm:uc1}
 Let $\B$ be a family of specialists of VC dimension $d$,
 let $\eps,\delta>0$, 
@@ -246,6 +293,7 @@ and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
 %\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
 \]
 \end{theorem}
+\fi
 
 \subsection{Uniform convergence of biases}
 \begin{theorem}
@@ -290,8 +338,8 @@ The proof follows from the following two lemmas:
 %In the remaining of this proof we condition on this event 
 %but for ease of notation omit spelling it out explicitly.
 
-\yoav{I plan to follow the steps in Devroye, Gyorfi, Lugosi Proof of
-  the Borel Cantelli theorem}
+%\yoav{I plan to follow the steps in Devroye, Gyorfi, Lugosi Proof of
+%  the Borel Cantelli theorem}
 
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
 Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
