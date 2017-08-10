@@ -263,6 +263,23 @@ roughly, to nearest neighbor methods.
 \section{Uniform convergence bounds for sepcialists.}
 \subsection{Uniform convergence of measures}
 
+In order for our unifom convergence bounds to hold, we need to remove
+from consideration all balls in which the number of points is smaller
+than some minimum $O(d \log n + \ln 1/\delta)$. As this threshold is
+used in the algorithm we need to be specific and we choose
+$2k_0=6\left[  d \log n + \log(1/\delta) \right]$ to be the threshold.
+
+It might be the case that by properly chosing the length of the
+confidence interval we can make sure that when $k(ball)<2k_0$ the
+inteval would make the statement vacuous. Restricting $k(B)>2k_0$
+gives a more direct proof. The bound is still better than the uniform
+bound that depends on $n$ rather than on $k(B)$.
+
+The first thing we show is that when using a sample of size $2n$, the
+probability that there exists a ball $B$ such that $k_1(B)>2k_0$ and
+$k_2(b)<k_0/2$ is smaller than $\delta$. In other words, the
+probability that at least one of the balls used by the algorithm has
+$k_2(B)<k_0/2$ is at most $\delta$.
 
 \begin{theorem}\label{thm:uc1}
 Let $\B$ be a family of specialists of VC dimension $d$,
@@ -292,24 +309,12 @@ that contain less than $2k_0$ points are ignored.
   \[
   P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
   \]
+  \end{itemize}
 
   We use the standard ghost sample argument to get a uniform bound
   over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
-  \end{itemize}
-
 
   \end{proof}
-
-\iffalse
-\begin{theorem}\label{thm:uc1}
-Let $\B$ be a family of specialists of VC dimension $d$,
-let $\eps,\delta>0$, 
-and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-\[\Pr_{\samp\sim p^n}\Bigl[\exists {B\in\B}:~\lvert p_{\samp}(B) -  p(B)\rvert \geq \sqrt{\frac{100d + \log(1/\delta)}{n}} \Bigr] \leq \delta.
-%\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
-\]
-\end{theorem}
-\fi
 
 \subsection{Uniform convergence of biases}
 \begin{theorem}
@@ -317,7 +322,11 @@ Let $\B$ be a family of specialists of VC dimension $d$,
 let $\eps,\delta>0$,
 and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
 Then:
-\[\Pr_{\samp\sim p^n}\Bigl[\exists {B\in\B}:~\lvert \bias_{\samp}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k(B)} }\Bigr] \leq \delta,
+\[\Pr_{\samp\sim p^n}\left[\exists {B\in\B}:~\lvert
+  \bias_{\samp}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n +
+      \log(1/\delta)}{k(B)} }
+  \mbox{ and } k(B)>2k_0
+  \right] \leq \delta,
 %\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
 \]
 where $k(B) = \lvert\{ i : x_i\in B \}\rvert$.
@@ -331,11 +340,16 @@ We follow the double sampling argument.
 Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
 Let $E_1$ denote the event whose probability we want to bound:
 \[
-E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }\text{"}, 
+E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -
+\bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)}}
+\mbox{ and } k_1(B)>2k_0
+\text{"}, 
 \]
-,and let $E_2$ denote the event:
+and let $E_2$ denote the event:
 \[
-E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{\min(k_1(B),k_2(B))} }\text{"},
+E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)}}
+  \mbox{ and } k1(B)>2k_0
+  \text{"},
 \]
 where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
 The proof follows from the following two lemmas:
@@ -347,15 +361,6 @@ The proof follows from the following two lemmas:
 \end{lemma}
 
 \paragraph{Proof of Lemma~\ref{lem:aux1}.}
-%First note that we may restrict ourselves to the event
-%that $k_1(B)$, $k_2(b)$, and $n\cdot p(b)$ are all within distance
-%$\sqrt{n(100d+\log(1/\delta))}$ from each other, simultanously for every $B\in\B$.
-%Indeed, by Theorem~\ref{thm:uc1} the probability it is not the case is at most $2\delta$.
-%In the remaining of this proof we condition on this event 
-%but for ease of notation omit spelling it out explicitly.
-
-%\yoav{I plan to follow the steps in Devroye, Gyorfi, Lugosi Proof of
-%  the Borel Cantelli theorem}
 
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
 Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
@@ -367,13 +372,18 @@ it suffices to show that
 Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$.
 We distinguish between two cases: $p(B)$ is large and $p(B)$ is small.
 The case when $p(B)$ is sufficiently large (at least $1/n$) is fine (I think).
-Therefore, assume $p(B)$ is small, say $p(B) \leq 1/1000n$.
+
+On the other hand, if $p(B)<k_0/n$ then, with hight probability
+$k_1(B)<2k_0$ and the ball will be eliminated from consideration.
+
+\iffalse
 Further assume that $\bias(B) = 0.8$,  that $\bias_{\samp_1}(B)=0$, and that $k_1(B)$
 is sufficiently large so the $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$.
 Now, since $p(B) \leq 1/1000n$ it follows that $k_2(B)=0$ with probability at least $0.99$.
 Now, it is plausible to define $\bias_{\samp_2}(B)=0$ when $k_2(B)=0$,
 and therefore we get that $\bias_{\samp_2}=\bias_{\samp_1}=0$ with probability at least $0.99$ and so the event $E_2$ occurs with probability less than $0.01$,
 unlike what we wanted.
+\fi
 \end{proof}
 
 \section{The algoithm}
