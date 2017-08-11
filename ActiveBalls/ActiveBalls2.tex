@@ -281,38 +281,79 @@ $k_2(b)<k_0/2$ is smaller than $\delta$. In other words, the
 probability that at least one of the balls used by the algorithm has
 $k_2(B)<k_0/2$ is at most $\delta$.
 
+%\begin{theorem}\label{thm:uc1}
+%Let $\B$ be a family of specialists of VC dimension $d$,
+%let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
+%and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+%\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
+%  k_{\samp_1}(B)>2k_0 \mbox{ and } k_{\samp_2}(B) < \frac{k_0}{2} \Bigr] \leq \delta
+%\]
+%\end{theorem}
+
 \begin{theorem}\label{thm:uc1}
 Let $\B$ be a family of specialists of VC dimension $d$,
 let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
-and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
-  k_{\samp_1}(B)>2k_0 \mbox{ and } k_{\samp_2}(B) < \frac{k_0}{2} \Bigr] \leq \delta
+and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
+  p_{\samp}(B)>2k_0/n \mbox{ and } p(B) < k_0/n \Bigr] \leq \delta,
+\]
+and
+\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
+  p_{\samp}(B)< 2k_0/n \mbox{ and } p(B) > 4k_0/n \Bigr] \leq \delta.
 \]
 \end{theorem}
+
+
 
 Note that this has a meaning for the algorithm. It means that balls
 that contain less than $2k_0$ points are ignored.
 
 \begin{proof}
-  Sketch of proof. We use the standard uniform convergence bound with
-  the difference that We use the multiplicative Chernoff bound instead
-  of the additive Hoeffding bound. 
+Sketch of proof. We use the standard uniform convergence bound with
+the difference that We use the multiplicative Chernoff bound instead
+ of the additive Hoeffding bound. 
 
-  Fix $B$, we have two cases: either $p(B) \leq k_0/n$ or
-  $p(B)>k_0/n$. We bound the probability of each case using chernoff:
-  \begin{itemize}
-  \item $p(B) \leq k_0/n$ then
-  \[
-  P\left[ k_{\samp_1}(B) \geq 2 k_0 \right] \leq \exp(-k_0/3)
-  \]
-  \item $p(B) > k_0/n$ then
-  \[
-  P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
-  \]
-  \end{itemize}
+We begin with the first inequality.  
+We follow the double sampling argument.
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $E_1$ denote the event whose probability we want to bound:
+\[
+E_1 = \text{"}\exists {B\in\B}:
+  p_{\samp_1}(B)>2k_0/n \mbox{ and } p(B) < k_0/n
+\text{"}, 
+\]
+and let $E_2$ denote the event:
+\[
+E_1 = \text{"}\exists {B\in\B}:
+  p_{\samp_1}(B)>2k_0/n \mbox{ and } p_{\samp_2}(B) < 1.5k_0/n
+\text{"}.
+\]
+The proof follows from the following two lemmas:
+\begin{lemma}\label{lem:aux1}
+\[\Pr[E_1]\leq 4\Pr[E_2]\]
+\end{lemma}
+\begin{lemma}
+\[\Pr[E_2]\leq \delta\]
+\end{lemma}
 
-  We use the standard ghost sample argument to get a uniform bound
-  over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
+  
+  
+%
+%  Fix $B$, we have two cases: either $p(B) \leq k_0/n$ or
+%  $p(B)>k_0/n$. We bound the probability of each case using chernoff:
+%  \begin{itemize}
+%  \item $p(B) \leq k_0/n$ then
+%  \[
+%  P\left[ k_{\samp_1}(B) \geq 2 k_0 \right] \leq \exp(-k_0/3)
+%  \]
+%  \item $p(B) > k_0/n$ then
+%  \[
+%  P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
+%  \]
+%  \end{itemize}
+%
+%  We use the standard ghost sample argument to get a uniform bound
+%  over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
 
   \end{proof}
 
