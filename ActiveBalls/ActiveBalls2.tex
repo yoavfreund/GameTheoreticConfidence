@@ -462,9 +462,75 @@ The bias of each constraint is calculated with respect to the
 cumulative uniform sample, and with respect to each one of the active
 sets. Each of these sets defines a contraint on a subset of the $z_i$'s 
 
+\section{Sufficient conditions on the true bias}
+\newcommand{\Bayes}{f^*}
+The goal of our algorithm is to generate a rule $f$ that
+approximates the Bayes decision rule $\Bayes(\x) = \sign(\bias(\x))$.
+Specifically, we set our goal to be minimizing the regret $\err(f) - \err(\Bayes)$.
 
+In this section we define conditions on $\bias(x)$ that guarantee that
+the algorithm will achieve a regret of $\epsilon$ after querying the
+labels of $O(\log 1/\epsilon)$ instances.
 
+We do this in two steps. First, we describe a technical condition on
+$\bias(\x)$. Second, we give two more natural conditions that
+guarantee the technical condition.
 
+\subsection{$\epsilon$ approximation using Balls}
 
+Let $\D$ be the distribution over $\X\times \{-1,+1\}$ where the
+distribution over $\X$ is uniform and the conditional distribution
+over the label $y$ given $\x$ is define by $\bias(\x)$.
+
+\newcommand{\Be}{{\cal B}_{\epsilon}}
+\newcommand{\fBe}{f_{\Be}}
+\newcommand{\UBe}{U_{\epsilon}}
+We say that $\D$ is $\epsilon$ approximable using balls for $\epsilon>0$ if
+there exists a collection of balls $\Be$ such that 
+\begin{itemize}
+\item For all $B \in \Be$, $P_{\D}(B)>\epsilon$
+\item For all $B \in \Be$, $|\bias(B)-1/2| > \epsilon$
+\item For all $B \in \Be$ and for any point $\x \in B$, $\sign(\bias(\x))=\sign(\bias(B))$
+\item %Let $\UBe$ be the union of all of the balls in $\Be$, i.e. $\UBe
+  %\doteq \bigcup_{B \in \Be} B$\\
+  Define the prediction function $\fBe$ as follows:
+  \[
+  \fBe(\x) \doteq \begin{cases}
+    1 & \exists B \in \Be, \;\;\mbox{such that}\;\; \x \in B,
+    \bias(B)>0 \\
+    0 & \nexists B \in \Be \;\;\mbox{such that}\;\; \x \in B \\
+    -1 & \exists B \in \Be, \;\;\mbox{such that}\;\; \x \in B,
+    \bias(B)<0
+  \end{cases}
+  \]
+  The final requirement is that $\err(\fBe) \leq \err(\Bayes)+\epsilon$
+\end{itemize}
+
+\subsection{Specific conditions}
+
+I believe either of the following conditions implies
+$\epsilon$-approximation using balls.
+
+\begin{enumerate}
+\item
+  {\bf The conditional probability is Lipshitz smooth}. In other words, for
+any $\x,\y \in \X$:
+\[
+|\bias(\x) - \bias(\y)| \leq \alpha \|\x-\y\|_2^{\beta}
+\]
+\item
+The bias is bounded away from zero and {\bf the boundary is low
+dimensional}. More technically:
+\begin{itemize}
+\item There exists some $\epsilon_0$ such that $\forall \x \in \X$, $|\bias(\x)|>\epsilon_0$.
+\item Recall that $\X \subset R^d$. Define boundary balls as balls
+  that contain and element with positive bias and an element with
+  negative bias. Let $G_{\epsilon}$ be the union of all boundary balls
+  with probability at most $\epsilon$. We say that the boundary has
+  low dimension if $P_{\D}(G_{\epsilon}) \to 0$ as $\epsilon \to 0$
+  (one has to be a bit careful in the definition here because $\X$ is finite, so
+  $G_{1/2|\X|}=\emptyset$ trivially).  
+\end{itemize}
+\end{enumerate}
 
 \end{document}
