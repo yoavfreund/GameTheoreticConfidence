@@ -324,17 +324,35 @@ E_1 = \text{"}\exists {B\in\B}:
 \]
 and let $E_2$ denote the event:
 \[
-E_1 = \text{"}\exists {B\in\B}:
+E_2 = \text{"}\exists {B\in\B}:
   p_{\samp_1}(B)>2k_0/n \mbox{ and } p_{\samp_2}(B) < 1.5k_0/n
 \text{"}.
 \]
 The proof follows from the following two lemmas:
-\begin{lemma}\label{lem:aux1}
+\begin{lemma}\label{lem:auxuc1}
 \[\Pr[E_1]\leq 4\Pr[E_2]\]
 \end{lemma}
-\begin{lemma}
+\begin{lemma}\label{lem:auxuc2}
 \[\Pr[E_2]\leq \delta\]
 \end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]\ \\
+
+\paragraph{High level.}
+Condition on $E_1$ and let $B$ be a specialist that certifies it.
+Since $p(B)$ is small, it follows that with a constant probability
+$p_{\samp_2}(B)$ is also small.
+This should imply $E_2$.
+So, conditioned on $E_1$, with a constant probability $E_2$ occurs.
+
+\end{proof}
+
+
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ \\
+
+\paragraph{High level.}
+
+\end{proof}
 
   
   
