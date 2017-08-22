@@ -343,7 +343,8 @@ Condition on $E_1$ and let $B$ be a specialist that certifies it.
 Since $p(B)$ is small, it follows that with a constant probability
 $p_{\samp_2}(B)$ is also small.
 This should imply $E_2$.
-So, conditioned on $E_1$, with a constant probability $E_2$ occurs.
+So, it follows that conditioned on $E_1$, 
+the event $E_2$ occurs with a constant probability.
 
 \end{proof}
 
@@ -351,6 +352,15 @@ So, conditioned on $E_1$, with a constant probability $E_2$ occurs.
 \begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ \\
 
 \paragraph{High level.}
+Instead of sampling $S_1$ and then $S_2$,
+we first sample $S=S_1\cup S_2$ and 
+then partition it to $S_1$ and $S_2$ uniformly.
+Now, given a sample $S$ what is the probability (over the random partition)
+that $E_2$ occurs?
+To analyze this we use a union bound. 
+We only need to consider $B$'s such that $p_S(B) > 2k_0$.
+Then we show that $p_{S_1}(B) > \frac{4}{3}p_{S_2}(B)$
+with probability at most $\delta$.
 
 \end{proof}
 
