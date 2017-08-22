@@ -389,7 +389,7 @@ E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -
 and let $E_2$ denote the event:
 \[
 E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)}}
-  \mbox{ and } k_1(B)>2k_0
+  \mbox{ and }~ \bigl(k_1(B) + k_2(B)\bigr)>2k_0
   \text{"},
 \]
 where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
@@ -397,11 +397,11 @@ The proof follows from the following two lemmas:
 \begin{lemma}\label{lem:aux1}
 \[\Pr[E_1]\leq 4\Pr[E_2]\]
 \end{lemma}
-\begin{lemma}
+\begin{lemma}\label{lem:aux2}
 \[\Pr[E_2]\leq \delta\]
 \end{lemma}
 
-\paragraph{Proof of Lemma~\ref{lem:aux1}.}
+\begin{proof}[Proof of Lemma~\ref{lem:aux1}.]
 
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
 Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
@@ -410,12 +410,40 @@ namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 4\Pr[E_2]$.
 Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
 it suffices to show that 
 \[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/4.\]
-Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$.
-We distinguish between two cases: $p(B)$ is large and $p(B)$ is small.
-The case when $p(B)$ is sufficiently large (at least $1/n$) is fine (I think).
+Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$
+and $k_1(B) > 2k_0$. 
+By Theorem~\ref{thm:uc1} we may assume (with probability $1-\delta$)
+that~$p(B)\geq k_0/n$.
 
-On the other hand, if $p(B)<k_0/n$ then, with hight probability
-$k_1(B)<2k_0$ and the ball will be eliminated from consideration.
+\paragraph{High level.} $p(B)\geq k_0/n$ implies that $k_2(B)$ is sufficiently large with probability at least 1/2,
+say at least $k_0/100$.
+This should imply that the $\bias_{\samp_2}(B)$ is sufficiently close
+to $\bias(B)$, say to an additive factor of $\sqrt{\frac{100d\log n + \log(1/\delta)}{k_2(B)}}$.
+Consequently, this should imply that $\bias_{\samp_2}(B)$ and $\bias_{\samp_1}(B)$
+are at least some $\Omega(\sqrt{\frac{d\log n + \log(1/\delta)}{k_1(B)}})$ with a constant probability,
+which is qualitatively $E_1$. To conclude, conditioned on $E_2$, the probability of $E_1$
+is at least a constant.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:aux2}]\ \\
+\paragraph{High level.}
+Instead of sampling $S_1$ and then $S_2$,
+we first sample $S=S_1\cup S_2$ and 
+then partition it to $S_1$ and $S_2$ uniformly.
+Now, given a sample $S$ what is the probability (over the random partition)
+that $E_2$ occurs?
+First, we only need to worry about $B$'s such that $k_S(B) > 2k_0$.
+For such a $B$, the probability that the biases differ should be sufficiently
+small such that when we union bound over all $O(n^d)$ different $B$'s
+we still get that the resulting probability is at most $\delta$.
+
+\end{proof}
+
+%We distinguish between two cases: $p(B)$ is large and $p(B)$ is small.
+%The case when $p(B)$ is sufficiently large (at least $1/n$) is fine (I think).
+%
+%On the other hand, if $p(B)<k_0/n$ then, with hight probability
+%$k_1(B)<2k_0$ and the ball will be eliminated from consideration.
 
 \iffalse
 Further assume that $\bias(B) = 0.8$,  that $\bias_{\samp_1}(B)=0$, and that $k_1(B)$
