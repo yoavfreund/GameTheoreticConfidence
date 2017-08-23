@@ -108,6 +108,8 @@
 \newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
 \newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
 \newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+\newcommand{\Ex}{\mathbb{E}} % expected value operator
+
 
 \newcommand{\pdis}[1]{P_{dis}\left(#1\right)}
 \newcommand{\lrp}[1]{\left(#1\right)}
@@ -267,7 +269,7 @@ In order for our unifom convergence bounds to hold, we need to remove
 from consideration all balls in which the number of points is smaller
 than some minimum $O(d \log n + \ln 1/\delta)$. As this threshold is
 used in the algorithm we need to be specific and we choose
-$2k_0=6\left[  d \log n + \log(1/\delta) \right]$ to be the threshold.
+$k_0=50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ to be the threshold.
 
 It might be the case that by properly chosing the length of the
 confidence interval we can make sure that when $k(ball)<2k_0$ the
@@ -292,7 +294,7 @@ $k_2(B)<k_0/2$ is at most $\delta$.
 
 \begin{theorem}\label{thm:uc1}
 Let $\B$ be a family of specialists of VC dimension $d$,
-let $\delta>0$ and let $k \geq k_0(n,\delta) := 3\left[  d \log n + \log(1/\delta) \right]$,
+let $\delta>0$, let $k \geq k_0(n,\delta) := \new{50\bigl(d\log(2n) + \log(10/\delta)\bigr)}$,
 and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
 \[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
   p_{\samp}(B)>2k/n \mbox{ and } p(B) \leq {p_{\samp}(B)}/{2} \Bigr] \leq \delta,
@@ -302,8 +304,6 @@ and
   p_{\samp}(B)< 2k/n \mbox{ and } p(B) \geq 2p_{\samp}(B) \Bigr] \leq \delta.
 \]
 \end{theorem}
-
-
 We will use $k_0=k_0(n,\delta)$ as a threshold for the algorithm:
 balls that contain less than $2k$ points are ignored by it.
 
@@ -355,9 +355,8 @@ it suffices to show that
 Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p(B) \leq p_{\samp_1}(B)/2$.
 We want to show that $p_{\samp_2}(B) \leq 3p_{\samp_1}(B)/4$ with probability at least $1/10$.
 It is enough to show that 
-\[ \Pr\Bigl[ p_{\samp_2}(B) \leq 3p(B)/2\Bigr] \geq 1/10 \]
-
-Or equivalently that:
+\[ \Pr\Bigl[ p_{\samp_2}(B) \leq 3p(B)/2\Bigr] \geq 1/10, \]
+or equivalently that:
 \[
 \Pr\Bigl[ p_{\samp_2}(B) > 3p(B)/2\Bigr]
 <
@@ -386,18 +385,39 @@ the event $E_2$ occurs with probability at least $1/10$.
 \end{proof}
 
 
-\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ \\
-
-\paragraph{High level.}
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ 
 Instead of sampling $S_1$ and then $S_2$,
 we first sample $S=S_1\cup S_2$ and 
 then partition it to $S_1$ and $S_2$ uniformly.
 Now, given a sample $S$ what is the probability (over the random partition)
 that $E_2$ occurs?
+
 To analyze this we use a union bound. 
-We only need to consider $B$'s such that $p_S(B) > 2k$.
-Then we show that $p_{S_1}(B) > \frac{4}{3}p_{S_2}(B)$
-with probability at most $\delta$.
+Fix a sample $\samp$ of size $2n$
+We only need to consider $B$'s such that $k(B) > 2k$.
+Fix such a $B$.
+Without loss of generality assume that
+first $k(B)$ points out of the $2n$
+points in $S$ are in $B$. 
+For every $j\leq k(B)$,
+let $X_i$ denote the indicator of the event
+that the $i$'th point in $S$ was drawn into $S_2$.
+Set~$X=\sum_{i=1}^{k(B)}X_i$.
+Note that $B$ causes $E_2$ to occur if and only if $X\leq 3k(B)/7$.
+To upper bound the probability of this event we use
+Mcdiarmid's inequality~\cite{}.
+To this end note that $X$ is a function of $X_1,\ldots,X_{k(B)}$
+with $\mu:=\Ex[X]=k(B)/2$, and that $X$ satisfies the bounded
+difference condition with $c_i=1$ (because it is a sum of indicators). 
+Therefore, Mcdiarmid's inequality implies
+that
+\[\Pr\bigl[X\leq3k(B)/7\bigr]=\Pr\bigl[X-\mu \leq -k(B)/14\bigr]\leq\exp\bigl(-2(1/14)^2k(B)\bigr) < \exp(-k/50) \]
+(where the last inequality is because $k(B) > 2k$).
+Now, since the number of distinct restrictions $B|_S$ is at most $(2n)^d$, by the union bound it follows that
+\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
+Setting $k\geq 50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+that this probability is at most $\delta/10$.
+
 
 \end{proof}
 
