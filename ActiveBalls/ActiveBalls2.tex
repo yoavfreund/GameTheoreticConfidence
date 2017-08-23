@@ -292,26 +292,25 @@ $k_2(B)<k_0/2$ is at most $\delta$.
 
 \begin{theorem}\label{thm:uc1}
 Let $\B$ be a family of specialists of VC dimension $d$,
-let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
+let $\delta>0$ and let $k \geq k_0(n,\delta) := 3\left[  d \log n + \log(1/\delta) \right]$,
 and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
 \[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)>2k_0/n \mbox{ and } p(B) < k_0/n \Bigr] \leq \delta,
+  p_{\samp}(B)>2k/n \mbox{ and } p(B) < k/n \Bigr] \leq \delta,
 \]
 and
 \[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)< 2k_0/n \mbox{ and } p(B) > 4k_0/n \Bigr] \leq \delta.
+  p_{\samp}(B)< 2k/n \mbox{ and } p(B) > 4k/n \Bigr] \leq \delta.
 \]
 \end{theorem}
 
 
-
-Note that this has a meaning for the algorithm. It means that balls
-that contain less than $2k_0$ points are ignored.
+We will use $k_0=k_0(n,\delta)$ as a threshold for the algorithm:
+balls that contain less than $2k$ points are ignored by it.
 
 \begin{proof}
-Sketch of proof. We use the standard uniform convergence bound with
-the difference that We use the multiplicative Chernoff bound instead
- of the additive Hoeffding bound. 
+We use the standard uniform convergence bound with
+the difference that we use the multiplicative Chernoff bound instead
+of the additive bound. 
 
 We begin with the first inequality.  
 We follow the double sampling argument.
@@ -319,32 +318,68 @@ Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
 Let $E_1$ denote the event whose probability we want to bound:
 \[
 E_1 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k_0/n \mbox{ and } p(B) < k_0/n
+  p_{\samp_1}(B)>2k/n \mbox{ and } p(B) < k/n
 \text{"}, 
 \]
 and let $E_2$ denote the event:
 \[
 E_2 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k_0/n \mbox{ and } p_{\samp_2}(B) < 1.5k_0/n
+  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) < 1.5k/n
 \text{"}.
 \]
 The proof follows from the following two lemmas:
 \begin{lemma}\label{lem:auxuc1}
-\[\Pr[E_1]\leq 4\Pr[E_2]\]
+\[\Pr[E_1]\leq 10\Pr[E_2].\]
 \end{lemma}
 \begin{lemma}\label{lem:auxuc2}
-\[\Pr[E_2]\leq \delta\]
+\[\Pr[E_2]\leq \delta/10.\]
 \end{lemma}
 
-\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]\ \\
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
 
-\paragraph{High level.}
-Condition on $E_1$ and let $B$ be a specialist that certifies it.
-Since $p(B)$ is small, it follows that with a constant probability
-$p_{\samp_2}(B)$ is also small.
-This should imply $E_2$.
+%\bf{High level.}
+%Condition on $E_1$ and let $B$ be a specialist that certifies it.
+%Since $p(B)$ is small, it follows that with a constant probability
+%$p_{\samp_2}(B)$ is also small.
+%This should imply $E_2$.
+%So, it follows that conditioned on $E_1$, 
+%the event $E_2$ occurs with a constant probability.
+
+It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/10$, 
+namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+
+Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p(B) < k/n$.
+By the definition of $E_2$
+it suffices to show that 
+\[
+\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
+\leq
+9/10
+\]
+(since $p(B) < k/n$).
+We consider two cases:
+(i) if $(3/2)p(B) < 1/n$
+then
+\[
+\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
+\leq
+\Pr\Bigl[ p_{\samp_2}(B) > 0 \Bigr]
+\leq np(B) < 2/3 < 9/10.
+\]
+(ii) Else, if $(3/2)p(B) > 1/n$, then bny the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+\[
+\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
+\leq
+\exp\Bigl( \frac{-({1}/{2})\cdot p(B)\cdot n}{3}\Bigr)\leq\exp(-1/9)\leq9/10.
+\]
 So, it follows that conditioned on $E_1$, 
-the event $E_2$ occurs with a constant probability.
+the event $E_2$ occurs with probability at least $1/10$.
+
+
 
 \end{proof}
 
@@ -358,7 +393,7 @@ then partition it to $S_1$ and $S_2$ uniformly.
 Now, given a sample $S$ what is the probability (over the random partition)
 that $E_2$ occurs?
 To analyze this we use a union bound. 
-We only need to consider $B$'s such that $p_S(B) > 2k_0$.
+We only need to consider $B$'s such that $p_S(B) > 2k$.
 Then we show that $p_{S_1}(B) > \frac{4}{3}p_{S_2}(B)$
 with probability at most $\delta$.
 
@@ -388,6 +423,7 @@ with probability at most $\delta$.
 \subsection{Uniform convergence of biases}
 \begin{theorem}
 Let $\B$ be a family of specialists of VC dimension $d$, 
+set $k_0 = ???$, and
 let $\eps,\delta>0$,
 and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
 Then:
@@ -423,13 +459,23 @@ E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\
 where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
 The proof follows from the following two lemmas:
 \begin{lemma}\label{lem:aux1}
-\[\Pr[E_1]\leq 4\Pr[E_2]\]
+\[\Pr[E_1]\leq 4\Pr[E_2].\]
 \end{lemma}
 \begin{lemma}\label{lem:aux2}
-\[\Pr[E_2]\leq \delta\]
+\[\Pr[E_2]\leq \delta.\]
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lem:aux1}.]
+
+%{\bf High level.} $p(B)\geq k_0/n$ implies 
+%that with a constant probability $k_2(B)$ is sufficiently large,
+%say at least $k_0/100$.
+%This should imply that the $\bias_{\samp_2}(B)$ is sufficiently close
+%to $\bias(B)$, say to an additive factor of $O\bigl(\sqrt{\frac{d\log n + \log(1/\delta)}{k_2(B)}}\bigr)$.
+%Consequently, this should imply that $\bias_{\samp_2}(B)$ and $\bias_{\samp_1}(B)$
+%are at least some $\Omega\bigl(\sqrt{\frac{d\log n + \log(1/\delta)}{k_1(B)}}\bigr)$ with a constant probability,
+%which is $E_1$ (or qualitatively equivalent to it). To conclude, conditioned on $E_2$, the probability of $E_1$
+%is at least a constant.
 
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
 Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
@@ -440,17 +486,28 @@ it suffices to show that
 \[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/4.\]
 Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$
 and $k_1(B) > 2k_0$. 
-By Theorem~\ref{thm:uc1} we may assume (with probability $1-\delta$)
-that~$p(B)\geq k_0/n$.
+By Theorem~\ref{thm:uc1} it holds 
+that~$p(B)\geq k_0/n$ and $k_2(B) \geq \new{\frac{k_0}{2}}$
+with probability at least \new{$1/2$}.
+In the remaining of this proof we condition on this event.
+Standard concentration bound (e.g.\ Chernoff)
+imply that with probability at least~$1/2$:
+\[\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \leq \sqrt{\frac{10}{k_2(B)}} \leq \sqrt{\frac{\new{20}}{k_1(B)}},\]
+where the last inequality is because we condition on the event that $k_2(B)\geq \frac{k_1(B)}{2}$.
+Therefore:
+\[\lvert \bias_{\samp_2}(B) -  \bias_{\samp_1}(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }- \sqrt{\frac{\new{20}}{k_1(B)}},\]
+which implies $E_2$.
+To conclude, the probability of $E_2$ conditioned on $E_1$
+is at least $1/4$.
 
-\paragraph{High level.} $p(B)\geq k_0/n$ implies that $k_2(B)$ is sufficiently large with probability at least 1/2,
-say at least $k_0/100$.
-This should imply that the $\bias_{\samp_2}(B)$ is sufficiently close
-to $\bias(B)$, say to an additive factor of $\sqrt{\frac{100d\log n + \log(1/\delta)}{k_2(B)}}$.
-Consequently, this should imply that $\bias_{\samp_2}(B)$ and $\bias_{\samp_1}(B)$
-are at least some $\Omega(\sqrt{\frac{d\log n + \log(1/\delta)}{k_1(B)}})$ with a constant probability,
-which is qualitatively $E_1$. To conclude, conditioned on $E_2$, the probability of $E_1$
-is at least a constant.
+%
+%Conditioning on this event, Chernoff bound implies that:
+%\[
+%\Pr\Bigl[\bigl\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_2(B)} }\Bigr]
+%\leq
+%2\exp\bigl(\bigr)
+%\]
+
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:aux2}]\ \\
