@@ -295,11 +295,11 @@ Let $\B$ be a family of specialists of VC dimension $d$,
 let $\delta>0$ and let $k \geq k_0(n,\delta) := 3\left[  d \log n + \log(1/\delta) \right]$,
 and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
 \[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)>2k/n \mbox{ and } p(B) < k/n \Bigr] \leq \delta,
+  p_{\samp}(B)>2k/n \mbox{ and } p(B) \leq {p_{\samp}(B)}/{2} \Bigr] \leq \delta,
 \]
 and
 \[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)< 2k/n \mbox{ and } p(B) > 4k/n \Bigr] \leq \delta.
+  p_{\samp}(B)< 2k/n \mbox{ and } p(B) \geq 2p_{\samp}(B) \Bigr] \leq \delta.
 \]
 \end{theorem}
 
@@ -318,13 +318,13 @@ Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
 Let $E_1$ denote the event whose probability we want to bound:
 \[
 E_1 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k/n \mbox{ and } p(B) < k/n
+  p_{\samp_1}(B)>2k/n \mbox{ and } p(B) \leq {p_{\samp_1}(B)}/{2}
 \text{"}, 
 \]
 and let $E_2$ denote the event:
 \[
 E_2 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) < 1.5k/n
+  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) \leq {3p_{\samp_1}(B)}/{4}
 \text{"}.
 \]
 The proof follows from the following two lemmas:
@@ -352,27 +352,29 @@ namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
 Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
 it suffices to show that 
 \[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
-Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p(B) < k/n$.
-By the definition of $E_2$
-it suffices to show that 
+Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p(B) \leq p_{\samp_1}(B)/2$.
+We want to show that $p_{\samp_2}(B) \leq 3p_{\samp_1}(B)/4$ with probability at least $1/10$.
+It is enough to show that 
+\[ \Pr\Bigl[ p_{\samp_2}(B) \leq 3p(B)/2\Bigr] \geq 1/10 \]
+
+Or equivalently that:
 \[
-\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
-\leq
-9/10
+\Pr\Bigl[ p_{\samp_2}(B) > 3p(B)/2\Bigr]
+<
+9/10.
 \]
-(since $p(B) < k/n$).
 We consider two cases:
 (i) if $(3/2)p(B) < 1/n$
 then
 \[
-\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
+\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
 \leq
 \Pr\Bigl[ p_{\samp_2}(B) > 0 \Bigr]
 \leq np(B) < 2/3 < 9/10.
 \]
 (ii) Else, if $(3/2)p(B) > 1/n$, then bny the multiplicative Chernoff bound (see e.g.\cite{} page ??):
 \[
-\Pr\Bigl[ p_{\samp_2}(B) \geq (3/2)p(B)\Bigr]
+\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
 \leq
 \exp\Bigl( \frac{-({1}/{2})\cdot p(B)\cdot n}{3}\Bigr)\leq\exp(-1/9)\leq9/10.
 \]
