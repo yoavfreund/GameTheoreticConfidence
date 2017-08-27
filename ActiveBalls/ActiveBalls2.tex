@@ -263,196 +263,259 @@ roughly, to nearest neighbor methods.
 \end{enumerate}
 
 \section{Uniform convergence bounds for sepcialists.}
-\subsection{Uniform convergence of measures}
-
-In order for our unifom convergence bounds to hold, we need to remove
-from consideration all balls in which the number of points is smaller
-than some minimum $O(d \log n + \ln 1/\delta)$. As this threshold is
-used in the algorithm we need to be specific and we choose
-$k_0=50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ to be the threshold.
-
-It might be the case that by properly chosing the length of the
-confidence interval we can make sure that when $k(ball)<2k_0$ the
-inteval would make the statement vacuous. Restricting $k(B)>2k_0$
-gives a more direct proof. The bound is still better than the uniform
-bound that depends on $n$ rather than on $k(B)$.
-
-The first thing we show is that when using a sample of size $2n$, the
-probability that there exists a ball $B$ such that $k_1(B)>2k_0$ and
-$k_2(b)<k_0/2$ is smaller than $\delta$. In other words, the
-probability that at least one of the balls used by the algorithm has
-$k_2(B)<k_0/2$ is at most $\delta$.
-
+%\subsection{Uniform convergence of measures}
+%
+%In order for our unifom convergence bounds to hold, we need to remove
+%from consideration all balls in which the number of points is smaller
+%than some minimum $O(d \log n + \ln 1/\delta)$. As this threshold is
+%used in the algorithm we need to be specific and we choose
+%$k_0=50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ to be the threshold.
+%
+%It might be the case that by properly chosing the length of the
+%confidence interval we can make sure that when $k(ball)<2k_0$ the
+%inteval would make the statement vacuous. Restricting $k(B)>2k_0$
+%gives a more direct proof. The bound is still better than the uniform
+%bound that depends on $n$ rather than on $k(B)$.
+%
+%The first thing we show is that when using a sample of size $2n$, the
+%probability that there exists a ball $B$ such that $k_1(B)>2k_0$ and
+%$k_2(b)<k_0/2$ is smaller than $\delta$. In other words, the
+%probability that at least one of the balls used by the algorithm has
+%$k_2(B)<k_0/2$ is at most $\delta$.
+%
+%%\begin{theorem}\label{thm:uc1}
+%%Let $\B$ be a family of specialists of VC dimension $d$,
+%%let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
+%%and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+%%\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
+%%  k_{\samp_1}(B)>2k_0 \mbox{ and } k_{\samp_2}(B) < \frac{k_0}{2} \Bigr] \leq \delta
+%%\]
+%%\end{theorem}
+%
 %\begin{theorem}\label{thm:uc1}
 %Let $\B$ be a family of specialists of VC dimension $d$,
-%let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
-%and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-%\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
-%  k_{\samp_1}(B)>2k_0 \mbox{ and } k_{\samp_2}(B) < \frac{k_0}{2} \Bigr] \leq \delta
+%let $\delta>0$, let $k \geq k_0(n,\delta) := \new{50\bigl(d\log(2n) + \log(10/\delta)\bigr)}$,
+%and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
+%\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
+%  p_{\samp}(B)>2k/n \mbox{ and } p_{\samp}(B)\notin [{2^{-1}p(B)}, 2p(B)]  \Bigr] \leq \delta,
 %\]
 %\end{theorem}
+%We will use $k_0=k_0(n,\delta)$ as a threshold for the algorithm:
+%balls that contain less than $2k$ points are ignored by it.
+%
+%\begin{proof}
+%We use the standard uniform convergence bound with
+%the difference that we use the multiplicative Chernoff bound instead
+%of the additive bound. 
+%
+%We begin with the first inequality.  
+%We follow the double sampling argument.
+%Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+%Let $E_1$ denote the event whose probability we want to bound:
+%\[
+%E_1 = \text{"}\exists {B\in\B}:
+%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin [{2^{-1}p(B)}, 2p(B)]
+%\text{"}, 
+%\]
+%and let $E_2$ denote the event:
+%\[
+%E_2 = \text{"}\exists {B\in\B}:
+%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin \Bigl[\frac{3}{4}p_{\samp_2}(B), \frac{4}{3}p_{\samp_2}(B)\Bigr]
+%\text{"}.
+%\]
+%The proof follows from the following two lemmas:
+%\begin{lemma}\label{lem:auxuc1}
+%\[\Pr[E_1]\leq 10\Pr[E_2].\]
+%\end{lemma}
+%\begin{lemma}\label{lem:auxuc2}
+%\[\Pr[E_2]\leq \delta/10.\]
+%\end{lemma}
+%
+%\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
+%
+%%\bf{High level.}
+%%Condition on $E_1$ and let $B$ be a specialist that certifies it.
+%%Since $p(B)$ is small, it follows that with a constant probability
+%%$p_{\samp_2}(B)$ is also small.
+%%This should imply $E_2$.
+%%So, it follows that conditioned on $E_1$, 
+%%the event $E_2$ occurs with a constant probability.
+%
+%It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+%Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/10$, 
+%namely that $\Pr[E_1] \leq 10\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+%
+%Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+%it suffices to show that 
+%\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+%Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin [{2^{-1}p(B)}, 2p(B)]$.
+%We want to show that $p_{\samp_1}(B)\notin\Bigl[\frac{3}{4}p_{\samp_2}(B), \frac{4}{3}p_{\samp_2}(B)\Bigr]$ with probability at least $1/10$.
+%It is enough to show that 
+%\[ \Pr\Bigl[ p_{\samp_2}(B) \notin[2p(B)/3,3p(B)/2]\Bigr] < 9/10. \]
+%
+%\new{I am having some problems with this:
+%Imagine the case where $p(B)$ is very small, say less than $1/100n$.
+%In such a case it will almost surely be the case that $p_{\samp_2}(B)=0$
+%which is $\lnot E_2$.}
+%
+%%\begin{align*}
+%%p_2&\in [2p/3,3p/2]]\\
+%%p_1&\notin [p/2,2p]\\
+%%&\implies\\
+%%\text{if }p_1 > 2p &\implies p_1 >  (4/3)(3p/2) \geq (4/3)p_2,\\
+%%\text{else, } p_1 < p/2 &\implies p_1 < (3/4)(2p/3) \leq (3/4)p_2. 
+%%\end{align*}
+%
+%Having $p_S(B)\notin[2^{-1}p(B),2p(B]$ means
+%that either $p(B) > 2p_S(B)$ or $p(B) < p_S(B)/2$.
+%We show that in either way $p_{\samp_2}(B)\notin[3p(B)/4,4p(B)/3]$.
+%
+%If $p(B) > 2p_{\samp_1}(B)$
+%then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+%\begin{align*}
+%\Pr\Bigl[ p_{\samp_2}(B) \notin[3p(B)/4,4p(B)/3]\Bigr]
+%&\leq
+%\exp\Bigl( \frac{-({1}/{4})\cdot p(B)\cdot n}{2}\Bigr) + \exp\Bigl( \frac{-({1}/{3})\cdot p(B)\cdot n}{3}\Bigr)\\
+%&\leq
+%9/10,
+%\end{align*}
+%where in the last inequality we used that $p(B)\geq 2p_{\samp_1}(B)\geq 4k_0/n\geq 50/n$.
+%\new{Can change $9/10$ to $1/10$,}
 
-\begin{theorem}\label{thm:uc1}
-Let $\B$ be a family of specialists of VC dimension $d$,
-let $\delta>0$, let $k \geq k_0(n,\delta) := \new{50\bigl(d\log(2n) + \log(10/\delta)\bigr)}$,
-and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)>2k/n \mbox{ and } p(B) \leq {p_{\samp}(B)}/{2} \Bigr] \leq \delta,
-\]
-and
-\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-  p_{\samp}(B)< 2k/n \mbox{ and } p(B) \geq 2p_{\samp}(B) \Bigr] \leq \delta.
-\]
-\end{theorem}
-We will use $k_0=k_0(n,\delta)$ as a threshold for the algorithm:
-balls that contain less than $2k$ points are ignored by it.
 
-\begin{proof}
-We use the standard uniform convergence bound with
-the difference that we use the multiplicative Chernoff bound instead
-of the additive bound. 
 
-We begin with the first inequality.  
-We follow the double sampling argument.
-Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
-Let $E_1$ denote the event whose probability we want to bound:
-\[
-E_1 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k/n \mbox{ and } p(B) \leq {p_{\samp_1}(B)}/{2}
-\text{"}, 
-\]
-and let $E_2$ denote the event:
-\[
-E_2 = \text{"}\exists {B\in\B}:
-  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) \leq {3p_{\samp_1}(B)}/{4}
-\text{"}.
-\]
-The proof follows from the following two lemmas:
-\begin{lemma}\label{lem:auxuc1}
-\[\Pr[E_1]\leq 10\Pr[E_2].\]
-\end{lemma}
-\begin{lemma}\label{lem:auxuc2}
-\[\Pr[E_2]\leq \delta/10.\]
-\end{lemma}
 
-\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
 
-%\bf{High level.}
-%Condition on $E_1$ and let $B$ be a specialist that certifies it.
-%Since $p(B)$ is small, it follows that with a constant probability
-%$p_{\samp_2}(B)$ is also small.
-%This should imply $E_2$.
+%
+%Else, we have that $p(B) < p_{\samp_1}(B)/2$.
+%We consider two cases:
+%(i) if $10p(B) < 1/n$
+%then
+%\begin{align*}
+%\Pr\Bigl[ p_{\samp_2}(B) \notin[3p(B)/4,4p(B)/3]\Bigr]
+%&\leq
+%\Pr\Bigl[ p_{\samp_2}(B) > 0 \Bigr]\\
+%&\leq np(B) < 2/3 < 9/10.
+%\end{align*}
+%(ii) Else, if $(3/2)p(B) > 1/n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+%\[
+%\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
+%\leq
+%\exp\Bigl( \frac{-({1}/{2})\cdot p(B)\cdot n}{3}\Bigr)\leq\exp(-1/9)\leq9/10.
+%\]
 %So, it follows that conditioned on $E_1$, 
-%the event $E_2$ occurs with a constant probability.
-
-It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
-Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/10$, 
-namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
-
-Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
-it suffices to show that 
-\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
-Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p(B) \leq p_{\samp_1}(B)/2$.
-We want to show that $p_{\samp_2}(B) \leq 3p_{\samp_1}(B)/4$ with probability at least $1/10$.
-It is enough to show that 
-\[ \Pr\Bigl[ p_{\samp_2}(B) \leq 3p(B)/2\Bigr] \geq 1/10, \]
-or equivalently that:
-\[
-\Pr\Bigl[ p_{\samp_2}(B) > 3p(B)/2\Bigr]
-<
-9/10.
-\]
-We consider two cases:
-(i) if $(3/2)p(B) < 1/n$
-then
-\[
-\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
-\leq
-\Pr\Bigl[ p_{\samp_2}(B) > 0 \Bigr]
-\leq np(B) < 2/3 < 9/10.
-\]
-(ii) Else, if $(3/2)p(B) > 1/n$, then bny the multiplicative Chernoff bound (see e.g.\cite{} page ??):
-\[
-\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
-\leq
-\exp\Bigl( \frac{-({1}/{2})\cdot p(B)\cdot n}{3}\Bigr)\leq\exp(-1/9)\leq9/10.
-\]
-So, it follows that conditioned on $E_1$, 
-the event $E_2$ occurs with probability at least $1/10$.
-
-
-
-\end{proof}
-
-
-\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ 
-Instead of sampling $S_1$ and then $S_2$,
-we first sample $S=S_1\cup S_2$ and 
-then partition it to $S_1$ and $S_2$ uniformly.
-Now, given a sample $S$ what is the probability (over the random partition)
-that $E_2$ occurs?
-
-To analyze this we use a union bound. 
-Fix a sample $\samp$ of size $2n$
-We only need to consider $B$'s such that $k(B) > 2k$.
-Fix such a $B$.
-Without loss of generality assume that
-first $k(B)$ points out of the $2n$
-points in $S$ are in $B$. 
-For every $j\leq k(B)$,
-let $X_i$ denote the indicator of the event
-that the $i$'th point in $S$ was drawn into $S_2$.
-Set~$X=\sum_{i=1}^{k(B)}X_i$.
-Note that $B$ causes $E_2$ to occur if and only if $X\leq 3k(B)/7$.
-To upper bound the probability of this event we use
-Mcdiarmid's inequality~\cite{}.
-To this end note that $X$ is a function of $X_1,\ldots,X_{k(B)}$
-with $\mu:=\Ex[X]=k(B)/2$, and that $X$ satisfies the bounded
-difference condition with $c_i=1$ (because it is a sum of indicators). 
-Therefore, Mcdiarmid's inequality implies
-that
-\[\Pr\bigl[X\leq3k(B)/7\bigr]=\Pr\bigl[X-\mu \leq -k(B)/14\bigr]\leq\exp\bigl(-2(1/14)^2k(B)\bigr) < \exp(-k/50) \]
-(where the last inequality is because $k(B) > 2k$).
-Now, since the number of distinct restrictions $B|_S$ is at most $(2n)^d$, by the union bound it follows that
-\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
-Setting $k\geq 50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
-that this probability is at most $\delta/10$.
-
-
-\end{proof}
-
-  
-  
+%the event $E_2$ occurs with probability at least $1/10$.
 %
-%  Fix $B$, we have two cases: either $p(B) \leq k_0/n$ or
-%  $p(B)>k_0/n$. We bound the probability of each case using chernoff:
-%  \begin{itemize}
-%  \item $p(B) \leq k_0/n$ then
-%  \[
-%  P\left[ k_{\samp_1}(B) \geq 2 k_0 \right] \leq \exp(-k_0/3)
-%  \]
-%  \item $p(B) > k_0/n$ then
-%  \[
-%  P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
-%  \]
-%  \end{itemize}
-%
-%  We use the standard ghost sample argument to get a uniform bound
-%  over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
 
-  \end{proof}
+
+%\end{proof}
+
+%
+%\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ 
+%Instead of sampling $\samp_1$ and then $\samp_2$,
+%we first sample $\samp=\samp_1\cup \samp_2$ and 
+%then partition it to $\samp_1$ and $\samp_2$ uniformly.
+%Now, given $\samp$ what is the probability (over the random partition)
+%that $E_2$ occurs?
+%
+%Fix a sample $\samp$ of size $2n$
+%Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+%It suffices to show that the event
+%\[E_2|_{\samp} = \text{"}\exists {B\in\B|_{\samp}}:
+%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) \leq {3p_{\samp_1}(B)}/{4}
+%\text{"}\]
+%has probability at most $\delta/10$, for every every $\samp$ 
+%(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$.
+%To analyze this we use a union bound. 
+%We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > 2k$.
+%Fix such a $B$.
+%Without loss of generality assume that
+%first $k(B)$ points out of the $2n$
+%points in $S$ are in $B$. 
+%For every $j\leq k(B)$,
+%let $X_i$ denote the indicator of the event
+%that the $i$'th point in $S$ was drawn into $S_2$.
+%Set~$X=\sum_{i=1}^{k(B)}X_i$.
+%Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq 3k(B)/7$.
+%To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+%where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
+%One can verify that $\Pr[X\geq 3k(B)/7]\leq \Pr[Y\geq 3k(B)/7]$,
+%and therefore it suffices to analyze the latter, 
+%which is a standard application of Chernoff bound:
+%
+%\begin{align*}
+%\Pr\bigl[X\leq3k(B)/7\bigr]&\leq 
+%\Pr\bigl[Y\leq3k(B)/7\bigr]\\
+%&=\Pr\bigl[Y- k(B)/2 < k(B)/14\bigr]\leq
+%\exp\bigl(-2(1/14)^2k(B)\bigr) < \exp(-k/50)
+%\end{align*}
+%(where the last inequality is because $k(B) > 2k$).
+%By Sauer's Lemma
+%the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
+%\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
+%Setting $k\geq 50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+%that this probability is at most $\delta/10$.
+%
+%
+%\end{proof}
+%
+%  
+%  
+%%
+%%  Fix $B$, we have two cases: either $p(B) \leq k_0/n$ or
+%%  $p(B)>k_0/n$. We bound the probability of each case using chernoff:
+%%  \begin{itemize}
+%%  \item $p(B) \leq k_0/n$ then
+%%  \[
+%%  P\left[ k_{\samp_1}(B) \geq 2 k_0 \right] \leq \exp(-k_0/3)
+%%  \]
+%%  \item $p(B) > k_0/n$ then
+%%  \[
+%%  P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
+%%  \]
+%%  \end{itemize}
+%%
+%%  We use the standard ghost sample argument to get a uniform bound
+%%  over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
+%
+%  \end{proof}
 
 \subsection{Uniform convergence of biases}
+
+We will use the following Lemma, which we prove in the appendix, in Section~\ref{sec:auxuc}.
+\begin{lemma}\label{lem:auxuc}
+Let $\B$ be a family of specialists of VC dimension $d$.
+Set $p_0 = \frac{100\bigl(d\log(2n) + \log(10/\delta)\bigr)}{n}$, 
+where $1/2\geq \delta>0$,
+and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
+Then:
+\[
+\Pr
+\Bigl[
+\exists {B\in\B}: p_{\samp}(B) \geq p_0 \mbox{ and } p(B) \leq \frac{p_{\samp}(B)}{10n}
+\Bigr]\leq \delta
+\]
+and
+\[
+\Pr
+\Bigl[
+\exists {B\in\B}: p(B) \geq p_0 \mbox{ and } p_{\samp}(B) \leq \frac{p(B)}{10n}
+\Bigr]\leq \delta.
+\]
+
+
+\end{lemma}
+
 \begin{theorem}
-Let $\B$ be a family of specialists of VC dimension $d$, 
-set $k_0 = ???$, and
-let $\eps,\delta>0$,
+Let $\B$ be a family of specialists of VC dimension $d$.
+Set $k_0 = 100\bigl(d\log(2n) + \log(10/\frac{\delta}{2})\bigr)$, where
+ $1/2\geq \delta>0$,
 and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
 Then:
 \[\Pr_{\samp\sim p^n}\left[\exists {B\in\B}:~\lvert
   \bias_{\samp}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n +
       \log(1/\delta)}{k(B)} }
-  \mbox{ and } k(B)>2k_0
+  \mbox{ and } k(B)>k_0
   \right] \leq \delta,
 %\binom{n}{\leq d}\exp\bigl(-2\eps^2n\bigr),
 \]
@@ -469,58 +532,64 @@ Let $E_1$ denote the event whose probability we want to bound:
 \[
 E_1 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -
 \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)}}
-\mbox{ and } k_1(B)>2k_0
+\mbox{ and } k_1(B)>k_0
 \text{"}, 
 \]
 and let $E_2$ denote the event:
 \[
 E_2 = \text{"}\exists {B\in\B}:~\lvert \bias_{\samp_1}(B) -  \bias_{\samp_2}(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)}}
-  \mbox{ and }~ \bigl(k_1(B) + k_2(B)\bigr)>2k_0
+  \mbox{ and }~ \bigl(k_1(B) + k_2(B)\bigr)>k_0
   \text{"},
 \]
 where $k_i(b)$ is the number of examples in $S_i$ that belong to $B$.
-The proof follows from the following two lemmas:
+
+Now, assume towards contradiction that $\Pr[E_1] > \delta$.
+The following two lemmas yield a contradiction.
 \begin{lemma}\label{lem:aux1}
-\[\Pr[E_1]\leq 4\Pr[E_2].\]
+If $\Pr[E_1] > \delta$ then $\Pr[E_1]\leq 10\Pr[E_2].$
 \end{lemma}
 \begin{lemma}\label{lem:aux2}
-\[\Pr[E_2]\leq \delta.\]
+$\Pr[E_2]\leq \delta/10.$
 \end{lemma}
 
 \begin{proof}[Proof of Lemma~\ref{lem:aux1}.]
 
-%{\bf High level.} $p(B)\geq k_0/n$ implies 
-%that with a constant probability $k_2(B)$ is sufficiently large,
-%say at least $k_0/100$.
-%This should imply that the $\bias_{\samp_2}(B)$ is sufficiently close
-%to $\bias(B)$, say to an additive factor of $O\bigl(\sqrt{\frac{d\log n + \log(1/\delta)}{k_2(B)}}\bigr)$.
-%Consequently, this should imply that $\bias_{\samp_2}(B)$ and $\bias_{\samp_1}(B)$
-%are at least some $\Omega\bigl(\sqrt{\frac{d\log n + \log(1/\delta)}{k_1(B)}}\bigr)$ with a constant probability,
-%which is $E_1$ (or qualitatively equivalent to it). To conclude, conditioned on $E_2$, the probability of $E_1$
-%is at least a constant.
+\new{It suffices to show that $\Pr[E_2 \vert E_1]\geq \new{1/4}$.
+Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq \new{1/4}$, 
+namely that $\Pr[E_1] \leq \new{4}\Pr[E_1 \land E_2]\leq 4\Pr[E_2]$.
+We do it in two steps:
+Consider the event
+\[
+F = \text{"}\forall {B\in\B}:~k_1(B) \geq k_0 \implies k_2(B) \geq k_1(B)/\new{20}
+  \text{"}.
+\]
+We first prove that $\Pr[F \vert E_1] \geq \new{1/2}$ and then that $\Pr[E_2 \vert E_1\cap F]\geq 1/2$.
+This concludes the proof as $\Pr[E_2 \vert E_1] = \Pr[F \vert E_1]\cdot\Pr[E_2 \vert E_1\cap F]$.}
+\new{
+We begin with the first step.
+Indeed, Lemma~\ref{lem:auxuc} and the choice of $k_0$ 
+imply that $\Pr[\lnot F] < \delta/2$.
+Therefore, $\Pr[\lnot F \vert E_1] \leq \Pr[\lnot F]/\Pr[E_1] \leq (\delta/2)/\delta\leq 1/2$
+(note that we used here the assumption that $\Pr[E_1]\geq \delta$).}
 
-It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/4$.
-Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/4$, 
-namely that $\Pr[E_1] \leq 4\Pr[E_1 \land E_2]\leq 4\Pr[E_2]$.
+\new{Ignore what is written below}
 
-Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+For the second step,
+let $(S_1,S_2)\in E_1\cap F$. 
+Since the labels of $S_2$, denoted by $y(S_2)$ are independent with $E_1\cap F$
 it suffices to show that 
-\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/4.\]
+\[\Pr_{y(S_2)}\bigl[(S_1,S_2)\in E_2 \bigr] \geq 1/2.\]
 Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$
 and $k_1(B) > 2k_0$. 
-By Theorem~\ref{thm:uc1} it holds 
-that~$p(B)\geq k_0/n$ and $k_2(B) \geq \new{\frac{k_0}{2}}$
-with probability at least \new{$1/2$}.
-In the remaining of this proof we condition on this event.
+We next analyze $\bias_{\samp_2}(B)$.
 Standard concentration bound (e.g.\ Chernoff)
 imply that with probability at least~$1/2$:
-\[\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \leq \sqrt{\frac{10}{k_2(B)}} \leq \sqrt{\frac{\new{20}}{k_1(B)}},\]
-where the last inequality is because we condition on the event that $k_2(B)\geq \frac{k_1(B)}{2}$.
+\[\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \leq \sqrt{\frac{10}{k_2(B)}} \leq \sqrt{\frac{\new{1000}}{k_1(B)}}.\]
 Therefore:
-\[\lvert \bias_{\samp_2}(B) -  \bias_{\samp_1}(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }- \sqrt{\frac{\new{20}}{k_1(B)}},\]
+\[\lvert \bias_{\samp_2}(B) -  \bias_{\samp_1}(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }- \sqrt{\frac{\new{1000}}{k_1(B)}},\]
 which implies $E_2$.
-To conclude, the probability of $E_2$ conditioned on $E_1$
-is at least $1/4$.
+Thus, the probability of $E_2$ conditioned on $E_1\cap F$
+is at least $1/2$, which finishes the proof.
 
 %
 %Conditioning on this event, Chernoff bound implies that:
@@ -667,5 +736,115 @@ dimensional}. More technically:
   $G_{1/2|\X|}=\emptyset$ trivially).  
 \end{itemize}
 \end{enumerate}
+
+
+\appendix
+
+\section{Proof of Lemma~\ref{lem:auxuc}}\label{sec:auxuc}
+\begin{proof}
+We use the standard uniform convergence bound with
+the difference that we use the multiplicative Chernoff bound instead
+of the additive bound. 
+We follow the double sampling argument.
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $E_1$ denote the event whose probability we want to bound:
+\[
+E_1 = \text{"}\exists {B\in\B}:
+  k_1(B) \geq t_0 \mbox{ and } p(B) \leq \frac{k_1(B)}{4n}
+\text{"}, 
+\]
+and let $E_2$ denote the event:
+\[
+E_2 = \text{"}\exists {B\in\B}:
+  k_1(B) \geq t_0 \mbox{ and }k_2(B) \leq \frac{k_1(B)}{2}
+\text{"}.
+\]
+The proof follows from the following two lemmas:
+\begin{lemma}\label{lem:auxuc1}
+\[\Pr[E_1]\leq 10\Pr[E_2].\]
+\end{lemma}
+\begin{lemma}\label{lem:auxuc2}
+\[\Pr[E_2]\leq \delta/10.\]
+\end{lemma}
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
+It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+Indeed, this would imply that 
+$\Pr[E_1] \leq 10\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+
+Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+Let $B\in\B$ such that $p(B)\leq \frac{k_1(B)}{4n}$.
+We want to show that $k_2(B)\leq \frac{k_1(B)}{2}$ with probability at least $1/10$.
+We consider two cases:
+(i) if $p(B) < 1/2n$
+then we bound as follows:
+\begin{align*}
+\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{n}\Bigr]
+&\leq
+\Pr\Bigl[ k_2(B) > 0 \Bigr]\\
+&\leq np(B) < 1/2 < 9/10.
+\end{align*}
+(ii) Else, if $p(B) \geq 1/2n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+\[
+\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{2}\Bigr]
+\leq
+\Pr\Bigl[ p_{\samp_2}(B) > 2p(B)\Bigr]
+\leq
+\exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
+\]
+So, conditioned on $E_1$, 
+the event $E_2$ occurs with probability at least $1/10$.
+
+
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]
+
+Instead of sampling $\samp_1$ and then $\samp_2$,
+we first sample $\samp=\samp_1\cup \samp_2$ and 
+then partition it to $\samp_1$ and $\samp_2$ uniformly.
+Now, for a fixed $\samp$ what is the probability (over the random partition)
+that $E_2$ occurs?
+Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+It suffices to show that the event
+\[E_2|_{\samp} = \text{"}\exists {B\in\B|_{\samp}}:
+  k_1(B)>t_0 \mbox{ and } k_2(B) \leq \frac{k_1(B)}{2}
+\text{"}\]
+has probability at most $\delta/10$, for every every $\samp$ 
+(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
+To analyze this we use a union bound. 
+We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > t_0$.
+Fix such a $B$.
+Without loss of generality assume that
+first $k(B)$ points out of the $2n$
+points in $S$ are in $B$. 
+For every $i\leq k(B)$,
+let $X_i$ denote the indicator of the event
+that the $i$'th point in $S$ was drawn into $S_2$.
+Set~$X=\sum_{i=1}^{k(B)}X_i$.
+Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
+To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
+One can verify that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
+and therefore it suffices to analyze the latter, 
+which is a standard application of Chernoff bound:
+\begin{align*}
+\Pr\bigl[X\leq k(B)/3\bigr]&\leq 
+\Pr\bigl[Y\leq k(B)/3\bigr]\\
+&=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
+\exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k/100)
+\end{align*}
+(where the last inequality is because $k(B) > t_0$).
+By Sauer's Lemma
+the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
+\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
+Setting $k\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+that this probability is at most $\delta/10$.
+\end{proof}
+\end{proof}
+
+
+
 
 \end{document}
