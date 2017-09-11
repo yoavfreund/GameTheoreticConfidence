@@ -263,222 +263,6 @@ roughly, to nearest neighbor methods.
 \end{enumerate}
 
 \section{Uniform convergence bounds for sepcialists.}
-%\subsection{Uniform convergence of measures}
-%
-%In order for our unifom convergence bounds to hold, we need to remove
-%from consideration all balls in which the number of points is smaller
-%than some minimum $O(d \log n + \ln 1/\delta)$. As this threshold is
-%used in the algorithm we need to be specific and we choose
-%$k_0=50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ to be the threshold.
-%
-%It might be the case that by properly chosing the length of the
-%confidence interval we can make sure that when $k(ball)<2k_0$ the
-%inteval would make the statement vacuous. Restricting $k(B)>2k_0$
-%gives a more direct proof. The bound is still better than the uniform
-%bound that depends on $n$ rather than on $k(B)$.
-%
-%The first thing we show is that when using a sample of size $2n$, the
-%probability that there exists a ball $B$ such that $k_1(B)>2k_0$ and
-%$k_2(b)<k_0/2$ is smaller than $\delta$. In other words, the
-%probability that at least one of the balls used by the algorithm has
-%$k_2(B)<k_0/2$ is at most $\delta$.
-%
-%%\begin{theorem}\label{thm:uc1}
-%%Let $\B$ be a family of specialists of VC dimension $d$,
-%%let $\delta>0$ and set $k_0=3\left[  d \log n + \log(1/\delta) \right]$
-%%and let $S_1,S_2$ be two independent samples $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-%%\[\Pr_{\samp_1,\samp_2 \sim p^{2n}}\Bigl[\exists {B\in\B}:
-%%  k_{\samp_1}(B)>2k_0 \mbox{ and } k_{\samp_2}(B) < \frac{k_0}{2} \Bigr] \leq \delta
-%%\]
-%%\end{theorem}
-%
-%\begin{theorem}\label{thm:uc1}
-%Let $\B$ be a family of specialists of VC dimension $d$,
-%let $\delta>0$, let $k \geq k_0(n,\delta) := \new{50\bigl(d\log(2n) + \log(10/\delta)\bigr)}$,
-%and let $S$ be an independent sample $\bigl((x_i,y_i)\bigr) \sim p^n$. Then:
-%\[\Pr_{\samp \sim p^{n}}\Bigl[\exists {B\in\B}:
-%  p_{\samp}(B)>2k/n \mbox{ and } p_{\samp}(B)\notin [{2^{-1}p(B)}, 2p(B)]  \Bigr] \leq \delta,
-%\]
-%\end{theorem}
-%We will use $k_0=k_0(n,\delta)$ as a threshold for the algorithm:
-%balls that contain less than $2k$ points are ignored by it.
-%
-%\begin{proof}
-%We use the standard uniform convergence bound with
-%the difference that we use the multiplicative Chernoff bound instead
-%of the additive bound. 
-%
-%We begin with the first inequality.  
-%We follow the double sampling argument.
-%Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
-%Let $E_1$ denote the event whose probability we want to bound:
-%\[
-%E_1 = \text{"}\exists {B\in\B}:
-%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin [{2^{-1}p(B)}, 2p(B)]
-%\text{"}, 
-%\]
-%and let $E_2$ denote the event:
-%\[
-%E_2 = \text{"}\exists {B\in\B}:
-%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin \Bigl[\frac{3}{4}p_{\samp_2}(B), \frac{4}{3}p_{\samp_2}(B)\Bigr]
-%\text{"}.
-%\]
-%The proof follows from the following two lemmas:
-%\begin{lemma}\label{lem:auxuc1}
-%\[\Pr[E_1]\leq 10\Pr[E_2].\]
-%\end{lemma}
-%\begin{lemma}\label{lem:auxuc2}
-%\[\Pr[E_2]\leq \delta/10.\]
-%\end{lemma}
-%
-%\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
-%
-%%\bf{High level.}
-%%Condition on $E_1$ and let $B$ be a specialist that certifies it.
-%%Since $p(B)$ is small, it follows that with a constant probability
-%%$p_{\samp_2}(B)$ is also small.
-%%This should imply $E_2$.
-%%So, it follows that conditioned on $E_1$, 
-%%the event $E_2$ occurs with a constant probability.
-%
-%It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
-%Indeed, this would imply that $\Pr[E_2 \vert E_1]\geq 1/10$, 
-%namely that $\Pr[E_1] \leq 10\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
-%
-%Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
-%it suffices to show that 
-%\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
-%Let $B\in\B$ such that $p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_1}(B)\notin [{2^{-1}p(B)}, 2p(B)]$.
-%We want to show that $p_{\samp_1}(B)\notin\Bigl[\frac{3}{4}p_{\samp_2}(B), \frac{4}{3}p_{\samp_2}(B)\Bigr]$ with probability at least $1/10$.
-%It is enough to show that 
-%\[ \Pr\Bigl[ p_{\samp_2}(B) \notin[2p(B)/3,3p(B)/2]\Bigr] < 9/10. \]
-%
-%\new{I am having some problems with this:
-%Imagine the case where $p(B)$ is very small, say less than $1/100n$.
-%In such a case it will almost surely be the case that $p_{\samp_2}(B)=0$
-%which is $\lnot E_2$.}
-%
-%%\begin{align*}
-%%p_2&\in [2p/3,3p/2]]\\
-%%p_1&\notin [p/2,2p]\\
-%%&\implies\\
-%%\text{if }p_1 > 2p &\implies p_1 >  (4/3)(3p/2) \geq (4/3)p_2,\\
-%%\text{else, } p_1 < p/2 &\implies p_1 < (3/4)(2p/3) \leq (3/4)p_2. 
-%%\end{align*}
-%
-%Having $p_S(B)\notin[2^{-1}p(B),2p(B]$ means
-%that either $p(B) > 2p_S(B)$ or $p(B) < p_S(B)/2$.
-%We show that in either way $p_{\samp_2}(B)\notin[3p(B)/4,4p(B)/3]$.
-%
-%If $p(B) > 2p_{\samp_1}(B)$
-%then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
-%\begin{align*}
-%\Pr\Bigl[ p_{\samp_2}(B) \notin[3p(B)/4,4p(B)/3]\Bigr]
-%&\leq
-%\exp\Bigl( \frac{-({1}/{4})\cdot p(B)\cdot n}{2}\Bigr) + \exp\Bigl( \frac{-({1}/{3})\cdot p(B)\cdot n}{3}\Bigr)\\
-%&\leq
-%9/10,
-%\end{align*}
-%where in the last inequality we used that $p(B)\geq 2p_{\samp_1}(B)\geq 4k_0/n\geq 50/n$.
-%\new{Can change $9/10$ to $1/10$,}
-
-
-
-
-
-%
-%Else, we have that $p(B) < p_{\samp_1}(B)/2$.
-%We consider two cases:
-%(i) if $10p(B) < 1/n$
-%then
-%\begin{align*}
-%\Pr\Bigl[ p_{\samp_2}(B) \notin[3p(B)/4,4p(B)/3]\Bigr]
-%&\leq
-%\Pr\Bigl[ p_{\samp_2}(B) > 0 \Bigr]\\
-%&\leq np(B) < 2/3 < 9/10.
-%\end{align*}
-%(ii) Else, if $(3/2)p(B) > 1/n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
-%\[
-%\Pr\Bigl[ p_{\samp_2}(B) > (3/2)p(B)\Bigr]
-%\leq
-%\exp\Bigl( \frac{-({1}/{2})\cdot p(B)\cdot n}{3}\Bigr)\leq\exp(-1/9)\leq9/10.
-%\]
-%So, it follows that conditioned on $E_1$, 
-%the event $E_2$ occurs with probability at least $1/10$.
-%
-
-
-%\end{proof}
-
-%
-%\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]\ 
-%Instead of sampling $\samp_1$ and then $\samp_2$,
-%we first sample $\samp=\samp_1\cup \samp_2$ and 
-%then partition it to $\samp_1$ and $\samp_2$ uniformly.
-%Now, given $\samp$ what is the probability (over the random partition)
-%that $E_2$ occurs?
-%
-%Fix a sample $\samp$ of size $2n$
-%Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
-%It suffices to show that the event
-%\[E_2|_{\samp} = \text{"}\exists {B\in\B|_{\samp}}:
-%  p_{\samp_1}(B)>2k/n \mbox{ and } p_{\samp_2}(B) \leq {3p_{\samp_1}(B)}/{4}
-%\text{"}\]
-%has probability at most $\delta/10$, for every every $\samp$ 
-%(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$.
-%To analyze this we use a union bound. 
-%We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > 2k$.
-%Fix such a $B$.
-%Without loss of generality assume that
-%first $k(B)$ points out of the $2n$
-%points in $S$ are in $B$. 
-%For every $j\leq k(B)$,
-%let $X_i$ denote the indicator of the event
-%that the $i$'th point in $S$ was drawn into $S_2$.
-%Set~$X=\sum_{i=1}^{k(B)}X_i$.
-%Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq 3k(B)/7$.
-%To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
-%where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
-%One can verify that $\Pr[X\geq 3k(B)/7]\leq \Pr[Y\geq 3k(B)/7]$,
-%and therefore it suffices to analyze the latter, 
-%which is a standard application of Chernoff bound:
-%
-%\begin{align*}
-%\Pr\bigl[X\leq3k(B)/7\bigr]&\leq 
-%\Pr\bigl[Y\leq3k(B)/7\bigr]\\
-%&=\Pr\bigl[Y- k(B)/2 < k(B)/14\bigr]\leq
-%\exp\bigl(-2(1/14)^2k(B)\bigr) < \exp(-k/50)
-%\end{align*}
-%(where the last inequality is because $k(B) > 2k$).
-%By Sauer's Lemma
-%the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
-%\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
-%Setting $k\geq 50\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
-%that this probability is at most $\delta/10$.
-%
-%
-%\end{proof}
-%
-%  
-%  
-%%
-%%  Fix $B$, we have two cases: either $p(B) \leq k_0/n$ or
-%%  $p(B)>k_0/n$. We bound the probability of each case using chernoff:
-%%  \begin{itemize}
-%%  \item $p(B) \leq k_0/n$ then
-%%  \[
-%%  P\left[ k_{\samp_1}(B) \geq 2 k_0 \right] \leq \exp(-k_0/3)
-%%  \]
-%%  \item $p(B) > k_0/n$ then
-%%  \[
-%%  P\left[ k_{\samp_2}(B) < k_0/2 \right] \leq \exp(-k_0/2)
-%%  \]
-%%  \end{itemize}
-%%
-%%  We use the standard ghost sample argument to get a uniform bound
-%%  over all $B$ and choose $k_0$ so that the bad probability is bound by $\delta$.
-%
-%  \end{proof}
 
 \subsection{Uniform convergence of biases}
 
@@ -502,11 +286,9 @@ and
 \exists {B\in\B}: p(B) \geq p_0 \mbox{ and } p_{\samp}(B) \leq \frac{p(B)}{10}
 \Bigr]\leq \delta.
 \]
-
-
 \end{lemma}
 
-\begin{theorem}
+\begin{theorem} \label{thm:Bias-Convergence}
 Let $\B$ be a family of specialists of VC dimension $d$.
 Set $k_0 = 100\bigl(d\log(2n) + \log(10/\frac{\delta}{2})\bigr)$, where
  $1/2\geq \delta>0$,
@@ -525,7 +307,59 @@ where $k(B) = \lvert\{ i : x_i\in B \}\rvert$.
 %has probability at most delta.
 \end{theorem}
 
+\subsection{sampling without replacement}
+Before proving Theorem~\ref{thm:Bias-Convergence} we prove a 
+lemma regarding the concentration of sampling without replacement.
+
+Let $a_1,\ldots,a_n$ be a fixed sequence where $a_i \in
+\{0,1\}$. We denote the number of 1's by $k=\sum_{i=1}^n a_i$.
+
+We compare sampling from $a_1^n$ $j$ with and without replacement.
+Consider a sequence of $n$ draws made with or without replacement.
+We denote the number of 1's in the sequence after $i$ draws by
+$k_i$. This defines a sequence of random variables $k_1,k_2,\ldots,k_n$.
+
+We denote the fraction of 1's in $a_1^n$ by $p=k/n$.
+
+We denote by $P_{ij}$ the probability that $k_j=i$ when sampling {\em
+  with} replacement, and by $Q_{ji}$ the probability that $k_j=i$ when
+sampling {\em without} replacement.
+
+The mean of $k_i$ is the same whether the sampling is equal to $pi$
+whether sampling with replacement or not.
+
+\newcommand{\Pupper}{{\mathbf P}^{>}}
+\newcommand{\Plower}{{\mathbf P}^{<}}
+\newcommand{\Qupper}{{\mathbf Q}^{>}}
+\newcommand{\Qlower}{{\mathbf Q}^{<}}
+
+
+We are interested in the tail probabilities for the two processes. For
+$1 \leq i \leq n$ and $1 \leq j < \lfloor pi \rfloor $ we define the lower tails as:
+\[
+\Plower_{ij} = \sum_{l=1}^j P_{il},\;\;
+\Qlower_{ij} = \sum_{l=1}^j Q_{il}\;\;
+\]
+For $\lceil pi \rceil < j \leq i$ we define the upper tails to be
+\[
+\Pupper_{ij} = \sum_{l=j}^i P_{il},\;\;
+\Qupper_{ij} = \sum_{l=j}^i Q_{il}\;\;
+\]
+
+Using this notation we can state the following lemma. Intuitively,
+this lemma states that the distribution generated by sampling without
+replacement is more concentrated around the mean than the
+corresponding distribution for sampling with replacement.
+\begin{lemma}
+For all $1 \leq i \leq n$ and $1 \leq j < \lfloor pi \rfloor$,
+$\Plower_{ij} > \Qlower_{ij}$, and for all $1 \leq i \leq n$, $\lceil
+pi \rceil < j \leq i$, $\Pupper_{ij} > \Qupper_{ij}$.
+\end{lemma}
 \begin{proof}
+  By Induction over $i$.
+  \end{proof}
+
+\begin{proof} {\em of Theorem~\ref{thm:Bias-Convergence}} \newline
 We follow the double sampling argument.
 Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
 Let $E_1$ denote the event whose probability we want to bound:
@@ -572,32 +406,7 @@ imply that $\Pr[\lnot F] < \delta/2$.
 Therefore, $\Pr[\lnot F \vert E_1] \leq \Pr[\lnot F]/\Pr[E_1] \leq (\delta/2)/\delta\leq 1/2$
 (note that we used here the assumption that $\Pr[E_1]\geq \delta$).}
 
-\new{Ignore what is written below}
-
-For the second step,
-let $(S_1,S_2)\in E_1\cap F$. 
-Since the labels of $S_2$, denoted by $y(S_2)$ are independent with $E_1\cap F$
-it suffices to show that 
-\[\Pr_{y(S_2)}\bigl[(S_1,S_2)\in E_2 \bigr] \geq 1/2.\]
-Let $B\in\B$ such that $\lvert \bias_{\samp_1}(B) -  \bias(B)\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }$
-and $k_1(B) > 2k_0$. 
-We next analyze $\bias_{\samp_2}(B)$.
-Standard concentration bound (e.g.\ Chernoff)
-imply that with probability at least~$1/2$:
-\[\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \leq \sqrt{\frac{10}{k_2(B)}} \leq \sqrt{\frac{\new{1000}}{k_1(B)}}.\]
-Therefore:
-\[\lvert \bias_{\samp_2}(B) -  \bias_{\samp_1}(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_1(B)} }- \sqrt{\frac{\new{1000}}{k_1(B)}},\]
-which implies $E_2$.
-Thus, the probability of $E_2$ conditioned on $E_1\cap F$
-is at least $1/2$, which finishes the proof.
-
-%
-%Conditioning on this event, Chernoff bound implies that:
-%\[
-%\Pr\Bigl[\bigl\lvert \bias_{\samp_2}(B) -  \bias(B)\bigr\rvert \geq \sqrt{\frac{100d\log n + \log(1/\delta)}{k_2(B)} }\Bigr]
-%\leq
-%2\exp\bigl(\bigr)
-%\]
+To be continued...
 
 \end{proof}
 
