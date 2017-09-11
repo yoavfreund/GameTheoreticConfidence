@@ -191,8 +191,8 @@ joint distribution over $X \times \{-1,+1\}$.
 
 Suppose we have a sample $S$ of size $m$:
 $(x_1,y_1),\ldots,(x_m,y_m)$. We define the {\em size} of $h\in H$ relative
-to the sample $S$ to be $|h(S)| \doteq X\sum_{i=1}^m h(x_i)$
-~\\
+to the sample $S$ to be $|h(S)| \doteq \sum_{i=1}^m h(x_i)$
+
 ~\\
 
 {\bf The non-standard part:}
@@ -202,7 +202,6 @@ $\hat{E}(Y | h(X)=1) \doteq \left(\sum_{i=1}^m h(x_i) y_i\right)/|h(S)|$.
 We want to replace the factor $m^{-1/2}$ in the magnitude of the
 deviation by a term of the form  $|h(S)|^{-1/2}$,
 
-~\\
 ~\\
 
 {\bf for a single function this is easy:} Let $H=\{h\}$ be a singleton, then
@@ -216,7 +215,7 @@ P \left( | E(Y|h(X)=1) -
 \hat{E}(Y | h(X)=1) | > \frac{2 \ln 1/\delta}{\sqrt{|h(S)|}} \right)
 \leq \delta
 \]
-~\\
+
 ~\\
 
 {\bf The question:} Can we generalize this to a uniform bound of
