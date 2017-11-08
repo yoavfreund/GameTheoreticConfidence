@@ -271,15 +271,15 @@ and let $E_2$ denote the event
 \Bigl\{
 S_1S_2\in X^{2n} : (\exists i\in\I):~
 \bigl\lvert p_{n,1}(A \vert B_i)   -  p_{n,2}(A \vert B_i) \bigr\rvert >  
-100\sqrt{\frac{k_0}{k_{i,1}+k_{i,2}}}
+\frac{1}{10}\sqrt{\frac{k_0}{k_{i,1}+k_{i,2}}}
 \Bigr\}.
 \]
 The goal is to show that $\Pr[E_1]$ is small by reducing it to showing that $\Pr[E_2]$ 
 is small. We would like to argue, like in~\cite{anthony}, that
 \begin{equation}\label{eq:anthony} 
-(\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{10},
+(\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{4},
 \end{equation}
-which would imply that $\Pr[E_1]\leq 10\Pr[E_2]$ and yield the reduction.
+which would imply that $\Pr[E_1]\leq 4\Pr[E_2]$ and yield the reduction.
 However, \Cref{eq:anthony} does not necessarily hold: indeed consider
 $S_1\in E_1$ such that there is a single $B_i$ for which 
 \[\bigl\lvert p_{n,1}(A \vert B_i)   -  p_{n,2}(A \vert B_i) \bigr\rvert >  
@@ -316,7 +316,7 @@ and the last inequality is implied by the the second item of \Cref{lem:reduction
 
 
 We continue now to the standard \emph{symmetrization} argument
-that establishes $\Pr[E_2]\leq\delta$:
+that establishes $\Pr[E_2]\leq\delta/4$:
 instead of sampling $S_1S_2\sim p^{2n}$,
 consider the following equivalent process:
 \begin{itemize}
