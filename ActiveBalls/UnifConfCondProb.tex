@@ -275,7 +275,8 @@ S_1S_2\in X^{2n} : (\exists i\in\I):~
 \Bigr\}.
 \]
 The goal is to show that $\Pr[E_1]$ is small by reducing it to showing that $\Pr[E_2]$ 
-is small. We would like to argue, like in~\cite{anthony}, that
+is small, and to show that the latter is small using the standard \emph{symmetrization} argument. 
+We would like to argue, like in~\cite{anthony}, that
 \begin{equation}\label{eq:anthony} 
 (\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{4},
 \end{equation}
@@ -317,7 +318,7 @@ the second inequality follows by definition of conditional probability,
 and the last inequality is implied by the the second item of \Cref{lem:reduction}.
 
 
-We continue now to the standard \emph{symmetrization} argument
+We proceed to the standard symmetrization argument
 that establishes $\Pr[E_2]\leq\delta/4$:
 instead of sampling $S_1S_2\sim p^{2n}$,
 consider the following equivalent process:
