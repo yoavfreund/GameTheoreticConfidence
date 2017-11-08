@@ -294,6 +294,8 @@ and so $p_{n,2}(A \vert B_i)$ will be close to $p_{n,1}(A \vert B_i)$ with a goo
 To get around this, we introduce an auxiliary event $F$, defined by
 \[F = \Bigl\{S_1\in X^{n} : (\forall i\in\I): k_{i,1} \geq k_0 \implies p(B_i)\geq \frac{k_{i,1}}{10n}\Bigr\}. \]
 
+Note that $F$ discards the problematic example from above 
+(by constraining every $B_i$ that witnesses $E_1$ to have a large probability). 
 As we will see, $F$ is a typical event that happens with high probability,
 and so, it enables us to replace \Cref{eq:anthony} with the following
 \begin{lemma}\label{lem:reduction}
