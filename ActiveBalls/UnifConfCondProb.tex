@@ -253,6 +253,30 @@ The following event occurs with probability at least $1-\delta$:
 where $k_0 =100\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k_i = \sum_{j=1}^n 1[x_j\in B_i]$.
 \end{theorem}
 
+\paragraph{Discussion.}
+The uniform convergence bound in \Cref{thm:UCECM} is based on ``luckiness'':
+if many points from the sample belong to $B_i$ then the confidence interval
+around its (true) measure is smaller. 
+In other words, the bound on the confidence interval is random.
+It is worth noting that this can be combined with the classical uniform convergence
+result due \cite{vapnik} to yield a bound on the confidence interval
+that depends only on the true measure $p(B_i)$:
+indeed, it implies that roughly $p(B_i)\pm d/\sqrt{n}$ 
+empirical points from the sample are will indeed belong to $B_i$
+(with high probability), and so, once $n$ is sufficiently large,
+one can replace the radius of the confidence interval by $\Theta\Bigl(\sqrt{\frac{d\log n}{p(B_i)n - d\sqrt{n}}}\Bigr)$, which is roughly $\sqrt{\frac{d\log n}{p(B_i)n}}$.
+
+Another relevant remark is that a weaker statement than \Cref{thm:UCECM}
+can be derived quite easily as a corollary of the the classical uniform convergence
+result~\cite{vapnik}. 
+Indeed, it implies that 
+\[p_n(A\vert B_i)\approx\frac{p(A\cap B_i) \pm d/\sqrt{n}}{p(B_i)\pm d/\sqrt{n}}.\]
+Thus, a simple calculation yield that the radius of confidence interval is $\Theta(\frac{d}{p(B_i)\sqrt{n}})$.
+By comparing it with bound, one sees that that our bound becomes meaningful for $B_i$
+once $p(B_i) \geq d\log n /n$, whereas the other one becomes meaningful
+only once $p(B_i)\geq d/\sqrt{n}$.
+
+
 \section{Proof of \Cref{thm:UCECM}}
 
 The idea is to follow the standard argument which derives the standard uniform convergence
