@@ -1,32 +1,87 @@
 \subsection{sampling without replacement}
+
+% Transition probabilities
+\newcommand{\p}{p}
+\newcommand{\q}{q_{t,i}}
+
+%$$\p=k/n$$
+%$$\q=\frac{k-i}{n-t}$$
+
+% RVs
+\newcommand{\cnt}[2]{k^{#1}_{#2}}
+
+%  bin probabilities
+\newcommand{\prob}[2]{#1_{#2}}
+%$\bin{P}{t,i}, \bin{Q}{t,i}$
+
+% tail probabilities
+\newcommand{\tail}[3]{{\mathbf #1}^{#2}_{#3}}
+
+%$$\tail{L}{P}{t,i}$$
+
+
 Before proving Theorem~\ref{thm:Bias-Convergence} we prove a 
 lemma regarding the concentration of sampling without replacement.
 
-Let $a_1,\ldots,a_n$ be a fixed sequence where $a_i \in
+Let $a_1,\ldots,a_n$ be a sequence where $a_i \in
 \{0,1\}$. We denote the number of 1's by $k=\sum_{i=1}^n a_i$.
 
-We compare sequentially sampling $0 \leq t \leq n$ times from $a_1^n$ with and
-without replacement. We define $k_t$ for $0 \leq t \leq n$ to be the
-random variable corresponding to the number of $1$'s sampled in the
-first $t$ iterations.
+We compare sampling $n$ times from $a_1^n$ $n$ with and without
+replacement. We denote by $\cnt{P}{t}$ the random variable
+corresponding to the number of 1's after sampling $t$ times {\em with
+  replacement}, and by $\cnt{Q}{t}$ the corresponding random
+variable when the sampling is done {\em without replacement}.
 
-We denote by $P_{ti}$ the probability that $k_t=i$ when sampling {\em
-  with} replacement, and by $Q_{ti}$ the probability that $k_t=i$ when
-sampling {\em without} replacement.
-
-The probabilities $P_{ti}$ and $Q_{ti}$ obey the following inductions. 
-The base case is $t=0$ and there $P_{00}=Q_{00}=1$ and for all $i\neq
-0$ $P_{0i}=Q_{0i}=0$.
-
-For $t>0$ the following recursions hold for all $i$:
+We deonte the marginal probability that $\cnt{P}{t}=i$ by
+$\prob{P}{t,i}$ and the probability that $\cnt{Q}{t}=i$ by
+$\prob{Q}{t,i}$. For $t=0$ we have that 
+$\prob{P}{0,0}=\prob{Q}{0,0}=1$ and for all $i\neq 0$
+$\prob{P}{0,i}=\prob{Q}{0,i}=0$.
+For $t \geq 0$ the following recursion holds:
 \[
-P_{t+1,i}=\frac{k}{n}P_{t,i-1} + \left(1-\frac{k}{n}\right)P_{t,i}
+\prob{P}{t+1,i}=\frac{k}{n} \prob{P}{t,i-1} + \left(1-\frac{k}{n}\right)\prob{P}{t,i}
 \]
 and
 \[
-Q_{t+1,i}=\frac{k-i+1}{n-t}Q_{t,i-1} + \left(1-\frac{k-i}{n-t}\right)Q_{t,i}
+\prob{Q}{t+1,i}=\frac{k-i+1}{n-t}\prob{Q}{t,i-1} + \left(1-\frac{k-i}{n-t}\right)\prob{Q}{t,i-1}
 \]
 
+We denote the probability of sampling a 1 when sampling with
+replacement by $\p=k/n$ and the probability of sampling a 1 when
+sampling with replacement at step $t$ given that the number of 1's
+sampled so far is $i$ by $\q=\frac{k-i}{n-t}$
+
+Note that if $i < \p t$ then
+\[
+\q=\frac{k-i}{n-t} > \frac{k-\p t}{n-t} = \frac{k(1-t/n)}{n-t} =
+\frac{k(n-t)}{n(n-t)} = \frac{k}{n}=\p,
+\]
+and if $i > \p t$ then
+\[
+\q=\frac{k-i}{n-t} < \frac{k-\p t}{n-t} = \frac{k}{n}=\p.
+\]
+
+For $0 \leq t \leq n$ and $0 \leq i \leq t$ we define the left and
+right tails of the $P$ and $Q$ distributions as follows:
+\[
+\tail{L}{P}{t,i} \doteq \sum_{j=0}^i \prob{P}{t,j},\;\;\;\;\;\;
+\tail{L}{Q}{t,i} \doteq \sum_{j=0}^i \prob{Q}{t,j}
+\]
+\[
+\tail{R}{P}{t,i} \doteq \sum_{j=i}^t \prob{P}{t,j},\;\;\;\;\;\;
+\tail{R}{Q}{t,i} \doteq \sum_{j=i}^t \prob{Q}{t,j}
+\]
+We can now state our main lemma regarding the tails of the
+distribution $Q$.
+\begin{lemma}
+  For all $0\leq t \leq n$
+  \begin{itemize}
+    \item If $i < \lfloor \p t \rfloor$ then $\tail{L}{Q}{t,i} < \tail{L}{P}{t,i}$
+    \item If $i > \lceil \p t \rceil$ then $\tail{R}{Q}{t,i} < \tail{R}{P}{t,i}$
+    \end{itemize}
+\end{lemma}
+
+\iffalse
 The mean of $k_t$ is the same whether the sampling is equal to
 $E_t=E(k_t)=\frac{kt}{n}$ whether sampling with replacement or
 not. For each $0\leq t \leq n$ we partition the range $0\leq i \leq t$
@@ -60,10 +115,6 @@ increasing on the right part.
     \end{itemize}
 \end{proof}
 
-\newcommand{\Pupper}{{\mathbf P}^{R}}
-\newcommand{\Plower}{{\mathbf P}^{L}}
-\newcommand{\Qupper}{{\mathbf Q}^{R}}
-\newcommand{\Qlower}{{\mathbf Q}^{L}}
 
 We are interested in comparing the tail probabilities for the two
 processes. For all $1 \leq t \leq n$ and $1 \leq i < \left\lfloor
@@ -90,3 +141,4 @@ pi \rceil < j \leq i$, $\Pupper_{ij} > \Qupper_{ij}$.
 \begin{proof}
   By Induction over $i$.
   \end{proof}
+\fi
