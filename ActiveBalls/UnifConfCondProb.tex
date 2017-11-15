@@ -197,39 +197,35 @@
 \section{Formal Statement}
 
 Let $p$ be a distribution over $X$.
-Let $\cB=\{B_i : i\in\I\}$ be a collection of events, and let $A$ be an event.
+Let $\cB$ be a collection of events, and let $A$ be an event.
 Assume that $\cB$ has a finite VC dimension, denoted by $d$.
 Consider $n$ independent samples from~$p$, denoted by $x_1,\ldots,x_n$.
-We would like to estimate $p(A \vert B_i)$ simultaneously for all $i\in \I$.
+We would like to estimate $p(A \vert B)$ simultaneously for all $B\in \B$.
 It is natural to consider the empirical estimates:
-\[p_n(A\vert B_i)=\frac{\sum_j 1_{[x_j\in A \cap B_i]}}{\sum_j 1_{[x_j\in B_i]}}.\]
+\[p_n(A\vert B)=\frac{\sum_j 1_{[x_j\in A \cap B]}}{\sum_j 1_{[x_j\in B]}}.\]
 We study how well and when do these estimates approximate the underlying ones simultaneously.
 
 To demonstrate the kind of statements we would like to derive,
 consider the case where there is only one event $B$ in $\cB$, 
-and let $k=\sum_j 1_{[x_j\in B]}$.
-A Chernoff bound implies that conditioned on the event that~$k>0$, 
+and let $k(B)=\sum_j 1_{[x_j\in B]}$.
+A Chernoff bound implies that conditioned on the event that~$k(B)>0$, 
 it holds with probability at least $1-\delta$ that:
-\[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \frac{2\ln(1/\delta)}{\sqrt{k}}.\]
+\[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \frac{2\ln(1/\delta)}{\sqrt{k(B)}}.\]
 To derive it use that conditioned on $x_i\in B$ the event $x_i\in A$ has probability $p(A\vert B)$, 
-and so conditioned on a specific value for $k$ we get $k$ i.i.d random coin tosses with bias $p(A\vert B)$.
+and so conditioned on a specific value for $k(B)$ we get $k(B)$ i.i.d random coin tosses with bias $p(A\vert B)$.
 
 Note that the bound we get on the probability is also a random variable, 
-since it involves $k$ in it, which is random.
+since it involves $k(B)$ in it, which is random.
 We stress that this is the type of statement we want:
 the more samples belong to $B$ | the more certain we are with the empirical estimate.
 
 We would like to prove something like this:
 \begin{theorem}[A too good to be true UCECM]\label{thm:toogood}
 The following event occurs with probability at least $1-\delta$:
-\[\bigl(\forall i\in\I\bigr):\bigl\lvert p(A \vert B_i) - p_n(A \vert B_i) \bigr\rvert \leq O\Bigl(\frac{d\ln(1/\delta)}{\sqrt{k_i}}\Bigr),\]
-where $k_i = \sum_{j=1}^n 1[x_j\in B_i]$.
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq O\Bigl(\frac{d\ln(1/\delta)}{\sqrt{k(B)}}\Bigr),\]
+where $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
 \end{theorem}
 \Cref{thm:toogood} is, unfortunately, false. 
-%First, notice that formally speaking the above event is not well defined defined:
-%specifically, $p_n(A_i \vert B_i)$ is not defined for $B_i$'s such that $k_i=0$.
-%This can easily be fixed, say by restricting the universal quantifier to $(\forall i \text{ s.t. } k_i>0)$.
-%It turns out that this is also not enough. 
 As an example, consider the probability space defined by drawing uniformly $j\sim[n]$,
 and then coloring $j$ by $c_j\in\{\pm 1\}$ uniformly.
 For each $i$ let $B_i$ denote the event that $i$ was chosen,
@@ -241,86 +237,99 @@ One can verify that the VC dimension of $\B=\{B_i : i\leq n\}$ is $1$.
 indeed, if we sample $n$ times from this space 
 then with a constant probability there will be  $j$
 that will be always colored the same,  say $+1$, 
-and will be picked some $f(n)$ times, where $f(n)\to_{n\to\infty}\infty$.
+and will be picked some $\Theta(\log n/\log\log n)$ times.
 Therefore, $p_n(A\vert B_i) = 1$, $p(A\vert B_i)=1/2$,
-and $1-(1/2)>> 1/\sqrt{f(n)}$.
+and $1-(1/2)>> \sqrt{\log\log n/\log n}$.
 
 However, the following variant does hold:
 \begin{theorem}[UCECM]\label{thm:UCECM}
 The following event occurs with probability at least $1-\delta$:
-\[\bigl(\forall i\in\I\bigr):\bigl\lvert p(A \vert B_i) - p_n(A \vert B_i) \bigr\rvert \leq 
-\sqrt{\frac{k_0}{k_i}},\]
-where $k_0 =100\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k_i = \sum_{j=1}^n 1[x_j\in B_i]$.
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq 
+\sqrt{\frac{k_0}{k(B)}},\]
+where $k_0 =100\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
 \end{theorem}
 
 \paragraph{Discussion.}
+\shay{Analyze this comparison more clearly.
+I hope we can derive a statement like:
+our bound becomes meaningful
+for $B$ such that $p(B)\geq d\log n/n$
+but the naive bound requires $p(B)\geq \sqrt{d/n}$.}
+
 The uniform convergence bound in \Cref{thm:UCECM} is based on ``luckiness'':
-if many points from the sample belong to $B_i$ then the confidence interval
+if many points from the sample belong to $B$ then the confidence interval
 around its (true) measure is smaller. 
 In other words, the bound on the confidence interval is random.
 It is worth noting that this can be combined with the classical uniform convergence
 result due \cite{vapnik} to yield a bound on the confidence interval
-that depends only on the true measure $p(B_i)$:
-indeed, it implies that roughly $p(B_i)\pm d/\sqrt{n}$ 
-empirical points from the sample are will indeed belong to $B_i$
+that depends only on the true measure $p(B)$:
+indeed, it implies that roughly $p(B)\pm \sqrt{d/n}$ 
+empirical points from the sample are will indeed belong to $B$
 (with high probability), and so, once $n$ is sufficiently large,
-one can replace the radius of the confidence interval by $\Theta\Bigl(\sqrt{\frac{d\log n}{p(B_i)n - d\sqrt{n}}}\Bigr)$, which is roughly $\sqrt{\frac{d\log n}{p(B_i)n}}$.
+one can replace the radius of the confidence interval by 
+$\Theta\Bigl(\sqrt{\frac{d\log n}{p(B)n - \sqrt{dn}}}\Bigr)$, 
+which is for a large $n$ roughly $\sqrt{\frac{d\log n}{p(B)n}}$.
 
 Another relevant remark is that a weaker statement than \Cref{thm:UCECM}
 can be derived quite easily as a corollary of the the classical uniform convergence
 result~\cite{vapnik}. 
-Indeed, it implies that 
-\[p_n(A\vert B_i)\approx\frac{p(A\cap B_i) \pm d/\sqrt{n}}{p(B_i)\pm d/\sqrt{n}}.\]
-Thus, a simple calculation yield that the radius of confidence interval is $\Theta(\frac{d}{p(B_i)\sqrt{n}})$.
-By comparing it with bound, one sees that that our bound becomes meaningful for $B_i$
-once $p(B_i) \geq d\log n /n$, whereas the other one becomes meaningful
-only once $p(B_i)\geq d/\sqrt{n}$.
+Indeed, since the VC dimension of $\{B\cap A : i\in \I\}$ is at most $d$, it follows that 
+\[p_n(A\vert B)\approx\frac{p(A\cap B) \pm d/\sqrt{n}}{p(B)\pm d/\sqrt{n}}.\]
+Thus, a simple calculation yield that the radius of the confidence interval is at least 
+$\Omega(\frac{d}{p(B)\sqrt{n}})$.
+When comparing these bound, one sees that that our bound becomes non-trivial for $B$
+once $p(B) \geq d\log n /n$, whereas the other one becomes non-trivial
+only once $p(B)\geq d/\sqrt{n}$.
 
 
 \section{Proof of \Cref{thm:UCECM}}
 
-The idea is to follow the standard argument which derives the standard uniform convergence
-result due to~\cite{vapnik} (and to modify it accordingly). 
+The idea is to follow the standard argument due to~\cite{vapnik} 
+which derives the standard uniform convergence result (and to modify it accordingly). 
 We follow the exposition of~\cite{anthony}:
 consider a double-sample of size $2n$ from~$p$, denoted by $x_1,\ldots,x_{2n}$.
 Let $S_1$ denote the first half of the sample and $S_2$ the second.
 Define $E_1$ to be the event whose probability we want to bound:
-\[E_1 = \Bigl\{ S_1\in X^n : (\exists i\in \I):~ 
-\bigl\lvert p(A \vert B_i) - p_{n,1}(A \vert B_i) \bigr\rvert > 
-\sqrt{\frac{k_0}{k_{i,1}}} \Bigr\},\]
+\[E_1 = \Bigl\{ S_1\in X^n : (\exists B\in \B):~ 
+\bigl\lvert p(A \vert B) - p_{n,1}(A \vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k_{1}(B)}} \Bigr\},\]
 where $p_{n,1}$ is the empirical measure induced by $S_1$, 
-and $k_{i,1}=\sum_{j=1}^n 1[x_j\in B_i]$, 
-and let $E_2$ denote the event
+and $k_{1}(B)=\sum_{j=1}^n 1[x_j\in B]$ ($p_{n,2}, k_{2}$ are defined similarly).
+Let $E_2$ denote the event
 \[E_2 = 
 \Bigl\{
-S_1S_2\in X^{2n} : (\exists i\in\I):~
-\bigl\lvert p_{n,1}(A \vert B_i)   -  p_{n,2}(A \vert B_i) \bigr\rvert >  
-\frac{1}{10}\sqrt{\frac{k_0}{k_{i,1}+k_{i,2}}}
-\Bigr\}.
+S_1S_2\in X^{2n} : (\exists B\in\B):~
+\bigl\lvert p_{n,1}(A \vert B)   -  p_{n,2}(A \vert B) \bigr\rvert >  
+\frac{1}{4}\sqrt{\frac{k_0}{k(B)}}
+\Bigr\},
 \]
-The goal is to show that $\Pr[E_1]$ is small by reducing it to showing that $\Pr[E_2]$ 
-is small, and to show that the latter is small using the standard \emph{symmetrization} argument. 
-We would like to argue, like in~\cite{anthony}, that
+where $k(B) = k_{1}(B)+k_{2}(B)$.
+The strategy of showing that $\Pr[E_1]$ is by reducing it to showing that $\Pr[E_2]$ 
+is small, and then to show that the latter is small using a standard \emph{symmetrization} argument. 
+For the first part, we would like to argue like in~\cite{anthony}, that
 \begin{equation}\label{eq:anthony} 
-(\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{4},
+(\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{100},
 \end{equation}
-which would imply that $\Pr[E_1]\leq 4\Pr[E_2]$ and yield the reduction.
+which would imply that $\Pr[E_1]\leq 100\Pr[E_2]$ and yield the reduction.
 However, \Cref{eq:anthony} does not necessarily hold: indeed consider
-$S_1\in E_1$ such that there is a single $B_i$ for which 
-\[\bigl\lvert p_{n,1}(A \vert B_i)   -  p_{n,2}(A \vert B_i) \bigr\rvert >  
-\frac{1}{10}\sqrt{\frac{k_0}{k_{i,1}+k_{i,2}}},\]
+$S_1\in E_1$ such that there is a single $B$ for which 
+\[
+\bigl\lvert p(A \vert B) - p_{n,1}(A \vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k_{1}(B)}}
+\]
 and further assume that 
-(i) it has a tiny measure, say $p(B_i) = 1/n$,
-(ii) $p(A\vert B_i)= 1/2$, and
-(iii) $p_{n,1}(A\vert B_i) = 0$.
-Therefore, it is likely that we see only one $x\in B_i$ in $S_2$,
-and so $p_{n,2}(A \vert B_i)$ will be close to $p_{n,1}(A \vert B_i)$ with a good probability.
+(i) $B$ has a tiny measure, say $p(B) = 1/n$,
+(ii) $p(A\vert B)= 1/2$, and
+(iii) $p_{n,1}(A\vert B) = 0$.
+Therefore, $k_2(B)=1$ with probability at least $1/4$
+and therefore $p_{n,2}(A \vert B)=p_{n,1}(A \vert B)$
+with probability at least $1/8$, which is the negation of $E_2$.
 
 To get around this, we introduce an auxiliary event $F$, defined by
-\[F = \Bigl\{S_1\in X^{n} : (\forall i\in\I): k_{i,1} \geq k_0 \implies p(B_i)\geq \frac{k_{i,1}}{10n}\Bigr\}. \]
+\[F = \Bigl\{S_1\in X^{n} : (\forall B\in\B): k_{1}(B) \geq k_0 \implies p(B)\geq \frac{k_{1}(B)}{4n}\Bigr\}. \]
 
 Note that $F$ discards the problematic example from above 
-(by constraining every $B_i$ that witnesses $E_1$ to have a large probability). 
+(by constraining every $B$ that witnesses $E_1$ to have a large probability). 
 As we will see, $F$ is a typical event that happens with high probability,
 and so, it enables us to replace \Cref{eq:anthony} with the following
 \begin{lemma}\label{lem:reduction}
@@ -334,8 +343,8 @@ We defer the proof of \Cref{lem:reduction} to the end,
 and assume it for now towards proving \Cref{thm:UCECM}.
 
 \Cref{lem:reduction} yields the following win-win situation:
-either $\Pr[E_1 \leq \delta]$ and we are done, or 
-it yields us the reduction that $\Pr[E_1]\leq 4\Pr[E_2]$:
+either $\Pr[E_1 \leq \delta]$ and we are done, 
+or that $\Pr[E_1]\leq 4\Pr[E_2]$:
 \[\frac{\Pr[E_2]}{\Pr[E_1]} \geq  \frac{1}{2}\frac{\Pr[E_2]}{\Pr[E_1\cap F]} \geq \frac{\Pr[E_2 \vert E_1\cap F]}{2} \geq \frac{1}{4},\]
 where the first inequality uses the first item of \Cref{lem:reduction}, 
 the second inequality follows by definition of conditional probability,
@@ -361,11 +370,119 @@ of $S$ into $S_1,S_2$.
 
 \subsection{Proof of \Cref{lem:reduction}}
 
+\paragraph{Item {\it 1}.}
+We begin with the first item;
+it suffices to show that $\Pr[F]\geq 1-\delta/2$.
+This follows from the standard uniform convergence bound with
+the difference that of using the multiplicative Chernoff bound instead
+of the additive bound:
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $E_1$ denote the event whose probability we want to bound:
+\[
+E_1 =\bigl\{ S_1\in X^n : (\exists {B\in\B}):
+  k_{1}(B) \geq k_0 \mbox{ and } p(B) \leq \frac{k_{1}(B)}{4n}\bigr\}, 
+\]
+and let $E_2$ denote the event:
+\[
+E_2 = 
+\bigl\{ S_1S_2\in X^{2n} : (\exists {B\in\B}):
+  k_{1}(B) \geq k_0 \mbox{ and } k_{2}(B) \leq \frac{k_{1}(B)}{2}\bigr\}.
+\]
+The proof follows from the following two lemmas:
+\begin{lemma}\label{lem:aux11}
+$\Pr[E_1]\leq 10\Pr[E_2].$
+\end{lemma}
+\begin{lemma}\label{lem:aux12}
+$\Pr[E_2]\leq \delta/10.$
+\end{lemma}
+\begin{proof}[Proof of Lemma~\ref{lem:aux11}]
+It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+Indeed, this would imply that 
+$\Pr[E_1] \leq 10\Pr[E_1 \cap E_2]\leq 10\Pr[E_2]$.
+
+Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+Let $B\in\B$ such that $p(B)\leq \frac{k_{1}(B)}{4n}$.
+We want to show that $k_{2}(B)\leq \frac{k_{1}(B)}{2}$ with probability at least $1/10$.
+We consider two cases:
+(i) if $p(B) < 1/2n$
+then we bound as follows:
+\begin{align*}
+\Pr\Bigl[ k_{2}(B) > \frac{k_{1}(B)}{2}\Bigr]
+&\leq
+\Pr\Bigl[ k_{2}(B) > 0 \Bigr]\\
+&\leq np(B) < 1/2 < 9/10.
+\end{align*}
+(ii) Else, if $p(B) \geq 1/2n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+\[
+\Pr\Bigl[ k_{2}(B) > \frac{k_{1}(B)}{2}\Bigr]
+\leq
+\Pr\Bigl[ k_{2}(B) > 2p(B)\cdot n\Bigr]
+\leq
+\exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
+\]
+So, conditioned on $E_1$, 
+the event $E_2$ occurs with probability at least $1/10$.
+
+\begin{proof}[Proof of Lemma~\ref{lem:aux12}]
+
+Instead of sampling $\samp_1$ and then $\samp_2$,
+we first sample $\samp=\samp_1\cup \samp_2$ and 
+then partition it to $\samp_1$ and $\samp_2$ uniformly.
+Now, for a fixed $\samp$ what is the probability (over the random partition)
+that $E_2$ occurs?
+Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+It suffices to show that the event
+\[E_2|_{\samp} = 
+\bigl\{ \{S_1,S_2\}\text{ is a partition of $S$ into two equal parts} :
+\exists {B\in\B|_{\samp}}:
+  k_{i,1}>k_0 \mbox{ and } k_{i,2} \leq \frac{k_{i,1}}{2}
+  \bigr\}
+\]
+has probability at most $\delta/10$, for every every $\samp$ 
+(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
+To analyze this we use a union bound. 
+We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > k_0$,
+where $k(B) = k_{1}(B)+ k_{2}(B)$.
+Fix such a $B$;
+without loss of generality assume that
+first $k(B)$ points out of the $2n$
+points in $S$ are in $B$. 
+For every $i\leq k(B)$,
+let $X_i$ denote the indicator of the event
+that the $i$'th point in $S$ was drawn into $S_2$.
+Set~$X=\sum_{i=1}^{k(B)}X_i$.
+Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
+To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
+One can verify that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
+and therefore it suffices to analyze the latter, 
+which is a standard application of Chernoff bound:
+\begin{align*}
+\Pr\bigl[X\leq k(B)/3\bigr]&\leq 
+\Pr\bigl[Y\leq k(B)/3\bigr]\\
+&=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
+\exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k_0/100)
+\end{align*}
+(where the last inequality is because $k(B) > k_0$).
+By Sauer's Lemma
+the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
+\[\Pr[E_2]\leq (2n^d)\exp(-k_0/100).\]
+Having $k_0\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+that this probability is at most $\delta/10$.
+\end{proof}
+
+\paragraph{Item 2.}
+
+\end{proof}
+
+
 \subsection{Proof of \Cref{lem:e2}}
 
 
 
-\newpage
+%\newpage
 %
 %\section{Ball Specialists}
 %
@@ -720,111 +837,111 @@ of $S$ into $S_1,S_2$.
 %
 %\appendix
 %
-%\section{Proof of Lemma~\ref{lem:auxuc}}\label{sec:auxuc}
-%\begin{proof}
-%We use the standard uniform convergence bound with
-%the difference that we use the multiplicative Chernoff bound instead
-%of the additive bound. 
-%We follow the double sampling argument.
-%Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
-%Let $E_1$ denote the event whose probability we want to bound:
-%\[
-%E_1 = \text{"}\exists {B\in\B}:
-%  k_1(B) \geq t_0 \mbox{ and } p(B) \leq \frac{k_1(B)}{4n}
-%\text{"}, 
-%\]
-%and let $E_2$ denote the event:
-%\[
-%E_2 = \text{"}\exists {B\in\B}:
-%  k_1(B) \geq t_0 \mbox{ and }k_2(B) \leq \frac{k_1(B)}{2}
-%\text{"}.
-%\]
-%The proof follows from the following two lemmas:
-%\begin{lemma}\label{lem:auxuc1}
-%\[\Pr[E_1]\leq 10\Pr[E_2].\]
-%\end{lemma}
-%\begin{lemma}\label{lem:auxuc2}
-%\[\Pr[E_2]\leq \delta/10.\]
-%\end{lemma}
-%\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
-%It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
-%Indeed, this would imply that 
-%$\Pr[E_1] \leq 10\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+%%\section{Proof of Lemma~\ref{lem:auxuc}}\label{sec:auxuc}
+%%\begin{proof}
+%%We use the standard uniform convergence bound with
+%%the difference that we use the multiplicative Chernoff bound instead
+%%of the additive bound. 
+%%We follow the double sampling argument.
+%%Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+%%Let $E_1$ denote the event whose probability we want to bound:
+%%\[
+%%E_1 = \text{"}\exists {B\in\B}:
+%%  k_1(B) \geq t_0 \mbox{ and } p(B) \leq \frac{k_1(B)}{4n}
+%%\text{"}, 
+%%\]
+%%and let $E_2$ denote the event:
+%%\[
+%%E_2 = \text{"}\exists {B\in\B}:
+%%  k_1(B) \geq t_0 \mbox{ and }k_2(B) \leq \frac{k_1(B)}{2}
+%%\text{"}.
+%%\]
+%%The proof follows from the following two lemmas:
+%%\begin{lemma}\label{lem:auxuc1}
+%%\[\Pr[E_1]\leq 10\Pr[E_2].\]
+%%\end{lemma}
+%%\begin{lemma}\label{lem:auxuc2}
+%%\[\Pr[E_2]\leq \delta/10.\]
+%%\end{lemma}
+%%\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
+%%It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+%%Indeed, this would imply that 
+%%$\Pr[E_1] \leq 10\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+%%
+%%Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+%%it suffices to show that 
+%%\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+%%Let $B\in\B$ such that $p(B)\leq \frac{k_1(B)}{4n}$.
+%%We want to show that $k_2(B)\leq \frac{k_1(B)}{2}$ with probability at least $1/10$.
+%%We consider two cases:
+%%(i) if $p(B) < 1/2n$
+%%then we bound as follows:
+%%\begin{align*}
+%%\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{n}\Bigr]
+%%&\leq
+%%\Pr\Bigl[ k_2(B) > 0 \Bigr]\\
+%%&\leq np(B) < 1/2 < 9/10.
+%%\end{align*}
+%%(ii) Else, if $p(B) \geq 1/2n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+%%\[
+%%\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{2}\Bigr]
+%%\leq
+%%\Pr\Bigl[ p_{\samp_2}(B) > 2p(B)\Bigr]
+%%\leq
+%%\exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
+%%\]
+%%So, conditioned on $E_1$, 
+%%the event $E_2$ occurs with probability at least $1/10$.
+%%
+%%
+%%\end{proof}
+%%
+%%\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]
+%%
+%%Instead of sampling $\samp_1$ and then $\samp_2$,
+%%we first sample $\samp=\samp_1\cup \samp_2$ and 
+%%then partition it to $\samp_1$ and $\samp_2$ uniformly.
+%%Now, for a fixed $\samp$ what is the probability (over the random partition)
+%%that $E_2$ occurs?
+%%Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+%%It suffices to show that the event
+%%\[E_2|_{\samp} = \text{"}\exists {B\in\B|_{\samp}}:
+%%  k_1(B)>t_0 \mbox{ and } k_2(B) \leq \frac{k_1(B)}{2}
+%%\text{"}\]
+%%has probability at most $\delta/10$, for every every $\samp$ 
+%%(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
+%%To analyze this we use a union bound. 
+%%We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > t_0$.
+%%Fix such a $B$.
+%%Without loss of generality assume that
+%%first $k(B)$ points out of the $2n$
+%%points in $S$ are in $B$. 
+%%For every $i\leq k(B)$,
+%%let $X_i$ denote the indicator of the event
+%%that the $i$'th point in $S$ was drawn into $S_2$.
+%%Set~$X=\sum_{i=1}^{k(B)}X_i$.
+%%Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
+%%To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+%%where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
+%%One can verify that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
+%%and therefore it suffices to analyze the latter, 
+%%which is a standard application of Chernoff bound:
+%%\begin{align*}
+%%\Pr\bigl[X\leq k(B)/3\bigr]&\leq 
+%%\Pr\bigl[Y\leq k(B)/3\bigr]\\
+%%&=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
+%%\exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k/100)
+%%\end{align*}
+%%(where the last inequality is because $k(B) > t_0$).
+%%By Sauer's Lemma
+%%the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
+%%\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
+%%Setting $k\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+%%that this probability is at most $\delta/10$.
+%%\end{proof}
+%%\end{proof}
+%%
 %
-%Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
-%it suffices to show that 
-%\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
-%Let $B\in\B$ such that $p(B)\leq \frac{k_1(B)}{4n}$.
-%We want to show that $k_2(B)\leq \frac{k_1(B)}{2}$ with probability at least $1/10$.
-%We consider two cases:
-%(i) if $p(B) < 1/2n$
-%then we bound as follows:
-%\begin{align*}
-%\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{n}\Bigr]
-%&\leq
-%\Pr\Bigl[ k_2(B) > 0 \Bigr]\\
-%&\leq np(B) < 1/2 < 9/10.
-%\end{align*}
-%(ii) Else, if $p(B) \geq 1/2n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
-%\[
-%\Pr\Bigl[ k_2(B) > \frac{k_1(B)}{2}\Bigr]
-%\leq
-%\Pr\Bigl[ p_{\samp_2}(B) > 2p(B)\Bigr]
-%\leq
-%\exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
-%\]
-%So, conditioned on $E_1$, 
-%the event $E_2$ occurs with probability at least $1/10$.
 %
 %
-%\end{proof}
-%
-%\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]
-%
-%Instead of sampling $\samp_1$ and then $\samp_2$,
-%we first sample $\samp=\samp_1\cup \samp_2$ and 
-%then partition it to $\samp_1$ and $\samp_2$ uniformly.
-%Now, for a fixed $\samp$ what is the probability (over the random partition)
-%that $E_2$ occurs?
-%Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
-%It suffices to show that the event
-%\[E_2|_{\samp} = \text{"}\exists {B\in\B|_{\samp}}:
-%  k_1(B)>t_0 \mbox{ and } k_2(B) \leq \frac{k_1(B)}{2}
-%\text{"}\]
-%has probability at most $\delta/10$, for every every $\samp$ 
-%(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
-%To analyze this we use a union bound. 
-%We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > t_0$.
-%Fix such a $B$.
-%Without loss of generality assume that
-%first $k(B)$ points out of the $2n$
-%points in $S$ are in $B$. 
-%For every $i\leq k(B)$,
-%let $X_i$ denote the indicator of the event
-%that the $i$'th point in $S$ was drawn into $S_2$.
-%Set~$X=\sum_{i=1}^{k(B)}X_i$.
-%Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
-%To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
-%where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
-%One can verify that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
-%and therefore it suffices to analyze the latter, 
-%which is a standard application of Chernoff bound:
-%\begin{align*}
-%\Pr\bigl[X\leq k(B)/3\bigr]&\leq 
-%\Pr\bigl[Y\leq k(B)/3\bigr]\\
-%&=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
-%\exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k/100)
-%\end{align*}
-%(where the last inequality is because $k(B) > t_0$).
-%By Sauer's Lemma
-%the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
-%\[\Pr[E_2]\leq (2n^d)\exp(-k/100).\]
-%Setting $k\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
-%that this probability is at most $\delta/10$.
-%\end{proof}
-%\end{proof}
-
-
-
-
 \end{document}
