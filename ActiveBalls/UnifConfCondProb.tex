@@ -246,7 +246,7 @@ However, the following variant does hold:
 The following event occurs with probability at least $1-\delta$:
 \[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq 
 \sqrt{\frac{k_0}{k(B)}},\]
-where $k_0 =100\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
+where $k_0 =200\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
 \end{theorem}
 
 \paragraph{Discussion.}
@@ -393,7 +393,7 @@ The proof follows from the following two lemmas:
 $\Pr[E_1]\leq 10\Pr[E_2].$
 \end{lemma}
 \begin{lemma}\label{lem:aux12}
-$\Pr[E_2]\leq \delta/10.$
+$\Pr[E_2]\leq \delta/20.$
 \end{lemma}
 \begin{proof}[Proof of Lemma~\ref{lem:aux11}]
 It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
@@ -447,7 +447,7 @@ We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > k_0$,
 where $k(B) = k_{1}(B)+ k_{2}(B)$.
 Fix such a $B$;
 without loss of generality assume that
-first $k(B)$ points out of the $2n$
+first $k(B)$ points out of the~$2n$
 points in $S$ are in $B$. 
 For every $i\leq k(B)$,
 let $X_i$ denote the indicator of the event
@@ -469,8 +469,8 @@ which is a standard application of Chernoff bound:
 By Sauer's Lemma
 the number of distinct restrictions $B|_S$ is at most $(2n)^d$, and therefore 
 \[\Pr[E_2]\leq (2n^d)\exp(-k_0/100).\]
-Having $k_0\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
-that this probability is at most $\delta/10$.
+Having $k_0\geq 200\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
+that this probability is at most $\delta/20$.
 \end{proof}
 
 \paragraph{Item {\it 2}.}
