@@ -210,7 +210,7 @@ consider the case where there is only one event $B$ in $\cB$,
 and let $k(B)=\sum_j 1_{[x_j\in B]}$.
 A Chernoff bound implies that conditioned on the event that~$k(B)>0$, 
 it holds with probability at least $1-\delta$ that:
-\[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \frac{2\ln(1/\delta)}{\sqrt{k(B)}}.\]
+\[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.\]
 To derive it use that conditioned on $x_i\in B$ the event $x_i\in A$ has probability $p(A\vert B)$, 
 and so conditioned on a specific value for $k(B)$ we get $k(B)$ i.i.d random coin tosses with bias $p(A\vert B)$.
 
@@ -222,7 +222,7 @@ the more samples belong to $B$ | the more certain we are with the empirical esti
 We would like to prove something like this:
 \begin{theorem}[A too good to be true UCECM]\label{thm:toogood}
 The following event occurs with probability at least $1-\delta$:
-\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq O\Bigl(\frac{d\ln(1/\delta)}{\sqrt{k(B)}}\Bigr),\]
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq O\Bigl(\sqrt{\frac{d\ln(1/\delta)}{k(B)}}\Bigr),\]
 where $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
 \end{theorem}
 \Cref{thm:toogood} is, unfortunately, false. 
@@ -336,7 +336,7 @@ and so, it enables us to replace \Cref{eq:anthony} with the following
 If $\Pr[E_1]\geq \delta$ then 
 \begin{enumerate}
 \item $\Pr[E_1\cap F] \geq \frac{1}{2}\Pr[E_1]$, and
-\item $(\forall S_1\in E_1\cap F): \Pr_{S_2}[S_1S_2\in E_2] \geq \frac{1}{2}$. 
+\item $(\forall S_1\in E_1\cap F): \Pr_{S_2}[S_1S_2\in E_2] \geq \frac{1}{8}$. 
 \end{enumerate}
 \end{lemma}
 We defer the proof of \Cref{lem:reduction} to the end, 
@@ -344,25 +344,25 @@ and assume it for now towards proving \Cref{thm:UCECM}.
 
 \Cref{lem:reduction} yields the following win-win situation:
 either $\Pr[E_1 \leq \delta]$ and we are done, 
-or that $\Pr[E_1]\leq 4\Pr[E_2]$:
-\[\frac{\Pr[E_2]}{\Pr[E_1]} \geq  \frac{1}{2}\frac{\Pr[E_2]}{\Pr[E_1\cap F]} \geq \frac{\Pr[E_2 \vert E_1\cap F]}{2} \geq \frac{1}{4},\]
+or that $\Pr[E_1]\leq 16\Pr[E_2]$:
+\[\frac{\Pr[E_2]}{\Pr[E_1]} \geq  \frac{1}{2}\frac{\Pr[E_2]}{\Pr[E_1\cap F]} \geq \frac{\Pr[E_2 \vert E_1\cap F]}{2} \geq \frac{1}{16},\]
 where the first inequality uses the first item of \Cref{lem:reduction}, 
 the second inequality follows by definition of conditional probability,
 and the last inequality is implied by the the second item of \Cref{lem:reduction}.
 
 
 We proceed to the standard symmetrization argument
-that establishes $\Pr[E_2]\leq\delta/4$:
+that establishes $\Pr[E_2]\leq\delta/16$:
 instead of sampling $S_1S_2\sim p^{2n}$,
 consider the following equivalent process:
 \begin{itemize}
 \item[(i)] Sample $S\sim p^{2n}$.
 \item[(ii)] Partition $S$ uniformly into two subsamples $S_1,S_2$, each of size $n$.
 \end{itemize}
-The following lemma implies that $\Pr[E_2]\leq \delta/4$, and finishes the proof.
+The following lemma implies that $\Pr[E_2]\leq \delta/16$, and finishes the proof.
 \begin{lemma}\label{lem:e2}
 For every $S\in X^{2n}$
-\[\Pr_{S\to S_1S_2}\bigl[S_1S_2\in E_2\bigr]\leq \frac{\delta}{4},\]
+\[\Pr_{S\to S_1S_2}\bigl[S_1S_2\in E_2\bigr]\leq \frac{\delta}{16},\]
 where the randomness is over the uniform partitioning
 of $S$ into $S_1,S_2$.
 \end{lemma}
@@ -473,8 +473,27 @@ Having $k_0\geq 100\bigl(d\log(2n) + \log(10/\delta)\bigr)$ yields
 that this probability is at most $\delta/10$.
 \end{proof}
 
-\paragraph{Item 2.}
-
+\paragraph{Item {\it 2}.}
+We now derive the second item;
+let $S_1\in E_1\cap F$; we want to show that $\Pr_{S_2}[S_1S_2\in E_2]\geq 1/8$.
+Fix a $B$ such that $\bigl\lvert p_{n,1}(A\vert B) - p(A\vert B) \bigr\rvert > \sqrt{\frac{k_0}{k(B)}}$.
+Thus, it follows that $k(B) > k_0$, and having $S_1\in F$ implies that $p(B)\geq \frac{k_1(B)}{4n} > \frac{k_0}{4n}$.
+Therefore, by basic properties of the binomial distribution it follows that $k_2(B) \geq np(B)\geq \frac{k_1(B)}{4}$ 
+with probability at least $1/4$, and that conditioned on this event (by Chernoff):
+\[ \bigl\lvert p_{n,2}(A \vert B) - p(A\vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(2)}{k_2(B)}} < \sqrt{\frac{50}{k(B)}} \]
+with probability at least $1/2$. 
+(where in the last inequality we used that if $k_{2}(B)\geq k_1(B)/4$ then $k(B) \leq 5k_2(B)$).
+To summarize, 
+with probability at least~$\frac{1}{8}=\frac{1}{2}\cdot\frac{1}{4}$ we have that
+$\bigl\lvert p_{n,2}(A \vert B) - p(A\vert B) \bigr\rvert < \sqrt{\frac{50}{k(B)}}$,
+and therefore
+\[
+\bigl\lvert p_{n,2}(A \vert B) - p_{n,1}(A\vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k(B)}} - \sqrt{\frac{50}{k(B)}}\geq 
+\sqrt{\frac{k_0}{k(B)}} - \frac{1}{2}\sqrt{\frac{k_0}{k(B)}}=
+\frac{1}{2}\sqrt{\frac{k_0}{k(B)}},
+\]
+with probability at least $1/8$, which which implies that $S_1S_2\in E_2$ with this probability.
 \end{proof}
 
 
