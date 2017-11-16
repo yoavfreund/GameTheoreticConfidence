@@ -202,12 +202,12 @@ Assume that $\cB$ has a finite VC dimension, denoted by $d$.
 Consider $n$ independent samples from~$p$, denoted by $x_1,\ldots,x_n$.
 We would like to estimate $p(A \vert B)$ simultaneously for all $B\in \B$.
 It is natural to consider the empirical estimates:
-\[p_n(A\vert B)=\frac{\sum_j 1_{[x_j\in A \cap B]}}{\sum_j 1_{[x_j\in B]}}.\]
+\[p_n(A\vert B)=\frac{\sum_i 1_{[x_i\in A \cap B]}}{\sum_i 1_{[x_i\in B]}}.\]
 We study how well and when do these estimates approximate the underlying ones simultaneously.
 
 To demonstrate the kind of statements we would like to derive,
 consider the case where there is only one event $B$ in $\cB$, 
-and let $k(B)=\sum_j 1_{[x_j\in B]}$.
+and let $k(B)=\sum_i 1_{[x_i\in B]}$.
 A Chernoff bound implies that conditioned on the event that~$k(B)>0$, 
 it holds with probability at least $1-\delta$ that:
 \[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.\]
@@ -223,11 +223,11 @@ We would like to prove something like this:
 \begin{theorem}[A too good to be true UCECM]\label{thm:toogood}
 The following event occurs with probability at least $1-\delta$:
 \[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq O\Bigl(\sqrt{\frac{d\ln(1/\delta)}{k(B)}}\Bigr),\]
-where $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
+where $k(B) = \sum_{i=1}^n 1[x_i\in B]$.
 \end{theorem}
 \Cref{thm:toogood} is, unfortunately, false. 
 As an example, consider the probability space defined by drawing uniformly $j\sim[n]$,
-and then coloring $j$ by $c_j\in\{\pm 1\}$ uniformly.
+and then coloring $j$ by $c_i\in\{\pm 1\}$ uniformly.
 For each $i$ let $B_i$ denote the event that $i$ was chosen,
 and let $A$ denote the event that the chosen color was  $+1$.
 (formally, $B_i = \{i\}\times\{\pm 1\}$, and $A=[n]\times\{+1\}$).
@@ -235,18 +235,18 @@ One can verify that the VC dimension of $\B=\{B_i : i\leq n\}$ is $1$.
 
 \Cref{thm:toogood} fails in this setting:
 indeed, if we sample $n$ times from this space 
-then with a constant probability there will be  $j$
-that will be always colored the same,  say $+1$, 
+then with a constant probability there will be some  $j$
+that is assigned with the same color in each sample,  say $+1$, 
 and will be picked some $\Theta(\log n/\log\log n)$ times.
 Therefore, $p_n(A\vert B_i) = 1$, $p(A\vert B_i)=1/2$,
 and $1-(1/2)>> \sqrt{\log\log n/\log n}$.
 
-However, the following variant does hold:
+We prove the following slightly weaker variant:
 \begin{theorem}[UCECM]\label{thm:UCECM}
 The following event occurs with probability at least $1-\delta$:
 \[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq 
 \sqrt{\frac{k_0}{k(B)}},\]
-where $k_0 =200\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k(B) = \sum_{j=1}^n 1[x_j\in B]$.
+where $k_0 =200\bigl(d\log(2n) + \log(10/\delta)\bigr)$, and $k(B) = \sum_{i=1}^n 1[x_i\in B]$.
 \end{theorem}
 
 \paragraph{Discussion.}
@@ -294,7 +294,7 @@ Define $E_1$ to be the event whose probability we want to bound:
 \bigl\lvert p(A \vert B) - p_{n,1}(A \vert B) \bigr\rvert > 
 \sqrt{\frac{k_0}{k_{1}(B)}} \Bigr\},\]
 where $p_{n,1}$ is the empirical measure induced by $S_1$, 
-and $k_{1}(B)=\sum_{j=1}^n 1[x_j\in B]$ ($p_{n,2}, k_{2}$ are defined similarly).
+and $k_{1}(B)=\sum_{i=1}^n 1[x_i\in B]$ ($p_{n,2}, k_{2}$ are defined similarly).
 Let $E_2$ denote the event
 \[E_2 = 
 \Bigl\{
@@ -339,7 +339,7 @@ If $\Pr[E_1]\geq \delta$ then
 \item $(\forall S_1\in E_1\cap F): \Pr_{S_2}[S_1S_2\in E_2] \geq \frac{1}{8}$. 
 \end{enumerate}
 \end{lemma}
-We defer the proof of \Cref{lem:reduction} to the end, 
+We defer the proof of \Cref{lem:reduction} to a later section, 
 and assume it for now towards proving \Cref{thm:UCECM}.
 
 \Cref{lem:reduction} yields the following win-win situation:
@@ -459,6 +459,7 @@ where the $Y_i$'s are independent Bernoulli random variables with probability $1
 One can verify that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
 and therefore it suffices to analyze the latter, 
 which is a standard application of Chernoff bound:
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \begin{align*}
 \Pr\bigl[X\leq k(B)/3\bigr]&\leq 
 \Pr\bigl[Y\leq k(B)/3\bigr]\\
@@ -499,7 +500,38 @@ with probability at least $1/8$, which which implies that $S_1S_2\in E_2$ with t
 
 \subsection{Proof of \Cref{lem:e2}}
 
+Let $S\in X^{2n}$. 
+We need to show that
+\[\Pr_{S\to S_1S_2}\Bigl[(\exists B\in \B|_S) : \bigl\lvert p_{n,1}(A \vert B) - p_{n,2}(A \vert B)  \bigr\rvert > \frac{1}{4}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{\delta}{16}.\]
+To this end we show that
+for every $B\in \B|_S$, 
+\[\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n,2}(A \vert B)  \bigr\rvert > \frac{1}{4}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{\delta/16}{\lvert \B|_S\rvert},\]
+which would finish the proof by a union bound.
+Fix $B\in \B|_S$. 
+We may assume that $k(B)> k_0$ (otherwise the above event has probability $0$). 
+Denote by $k(A\cap B)$ the number of points in $S$
+that are in $A\cap B$, and denote by $p_n(A\vert B) = \frac{k(A\cap B}{k(B)}$.
+It suffices to show that
+\[\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n}(A \vert B)  \bigr\rvert > \frac{1}{2}\cdot\frac{1}{4}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{1}{2}\cdot\frac{\delta/16}{\lvert \B|_S\rvert}.\]
+Let $k_1(B)$ denote the number of points in $S_1$ that belong to $B$.
+By \new{concentration},
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\[ \Pr[k_1(B) < k(B)/2] \leq \exp(-k(B)/8) \leq \exp(-k_0/8),\]
+and conditioned on that $k_1(B) \geq k(B)/2\geq k_0/2$, \new{by Chernoff}:
+\[\Pr\Biggl[ \lvert p_{n,1}(A \vert B) - p_n(A \vert B) \rvert >\sqrt{\frac{2\log(1/\delta')}{k(B)/2}}~ \Biggr\vert~ k_1(B) \geq k(B)/2\Biggr] \leq \delta',
+\]
+for every $\delta'$. 
+Thus, plugging $\delta'$ such that $\log(1/\delta') = k_0/256$ yields that
+\begin{align*}
+\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n}(A \vert B)  \bigr\rvert > \frac{1}{2}\cdot\frac{1}{4}\sqrt{\frac{k_0}{k(B)}} \Bigr] 
+&\leq  \delta' + \exp(-k_0/8)\\
+&\leq  \exp(-k_0/256) + \exp(-k_0/8)\\
+&\leq 2\exp(-k_0/256).
+\end{align*}
+Now, $\lvert \B|_S\rvert \leq 2(2n)^d$ by Sauer's Lemma,  and therefore, by the definition of $k_0$,
+this probability is at most $\frac{1}{2}\cdot\frac{\delta/16}{\lvert \B|_S\rvert}$, as required.
 
+\qed
 
 %\newpage
 %
