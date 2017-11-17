@@ -210,12 +210,14 @@ consider the case where there is only one event $B$ in $\cB$,
 and let $k(B)=\sum_i 1_{[x_i\in B]}$.
 A Chernoff bound implies that conditioned on the event that~$k(B)>0$, 
 it holds with probability at least $1-\delta$ that:
-\[\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.\]
-To derive it use that conditioned on $x_i\in B$ the event $x_i\in A$ has probability $p(A\vert B)$, 
-and so conditioned on a specific value for $k(B)$ we get $k(B)$ i.i.d random coin tosses with bias $p(A\vert B)$.
+\begin{equation}\label{eq:chernoff}
+\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.
+\end{equation}
+To derive it use that conditioned on $x_i\in B$, the event $x_i\in A$ has probability $p(A\vert B)$, 
+and therefore the random variable ``$k(B)\cdot p_n(A \vert B)$'' has distribution $Bin(k(B), p(A\vert B))$.
 
-Note that the bound we get on the probability is also a random variable, 
-since it involves $k(B)$ in it, which is random.
+Note that the bound on the probability in \Cref{eq:chernoff} depends on $k(B)$
+and therefore is random.
 We stress that this is the type of statement we want:
 the more samples belong to $B$ | the more certain we are with the empirical estimate.
 
@@ -226,10 +228,10 @@ The following event occurs with probability at least $1-\delta$:
 where $k(B) = \sum_{i=1}^n 1[x_i\in B]$.
 \end{theorem}
 \Cref{thm:toogood} is, unfortunately, false. 
-As an example, consider the probability space defined by drawing uniformly $j\sim[n]$,
-and then coloring $j$ by $c_i\in\{\pm 1\}$ uniformly.
-For each $i$ let $B_i$ denote the event that $i$ was chosen,
-and let $A$ denote the event that the chosen color was  $+1$.
+As an example, consider the probability space defined by drawing uniformly $x\sim[n]$,
+and then coloring $x$ by $c_x\in\{\pm 1\}$ uniformly.
+For each $i$ let $B_i$ denote the event that $i$ was drawn,
+and let $A$ denote the event that the drawn color was  $+1$.
 (formally, $B_i = \{i\}\times\{\pm 1\}$, and $A=[n]\times\{+1\}$).
 One can verify that the VC dimension of $\B=\{B_i : i\leq n\}$ is $1$.
 
@@ -237,11 +239,12 @@ One can verify that the VC dimension of $\B=\{B_i : i\leq n\}$ is $1$.
 indeed, if we sample $n$ times from this space 
 then with a constant probability there will be some  $j$
 that is assigned with the same color in each sample,  say $+1$, 
-and will be picked some $\Theta(\ln n/\ln\ln n)$ times.
+and will be picked some $\Theta(\ln n/\ln\ln n)$ times\footnote{{This follows from analyzing the maximal bin
+in a uniform assignment of $\Theta(n)$ balls into $n$ bins~\cite{bins}}}.
 Therefore, $p_n(A\vert B_i) = 1$, $p(A\vert B_i)=1/2$,
 and $1-(1/2)>> \sqrt{\ln\ln n/\ln n}$.
 
-We prove the following slightly weaker variant:
+We prove the following (slightly weaker) variant:
 \begin{theorem}[UCECM]\label{thm:UCECM}
 The following event occurs with probability at least $1-\delta$:
 \[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq 
@@ -256,22 +259,22 @@ where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$, and $k(B) = \sum_{i=1}^n 1
 %for $B$ such that $p(B)\geq d\ln n/n$
 %but the naive bound requires $p(B)\geq \sqrt{d/n}$.}
 
-It is worth noting that this can be combined with the following uniform convergence 
-variant to yield a bound on the convergence rate of $p_n(A \vert B)$ to $p(A \vert B)$
-that depends only on the true measure $p(B)$.
+\Cref{thm:UCECM} can be combined with the following uniform convergence 
+variant to yield a bound on the minimal $n$ for which $p_n(A \vert B)$ 
+is a non-trivial approximation of $p(A \vert B)$
+(as explained below, this $n$ is some $\tilde O\bigl(1/p(B)\bigr)$).
 \begin{lemma}\label{lem:uconeside}
 Set $k_0$ like in \Cref{thm:UCECM}. Then with probability at least $1-\delta$:
 \[
-(\forall B\in \B):~ p_n(B) \geq \frac{p(B)}{4} - \frac{k_0}{n}.
+(\forall B\in \B):~ k(B) \geq \frac{1}{4}np(B) - {k_0}.
 \]
 \end{lemma}
-This implies that once $n$ large enough so that $p(B)$ is roughly $\Omega\bigl(\frac{d\ln n}{n}\bigr)$
+This implies that once $n$ large enough so that $p(B)=\tilde\Omega(k/n)=\tilde\Omega\bigl(\frac{d}{n}\bigr)$
 then the empirical estimate $p_n(A\vert B)$ becomes non-trivial.
 In the context of specialists, this means that the empirical
 biases provide meaningful estimates of the true biases 
-for specialists with the above measure.
-Note that this rate resembles that of realizable-case learning,
-although the considered setting is agnostic.
+for specialists whose measure is $\tilde\Omega\bigl(\frac{d}{n}\bigr)$.
+Note the resemblance with the learning rate in realizable settings.
 %
 %indeed, it implies that roughly $p(B)\pm \sqrt{d/n}$ 
 %empirical points from the sample are will indeed belong to $B$
@@ -281,15 +284,14 @@ although the considered setting is agnostic.
 %which is for a large $n$ roughly $\sqrt{\frac{d\ln n}{p(B)n}}$.
 
 A relevant remark is that a weaker statement than \Cref{thm:UCECM}
-can be derived quite easily as a corollary of the the classical uniform convergence
+can be derived as a corollary of the classical uniform convergence
 result~\cite{vapnik}. 
 Indeed, since the VC dimension of $\{B\cap A : i\in \I\}$ is at most $d$, it follows that 
 \[p_n(A\vert B)\approx\frac{p(A\cap B) \pm \sqrt{d/n}}{p(B)\pm \sqrt{d/n}}.\]
 However, this bound guarantees non-trivial estimates only once $p(B)$ is roughly $\sqrt{d/n}$.
-This corresponds to the rate of agnostic learning, which is significantly slower
-than the which is significantly smaller than the rate of $\frac{d\ln n}{n}$, which is implied by \Cref{thm:UCECM}.
+This is similar to the learning rate in the agnostic learning.
 
-Another advantage is that  the uniform convergence bound in \Cref{thm:UCECM} is based on ``luckiness'':
+Another practical advantage of the uniform convergence bound in \Cref{thm:UCECM} is ``luckiness'':
 if many points from the sample belong to $B$ then the confidence interval around its (true) measure is smaller. 
 
 
