@@ -291,8 +291,10 @@ Indeed, since the VC dimension of $\{B\cap A : i\in \I\}$ is at most $d$, it fol
 However, this bound guarantees non-trivial estimates only once $p(B)$ is roughly $\sqrt{d/n}$.
 This is similar to the learning rate in the agnostic learning.
 
-Another practical advantage of the uniform convergence bound in \Cref{thm:UCECM} is ``luckiness'':
-if many points from the sample belong to $B$ then the confidence interval around its (true) measure is smaller. 
+Another practical advantage of the uniform convergence bound in \Cref{thm:UCECM} is its dependence on $k(B)$,
+which may be thought of as a ``lucky-case'' bound:
+if (by ``luck'') many points from the sample belong to $B$ 
+then $p_n(A\vert B)$ is a good estimate of $p(A\vert B)$.
 
 
 
