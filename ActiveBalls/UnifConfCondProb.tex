@@ -343,7 +343,8 @@ with probability at least $1/8$, which is the negation of $E_2$.
 
 To get around this, we introduce an auxiliary event $F$, defined by
 \[F = \Bigl\{S_1\in X^{n} : (\forall B\in\B): k_{1}(B) \geq k_0 \implies p(B)\geq \frac{k_{1}(B)}{4n}\Bigr\}. \]
-
+\yoav{I find it more natural to define the complement of $F$, i.e. the
+  set of samples for which there exists a ball where the bad thing happens.}
 Note that $F$ discards the problematic example from above 
 (by constraining every $B$ that witnesses $E_1$ to have a large probability). 
 As we will see, $F$ is a typical event that happens with high probability,
@@ -476,9 +477,12 @@ Its moment-generating function upper-bounds that of $X$, i.e. $\evp{tX}{} \leq \
 (\cite{H63}, Thm. 4)), 
 so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chernoff bound on $Y$:
 \footnote{We repeatedly use this standard trick of relaxing sampling-without-replacement tail bounds based on moment-generating functions to their with-replacement counterparts in what follows.} 
-%and therefore it suffices to analyze the latter, 
-%which is a standard application of Chernoff bound:
+\yoav{Akshay, I can see how this argument works for a single ball $B$,
+  but not how it would work for a uniform bound over a set of balls.}
 \shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\yoav{This comment by shay appears verbatim in three different
+  places. Should all of them be there? (instead of uncommenting
+  comments, change the newcommands that create them).}
 \begin{align*}
 \Pr\bigl[X\leq k(B)/3\bigr]
 %&\leq \Pr\bigl[Y\leq k(B)/3\bigr]\\
