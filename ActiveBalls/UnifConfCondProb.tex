@@ -394,32 +394,32 @@ This follows from the standard uniform convergence bound with
 the difference that of using the multiplicative Chernoff bound instead
 of the additive bound:
 Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
-Let $E_1$ denote the event whose probability we want to bound:
+Let $F_1$ denote the event whose probability we want to bound:
 \[
-E_1 =\bigl\{ S_1\in X^n : (\exists {B\in\B}):
+F_1 =\bigl\{ S_1\in X^n : (\exists {B\in\B}):
   k_{1}(B) \geq k_0 \mbox{ and } p(B) \leq \frac{k_{1}(B)}{4n}\bigr\}, 
 \]
-and let $E_2$ denote the event:
+and let $F_2$ denote the event:
 \[
-E_2 = 
+F_2 = 
 \bigl\{ S_1S_2\in X^{2n} : (\exists {B\in\B}):
   k_{1}(B) \geq k_0 \mbox{ and } k_{2}(B) \leq \frac{k_{1}(B)}{2}\bigr\}.
 \]
 The proof follows from the following two lemmas:
 \begin{lemma}\label{lem:aux11}
-$\Pr[E_1]\leq 10\Pr[E_2].$
+$\Pr[F_1]\leq 10\Pr[F_2].$
 \end{lemma}
 \begin{lemma}\label{lem:aux12}
-$\Pr[E_2]\leq \delta/20.$
+$\Pr[F_2]\leq \delta/20.$
 \end{lemma}
 \begin{proof}[Proof of Lemma~\ref{lem:aux11}]
-It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/10$.
+It suffices to show that $\Pr[F_2 \vert F_1]\geq 1/10$.
 Indeed, this would imply that 
-$\Pr[E_1] \leq 10\Pr[E_1 \cap E_2]\leq 10\Pr[E_2]$.
+$\Pr[F_1] \leq 10\Pr[F_1 \cap F_2]\leq 10\Pr[F_2]$.
 
-Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+Let $S_1\in F_1$. Since $S_2$ and $S_1$ are independent,
 it suffices to show that 
-\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/10.\]
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in F_2\bigr] \geq 1/10.\]
 Let $B\in\B$ such that $p(B)\leq \frac{k_{1}(B)}{4n}$.
 We want to show that $k_{2}(B)\leq \frac{k_{1}(B)}{2}$ with probability at least $1/10$.
 We consider two cases:
@@ -439,8 +439,8 @@ then we bound as follows:
 \leq
 \exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
 \]
-So, conditioned on $E_1$, 
-the event $E_2$ occurs with probability at least $1/10$.
+So, conditioned on $F_1$, 
+the event $F_2$ occurs with probability at least $1/10$.
 
 \begin{proof}[Proof of Lemma~\ref{lem:aux12}]
 
@@ -448,10 +448,10 @@ Instead of sampling $\samp_1$ and then $\samp_2$,
 we first sample $\samp=\samp_1\cup \samp_2$ and 
 then partition it to $\samp_1$ and $\samp_2$ uniformly.
 Now, for a fixed $\samp$ what is the probability (over the random partition)
-that $E_2$ occurs?
+that $F_2$ occurs?
 Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
 It suffices to show that the event
-\[E_2|_{\samp} = 
+\[F_2|_{\samp} = 
 \bigl\{ \{S_1,S_2\}\text{ is a partition of $S$ into two equal parts} :
 \exists {B\in\B|_{\samp}}:
   k_{i,1}>k_0 \mbox{ and } k_{i,2} \leq \frac{k_{i,1}}{2}
@@ -470,7 +470,7 @@ For every $i\leq k(B)$,
 let $X_i$ denote the indicator of the event
 that the $i$'th point in $S$ was drawn into $S_2$.
 Set~$X=\sum_{i=1}^{k(B)}X_i$.
-Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
+Note that $B$ causes $F_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
 To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
 where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$. 
 Its moment-generating function upper-bounds that of $X$, i.e. $\evp{\exp(tX)}{} \leq \evp{\exp(tY)}{}$ 
@@ -492,7 +492,7 @@ so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chern
 (where the last inequality is because $k(B) > k_0$).
 By Sauer's Lemma
 the number of distinct restrictions $B|_S$ is at most $\bigl(\frac{2en}{d}\bigr)^d$, and therefore 
-\[\Pr[E_2]\leq \Bigl(\frac{2en}{d}\Bigr)^d\exp(-k_0/100).\]
+\[\Pr[F_2]\leq \Bigl(\frac{2en}{d}\Bigr)^d\exp(-k_0/100).\]
 Having $k_0\geq 200\bigl(d\ln(3n) + \ln(1/\delta) \bigr)$ yields
 that this probability is at most $\delta/20$.
 \end{proof}
