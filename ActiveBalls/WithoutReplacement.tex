@@ -12,12 +12,13 @@
 
 %  bin probabilities
 \newcommand{\prob}[2]{#1_{#2}}
-%$\bin{P}{t,i}, \bin{Q}{t,i}$
 
 % tail probabilities
 \newcommand{\tail}[3]{{\mathbf #1}^{#2}_{#3}}
 
-%$$\tail{L}{P}{t,i}$$
+% mode
+\newcommand{\mode}[1]{\mbox{mode}\left(#1\right)} 
+\newcommand{\fmode}[1]{Z^{#1}_t}
 
 
 Before proving Theorem~\ref{thm:Bias-Convergence} we prove a 
@@ -34,17 +35,16 @@ variable when the sampling is done {\em without replacement}.
 
 We deonte the marginal probability that $\cnt{P}{t}=i$ by
 $\prob{P}{t,i}$ and the probability that $\cnt{Q}{t}=i$ by
-$\prob{Q}{t,i}$. For $t=0$ we have that 
-$\prob{P}{0,0}=\prob{Q}{0,0}=1$ and for all $i\neq 0$
-$\prob{P}{0,i}=\prob{Q}{0,i}=0$.
-For $t \geq 0$ the following recursion holds:
-\[
-\prob{P}{t+1,i}=\frac{k}{n} \prob{P}{t,i-1} + \left(1-\frac{k}{n}\right)\prob{P}{t,i}
-\]
-and
-\[
-\prob{Q}{t+1,i}=\frac{k-i+1}{n-t}\prob{Q}{t,i-1} + \left(1-\frac{k-i}{n-t}\right)\prob{Q}{t,i-1}
-\]
+$\prob{Q}{t,i}$.
+
+Both $\prob{P}{t,i}$ and $\prob{Q}{t,i}$ have closed form formulas:
+\begin{equation}\label{eqn:P-closed-form}
+\prob{P}{t,i} = {t \choose i} \left(\frac{k}{n}\right)^i \left(1-\frac{k}{n}\right)^{t-i}
+\end{equation}
+
+\begin{equation}\label{eqn:Q-closed-form}
+\prob{Q}{t,i}=\frac{{k \choose i}{n-k \choose t-i}}{{n \choose t}}
+\end{equation}
 
 We denote the probability of sampling a 1 when sampling with
 replacement by $\p=k/n$ and the probability of sampling a 1 when
@@ -60,6 +60,45 @@ and if $i > \p t$ then
 \[
 \q=\frac{k-i}{n-t} < \frac{k-\p t}{n-t} = \frac{k}{n}=\p.
 \]
+Both $P$ and $Q$ are unimodal and achieve their maximal value close to
+$\p t$.
+
+Let $S$ stand for $P$ or $Q$, The mode $S$ is a set of one or two
+integers such that  $\mode{\prob{S}{t}} \doteq \argmax_{i} \prob{S}{t,i}$.
+  
+  For $0 \leq t \leq n$, for the distribution $\prob{S}{t}$ we denote the
+  ``exact mode'' by a real valued number $0\leq \fmode{S} \leq t$,
+  Which defines the mode as follows
+  \begin{equation}\label{eqn:mode}
+    \mode{\prob{S}{t}} = \begin{cases}
+      0 & \mbox{if $k=0$} \\
+    \lfloor \fmode{S}+1 \rfloor & \mbox{if $\fmode{S}$ is not
+      an integer,} \\
+      \fmode{S} \mbox{ and } \fmode{S}+1 & \mbox{if $\fmode{S}$ is an
+        integer} \\
+    t & \mbox{if $k=n$}
+  \end{cases}
+  \end{equation}
+  
+\begin{lemma} The modes for $P$ and $Q$ are:\newline
+   For sampling with replacement the mode is defined by
+   Equation~\ref{eqn:mode} with $S=P$ and $\fmode{P} = (t+1)\p-1$.\newline
+   For sampling with replacement  the mode is defined by
+   Equation~\ref{eqn:mode} with $S=Q$ and $\fmode{Q} = (t+1)\frac{k+1}{n+2}-1$.
+\end{lemma}
+
+Next we give a recursive formulation for $P$ and $Q$. \newline
+For $t=0$ we have that 
+$\prob{P}{0,0}=\prob{Q}{0,0}=1$ and for all $i\neq 0$
+$\prob{P}{0,i}=\prob{Q}{0,i}=0$.
+For $t \geq 0$ the following recursion holds:
+\[
+\prob{P}{t+1,i}=\frac{k}{n} \prob{P}{t,i-1} + \left(1-\frac{k}{n}\right)\prob{P}{t,i}
+\]
+and
+\[
+\prob{Q}{t+1,i}=\frac{k-i+1}{n-t}\prob{Q}{t,i-1} + \left(1-\frac{k-i}{n-t}\right)\prob{Q}{t,i-1}
+\]
 
 For $0 \leq t \leq n$ and $0 \leq i \leq t$ we define the left and
 right tails of the $P$ and $Q$ distributions as follows:
@@ -74,71 +113,12 @@ right tails of the $P$ and $Q$ distributions as follows:
 We can now state our main lemma regarding the tails of the
 distribution $Q$.
 \begin{lemma}
-  For all $0\leq t \leq n$
+  For all $0\leq t \leq n$, let $\fmode{Q} = (t+1)\frac{k+1}{n+2}-1$,
+  then 
   \begin{itemize}
-    \item If $i < \lfloor \p t \rfloor$ then $\tail{L}{Q}{t,i} < \tail{L}{P}{t,i}$
-    \item If $i > \lceil \p t \rceil$ then $\tail{R}{Q}{t,i} < \tail{R}{P}{t,i}$
+    \item If $i < \lfloor \fmode{Q} \rfloor$ then $\tail{L}{Q}{t,i} < \tail{L}{P}{t,i}$
+    \item If $i > \lceil \fmode{Q} \rceil$ then $\tail{R}{Q}{t,i} < \tail{R}{P}{t,i}$
     \end{itemize}
 \end{lemma}
 
-\iffalse
-The mean of $k_t$ is the same whether the sampling is equal to
-$E_t=E(k_t)=\frac{kt}{n}$ whether sampling with replacement or
-not. For each $0\leq t \leq n$ we partition the range $0\leq i \leq t$
-into the left part $L_t = \{1 | 0 \leq i <E_t \}$
-and the right part $R_t=\{i | E_t < i \leq t\}$. (When
-$E_t$ is an integer the mid-point $i=E_t$ is neither in $L_t$ nor in $R_t$).
-
-The following lemma states that for any $0 \leq t \leq n$,
-$P_{ti}$ and $Q_{ti}$ are non decreasing on the left part and non
-increasing on the right part.
-\begin{lemma}
-  for all $0 \leq t \leq n$:
-  \begin{itemize}
-  \item For all $i< E_t$ (the left part), $P_{t,i-1} \leq P_{t,i}$ and
-    $Q_{t,i-1} \leq Q_{t,i}$
-  \item For all $i>E_t$ (the right part), $P_{t,i+1} \leq P_{t,i}$ and
-    $Q_{t,i+1} \leq Q_{t,i}$
-  \end{itemize}
-\end{lemma}
-\begin{proof}
-  We prove the claim by induction:
-  \begin{itemize}
-    \item {\bf Base case:} for $t=0$, $E_t=0$, $P_{00}=Q_{00}=1$ and
-      for all $i\neq 0$ $P_{0i}=Q_{0i}=0$ and the claim follows.
-    \item {\bf Induction} Assume the claim holds for $t$ and prove for
-      $t+1$. Consider $P_{t+1,i-1},P_{t+1,i}$ on the left
-      part, i.e. $i < \frac{(t+1)k}{n}$. The recursion
-      implies that $P_{t+1,i-1}$ is a convex combination of 
-      $P_{t,i-2}$ and $P_{t,i-1}]$ and that $P_{t+1,i}$ is a convex
-        combination of $P_{t,i-1}]$ and $P_{t,i}$. 
-    \end{itemize}
-\end{proof}
-
-
-We are interested in comparing the tail probabilities for the two
-processes. For all $1 \leq t \leq n$ and $1 \leq i < \left\lfloor
-E_t\right\rfloor $ we define the left tails as:
-\[
-\Plower_{ti} = \sum_{j=1}^i P_{tj},\;\;
-\Qlower_{ti} = \sum_{j=1}^i Q_{tj}\;\;
-\]
-For $\lceil pi \rceil < j \leq i$ we define the upper tails to be
-\[
-\Pupper_{ij} = \sum_{j=i}^t P_{tj},\;\;
-\Qupper_{ij} = \sum_{j=i}^t Q_{tj}\;\;
-\]
-
-Using this notation we can state the following lemma. Intuitively,
-this lemma states that the distribution generated by sampling without
-replacement is more concentrated around the mean than the
-corresponding distribution for sampling with replacement.
-\begin{lemma}
-For all $1 \leq i \leq n$ and $1 \leq j < \lfloor pi \rfloor$,
-$\Plower_{ij} > \Qlower_{ij}$, and for all $1 \leq i \leq n$, $\lceil
-pi \rceil < j \leq i$, $\Pupper_{ij} > \Qupper_{ij}$.
-\end{lemma}
-\begin{proof}
-  By Induction over $i$.
-  \end{proof}
-\fi
+\subsection{End of section on sampling withuout replacement}

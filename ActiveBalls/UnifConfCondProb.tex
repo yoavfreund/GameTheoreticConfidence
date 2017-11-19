@@ -253,11 +253,11 @@ where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$, and $k(B) = \sum_{i=1}^n 1
 \end{theorem}
 
 \paragraph{Discussion.}
-%\shay{Analyze this comparison more clearly.
-%I hope we can derive a statement like:
-%our bound becomes meaningful
-%for $B$ such that $p(B)\geq d\ln n/n$
-%but the naive bound requires $p(B)\geq \sqrt{d/n}$.}
+\shay{Analyze this comparison more clearly.
+I hope we can derive a statement like:
+our bound becomes meaningful
+for $B$ such that $p(B)\geq d\ln n/n$
+but the naive bound requires $p(B)\geq \sqrt{d/n}$.}
 
 \Cref{thm:UCECM} can be combined with the following uniform convergence 
 variant to yield a bound on the minimal $n$ for which $p_n(A \vert B)$ 
@@ -478,7 +478,7 @@ so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chern
 \footnote{We repeatedly use this standard trick of relaxing sampling-without-replacement tail bounds based on moment-generating functions to their with-replacement counterparts in what follows.} 
 %and therefore it suffices to analyze the latter, 
 %which is a standard application of Chernoff bound:
-%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \begin{align*}
 \Pr\bigl[X\leq k(B)/3\bigr]
 %&\leq \Pr\bigl[Y\leq k(B)/3\bigr]\\
@@ -538,7 +538,7 @@ $k_1(B)\geq k(B)/2$, where $k_1(B)$ is the number of points in $S_1$ that belong
 and that conditioned on this typical event, the above event occurs with a sufficiently small probability.
 
 Using the multiplicative Chernoff bound, we get 
-%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \[ \Pr[k_1(B) < k(B)/2] \leq \exp(-k(B)/8) \leq \exp(-k_0/8).\]
 Now, conditioned on that $k_1(B) \geq k(B)/2\geq k_0/2$, by Chernoff:
 \[\Pr\Biggl[ \bigl\lvert p_{n,1}(A \vert B) - p_n(A \vert B) \bigr\rvert >\sqrt{\frac{2\ln(1/\delta')}{k(B)/2}}~ \Biggr\vert~ k_1(B) \geq k(B)/2\Biggr] \leq \delta',
@@ -663,7 +663,7 @@ where the $Y_i$'s are independent Bernoulli random variables with probability $1
 %\new{One can verify} that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
 %and therefore it suffices to analyze the latter, 
 Again note that the multiplicative Chernoff bound on $Y$ bounds the corresponding tail probability on $X$, so that:
-%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \begin{align*}
 \Pr\bigl[X\leq \frac{k(B)}{3}\bigr]&\leq 
 \Pr\bigl[Y\leq \frac{k(B)}{3}\bigr]\\
@@ -679,6 +679,7 @@ that this probability is at most $\delta/2$.
 \end{proof}
 \end{proof}
 
+\input{WithoutReplacement}
 
 \bibliography{UnifConfCondProb}
 \bibliographystyle{alpha}
