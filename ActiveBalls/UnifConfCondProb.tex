@@ -203,7 +203,7 @@ Consider $n$ independent samples from~$p$, denoted by $x_1,\ldots,x_n$.
 We would like to estimate $p(A \vert B)$ simultaneously for all $B\in \B$.
 It is natural to consider the empirical estimates:
 \[p_n(A\vert B)=\frac{\sum_i 1_{[x_i\in A \cap B]}}{\sum_i 1_{[x_i\in B]}}.\]
-We study how well and when do these estimates approximate the underlying ones simultaneously.
+We study how well and when these estimates approximate the underlying ones simultaneously.
 
 To demonstrate the kind of statements we would like to derive,
 consider the case where there is only one event $B$ in $\cB$, 
@@ -214,7 +214,7 @@ it holds with probability at least $1-\delta$ that:
 \bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.
 \end{equation}
 To derive it use that conditioned on $x_i\in B$, the event $x_i\in A$ has probability $p(A\vert B)$, 
-and therefore the random variable ``$k(B)\cdot p_n(A \vert B)$'' has distribution $Bin(k(B), p(A\vert B))$.
+and therefore the random variable ``$k(B)\cdot p_n(A \vert B)$'' has distribution $\mbox{Bin}(k(B), p(A\vert B))$.
 
 Note that the bound on the probability in \Cref{eq:chernoff} depends on $k(B)$
 and therefore is random.
@@ -242,7 +242,7 @@ that is assigned with the same color in each sample,  say $+1$,
 and will be picked some $\Theta(\ln n/\ln\ln n)$ times\footnote{{This follows from analyzing the maximal bin
 in a uniform assignment of $\Theta(n)$ balls into $n$ bins~\cite{bins}}}.
 Therefore, $p_n(A\vert B_i) = 1$, $p(A\vert B_i)=1/2$,
-and $1-(1/2)>> \sqrt{\ln\ln n/\ln n}$.
+and $1-(1/2) \gg \sqrt{\ln\ln n/\ln n}$.
 
 We prove the following (slightly weaker) variant:
 \begin{theorem}[UCECM]\label{thm:UCECM}
@@ -347,7 +347,7 @@ To get around this, we introduce an auxiliary event $F$, defined by
 Note that $F$ discards the problematic example from above 
 (by constraining every $B$ that witnesses $E_1$ to have a large probability). 
 As we will see, $F$ is a typical event that happens with high probability,
-and so, it enables us to replace \Cref{eq:anthony} with the following
+and so, it enables us to replace \Cref{eq:anthony} with the following:
 \begin{lemma}\label{lem:reduction}
 If $\Pr[E_1]\geq \delta$ then 
 \begin{enumerate}
@@ -368,8 +368,8 @@ and the last inequality is implied by the the second item of \Cref{lem:reduction
 
 
 We proceed to the standard symmetrization argument
-that establishes $\Pr[E_2]\leq\delta/16$:
-instead of sampling $S_1S_2\sim p^{2n}$,
+that establishes $\Pr[E_2]\leq\delta/16$. 
+Instead of sampling $S_1S_2\sim p^{2n}$,
 consider the following equivalent process:
 \begin{itemize}
 \item[(i)] Sample $S\sim p^{2n}$.
@@ -471,14 +471,17 @@ that the $i$'th point in $S$ was drawn into $S_2$.
 Set~$X=\sum_{i=1}^{k(B)}X_i$.
 Note that $B$ causes $E_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
 To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
-where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
-\new{One can verify} that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
-and therefore it suffices to analyze the latter, 
-which is a standard application of Chernoff bound:
-\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$. 
+Its moment-generating function upper-bounds that of $X$, i.e. $\evp{tX}{} \leq \evp{tY}{}$ 
+(\cite{H63}, Thm. 4)), 
+so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chernoff bound on $Y$:
+\footnote{We repeatedly use this standard trick of relaxing sampling-without-replacement tail bounds based on moment-generating functions to their with-replacement counterparts in what follows.} 
+%and therefore it suffices to analyze the latter, 
+%which is a standard application of Chernoff bound:
+%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \begin{align*}
-\Pr\bigl[X\leq k(B)/3\bigr]&\leq 
-\Pr\bigl[Y\leq k(B)/3\bigr]\\
+\Pr\bigl[X\leq k(B)/3\bigr]
+%&\leq \Pr\bigl[Y\leq k(B)/3\bigr]\\
 &=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
 \exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k_0/100)
 \end{align*}
@@ -533,10 +536,11 @@ Since $p_{n,1},p_{n,2}$ are identically distributed, it suffices to show that
 To this end we show that with a sufficiently large probability, 
 $k_1(B)\geq k(B)/2$, where $k_1(B)$ is the number of points in $S_1$ that belong to $B$,
 and that conditioned on this typical event, the above event occurs with a sufficiently small probability.
-By \new{the multiplicative Chernoff bound},
-\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+
+Using the multiplicative Chernoff bound, we get 
+%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \[ \Pr[k_1(B) < k(B)/2] \leq \exp(-k(B)/8) \leq \exp(-k_0/8).\]
-Now, conditioned on that $k_1(B) \geq k(B)/2\geq k_0/2$, \new{by Chernoff}:
+Now, conditioned on that $k_1(B) \geq k(B)/2\geq k_0/2$, by Chernoff:
 \[\Pr\Biggl[ \bigl\lvert p_{n,1}(A \vert B) - p_n(A \vert B) \bigr\rvert >\sqrt{\frac{2\ln(1/\delta')}{k(B)/2}}~ \Biggr\vert~ k_1(B) \geq k(B)/2\Biggr] \leq \delta',
 \]
 for every $\delta'$. 
@@ -656,10 +660,10 @@ Set~$X=\sum_{i=1}^{k(B)}X_i$.
 Note that $B$ causes $E_2|_{\samp}$ to occur only if $X\leq k(B)/3$.
 To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
 where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
-\new{One can verify} that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
-and therefore it suffices to analyze the latter, 
-which, by the multiplicative Chernoff bound:
-\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+%\new{One can verify} that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
+%and therefore it suffices to analyze the latter, 
+Again note that the multiplicative Chernoff bound on $Y$ bounds the corresponding tail probability on $X$, so that:
+%\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \begin{align*}
 \Pr\bigl[X\leq \frac{k(B)}{3}\bigr]&\leq 
 \Pr\bigl[Y\leq \frac{k(B)}{3}\bigr]\\
@@ -675,6 +679,9 @@ that this probability is at most $\delta/2$.
 \end{proof}
 \end{proof}
 
+
+\bibliography{UnifConfCondProb}
+\bibliographystyle{alpha}
 
 
 %
