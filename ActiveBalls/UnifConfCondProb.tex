@@ -474,11 +474,12 @@ Note that $B$ causes $F_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
 To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
 where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$. 
 Its moment-generating function upper-bounds that of $X$, i.e. $\evp{\exp(tX)}{} \leq \evp{\exp(tY)}{}$ 
-(\cite{H63}, Thm. 4)), 
+(\cite{H63}, Thm. 4), 
 so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chernoff bound on $Y$:
 \footnote{We repeatedly use this standard trick of relaxing sampling-without-replacement tail bounds based on moment-generating functions to their with-replacement counterparts in what follows.} 
 \yoav{Akshay, I can see how this argument works for a single ball $B$,
   but not how it would work for a uniform bound over a set of balls.}
+\akshay{Yoav, where is the issue? I believe the proof from the line ``Fix such a $B$" (before this comment inline) to ``By Sauer's Lemma" is for a fixed $B$, then the standard uniform bound applies over the Sauer class $B\mid_S$. And similarly for the other applications of Chernoff to without-replacement in this writeup.}
 \shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
 \yoav{This comment by shay appears verbatim in three different
   places. Should all of them be there? (instead of uncommenting
