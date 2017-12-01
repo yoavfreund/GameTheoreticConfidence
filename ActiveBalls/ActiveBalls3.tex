@@ -1,0 +1,935 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+%\usepackage{fullpage}
+%\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+%\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage[mathscr]{euscript}
+
+
+\usepackage{geometry}
+%% \geometry{a4paper,
+%%   total={170mm,220mm},
+%%   marginparwidth=80mm,
+%% left=5mm,
+%% right=85mm,
+%% top=20mm,
+%% }
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+\title{Non-Parametric Active Learning}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+\setcounter{MaxMatrixCols}{20}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Prtxt}{Pr}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\D}{{\cal D}}
+\newcommand{\B}{{\cal B}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}} % Specialists
+\newcommand{\CC}{{\cal C}}  % constraints
+
+\newcommand{\outcome}{z}
+\newcommand{\empoutcome}{\hat{\outcome}}
+\newcommand{\polarity}{p}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}{\mathbf{1}} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+\newcommand{\Ex}{\mathbb{E}} % expected value operator
+
+
+\newcommand{\pdis}[1]{P_{dis}\left(#1\right)}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}[1]{\mathbbm{1}^{#1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vI}{\mathbf{I}}  
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vl}{\mathbf{l}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}}   
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\vec{\alpha}}
+\newcommand{\vbeta}{\vec{\beta}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cO}{\mathcal{O}}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\ebias}{\widehat{\text{bias}}}
+
+\newcommand{\sign}{\text{sign}}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\N}{\mathbb{N}}
+
+\newcommand{\samp}{S}
+\newcommand{\usamp}{\underline{S}}
+
+\newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{magenta}{#1}}
+
+
+\title{Non-Parametric Active Learning}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+\begin{document}
+
+\maketitle
+\section{Introduction}
+
+In this paper we suggest a different approach to the problem of active
+learning using balls. Instead of using the min/max solution given by
+Muffler, we consider an Occam's razor approach by which we make the
+simplest prediction possible given the constraints.
+
+\section{Learning using Specialists}
+
+In the standard classification learning framework, a classifier is a
+mapping from a domain $X$ to a binary label. For reasons that will be
+clear soon, we define the binary labels to be $\{-1.+1\}$. In
+confidence rated classification (CRC) we allow the classifier to output one
+of {\em three} labels: $\{-1,0,+1\}$, where the meaning of $0$ is ``no
+prediction''. The performance of CRC is measured by two parameters,
+one is the conditional accuracy $P(c(x) \neq y | c(x) \neq 0)$, the other
+is the coverage, i.e. $P(c(x) \neq 0)$.
+
+Specialists are a special case of CRC, in which the outputs of the
+classifier are either in $\{0,1\}$ or in $\{0,-1\}$. For a specialist
+$s$ we refer to the set $\{x|s(x)\neq 0\}$ as the {\em support} of $s$.
+
+Later in the paper we will restrict our attention to
+``ball''-specialists which have the form:
+    \[
+    B_{r,\cc,s}(\x) =
+    \begin{cases}
+      s & \text{if } \| \cc- \x \| \leq r \\
+    0 & \text{otherwise }
+    \end{cases}
+    \]
+
+For now, we allow any family of specialists with small VC dimension $d$
+small) VC dimension.
+
+When learning using standard classifiers (to which we refer here as
+{\em generalists} the learning algorithm typically searches for the
+``empirical risk minimizer'' or ERM. The role of generalization bounds
+is to show that the generalization error of the ERM is not much larger
+than the training error. In contrast, when learning using specialists,
+the rule that is output is not the ERM, instead, it is a rule that is
+a combination of many specialists. The specialists will typically have
+small (low probability) support. The combined classifier will have a
+higher probability of a non-zero prediction, but it might still
+abstain on a significant part of the space where the conditional
+probability of a $+1$ label is close to $1/2$. When learning with
+specialists, convergence bounds are used {\em inside the
+  learning algorithm}. We use these bounds to compute confidence
+intervals on $P(y=+1|s(x) \neq 0)$ - the probability of the label $+1$
+conditioned on the instance $x$ being in the support of $s$.
+
+We now state the Convergence bound theorm. The proof is given in the
+next section.
+
+Let $\cB$ be a collection of support sets corresponding to a set of
+specialists. We assume that $\cB$ has VC dimension $d$. Let $p$ be a
+distribution over the space of examples $(x,y) \in X \times
+\{-1,+1\}$.
+
+Let $S = [(x_0,y_0),\ldots,(x_n,y_n)]$ be a sample of $n$ examples
+drawn independently at random according to $p$ and let $p_n$ be the
+empirical distribution defined by $S$.  Let $k(B) = \sum_{i=1}^n
+1[x_i\in B]$ denote the number of sample points that are in $B$.
+
+\begin{theorem}\label{thm:UCECM}
+The following holds with probability at least $1-\delta$ over the
+random choice of $p_n$:
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p( y=+1 \vert x \in B) -
+p_n(y=+1 \vert x \in B) \bigr\rvert \leq \sqrt{\frac{k_0}{k(B)}},\]
+where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
+\end{theorem}
+
+
+\section{Uniform convergence bounds for sepcialists}
+
+\yoav{I think that stating using the general term $A$ is an event,
+  rather than the more problem specific $y=+1$ is confusing. I like
+  the discussion but I would like to shorten it and not use ``too good
+  to be true'' non-theorems.}
+
+Let $p$ be a distribution over $X$.
+Let $\cB$ be a collection of events, and let $A$ be an event.
+Assume that $\cB$ has a finite VC dimension, denoted by $d$.
+Consider $n$ independent samples from~$p$, denoted by $x_1,\ldots,x_n$.
+We would like to estimate $p(A \vert B)$ simultaneously for all $B\in \B$.
+It is natural to consider the empirical estimates:
+\[p_n(A\vert B)=\frac{\sum_i 1_{[x_i\in A \cap B]}}{\sum_i 1_{[x_i\in B]}}.\]
+We study how well and when these estimates approximate the underlying ones simultaneously.
+
+To demonstrate the kind of statements we would like to derive,
+consider the case where there is only one event $B$ in $\cB$, 
+and let $k(B)=\sum_i 1_{[x_i\in B]}$.
+A Chernoff bound implies that conditioned on the event that~$k(B)>0$, 
+it holds with probability at least $1-\delta$ that:
+\begin{equation}\label{eq:chernoff}
+\bigl\lvert p(A\vert B) - p_n(A \vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(1/\delta)}{k(B)}}.
+\end{equation}
+To derive it use that conditioned on $x_i\in B$, the event $x_i\in A$ has probability $p(A\vert B)$, 
+and therefore the random variable ``$k(B)\cdot p_n(A \vert B)$'' has distribution $\mbox{Bin}(k(B), p(A\vert B))$.
+
+Note that the bound on the probability in \ref{eq:chernoff} depends on $k(B)$
+and therefore is random.
+We stress that this is the type of statement we want:
+the more samples belong to $B$ | the more certain we are with the empirical estimate.
+
+We would like to prove something like this:
+\begin{theorem}[A too good to be true UCECM]\label{thm:toogood}
+The following event occurs with probability at least $1-\delta$:
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq O\Bigl(\sqrt{\frac{d\ln(1/\delta)}{k(B)}}\Bigr),\]
+where $k(B) = \sum_{i=1}^n 1[x_i\in B]$.
+\end{theorem}
+\ref{thm:toogood} is, unfortunately, false. 
+As an example, consider the probability space defined by drawing uniformly $x\sim[n]$,
+and then coloring $x$ by $c_x\in\{\pm 1\}$ uniformly.
+For each $i$ let $B_i$ denote the event that $i$ was drawn,
+and let $A$ denote the event that the drawn color was  $+1$.
+(formally, $B_i = \{i\}\times\{\pm 1\}$, and $A=[n]\times\{+1\}$).
+One can verify that the VC dimension of $\B=\{B_i : i\leq n\}$ is $1$.
+
+\ref{thm:toogood} fails in this setting:
+indeed, if we sample $n$ times from this space 
+then with a constant probability there will be some  $j$
+that is assigned with the same color in each sample,  say $+1$, 
+and will be picked some $\Theta(\ln n/\ln\ln n)$ times\footnote{{This follows from analyzing the maximal bin
+in a uniform assignment of $\Theta(n)$ balls into $n$ bins~\cite{bins}}}.
+Therefore, $p_n(A\vert B_i) = 1$, $p(A\vert B_i)=1/2$,
+and $1-(1/2) \gg \sqrt{\ln\ln n/\ln n}$.
+
+We prove the following (slightly weaker) variant:
+\begin{theorem}[UCECM]\label{thm:UCECM}
+The following event occurs with probability at least $1-\delta$:
+\[\bigl(\forall B\in\B\bigr):\bigl\lvert p(A \vert B) - p_n(A \vert B) \bigr\rvert \leq 
+\sqrt{\frac{k_0}{k(B)}},\]
+where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$, and $k(B) = \sum_{i=1}^n 1[x_i\in B]$.
+\end{theorem}
+
+\paragraph{Discussion.}
+\shay{Analyze this comparison more clearly.
+I hope we can derive a statement like:
+our bound becomes meaningful
+for $B$ such that $p(B)\geq d\ln n/n$
+but the naive bound requires $p(B)\geq \sqrt{d/n}$.}
+
+\ref{thm:UCECM} can be combined with the following uniform convergence 
+variant to yield a bound on the minimal $n$ for which $p_n(A \vert B)$ 
+is a non-trivial approximation of $p(A \vert B)$
+(as explained below, this $n$ is some $\tilde O\bigl(1/p(B)\bigr)$).
+\begin{lemma}\label{lem:uconeside}
+Set $k_0$ like in \ref{thm:UCECM}. Then with probability at least $1-\delta$:
+\[
+(\forall B\in \B):~ k(B) \geq \frac{1}{4}np(B) - {k_0}.
+\]
+\end{lemma}
+This implies that once $n$ large enough so that $p(B)=\tilde\Omega(k/n)=\tilde\Omega\bigl(\frac{d}{n}\bigr)$
+then the empirical estimate $p_n(A\vert B)$ becomes non-trivial.
+In the context of specialists, this means that the empirical
+biases provide meaningful estimates of the true biases 
+for specialists whose measure is $\tilde\Omega\bigl(\frac{d}{n}\bigr)$.
+Note the resemblance with the learning rate in realizable settings.
+%
+%indeed, it implies that roughly $p(B)\pm \sqrt{d/n}$ 
+%empirical points from the sample are will indeed belong to $B$
+%(with high probability), and so, once $n$ is sufficiently large,
+%one can replace the radius of the confidence interval by 
+%$\Theta\Bigl(\sqrt{\frac{d\ln n}{p(B)n - \sqrt{dn}}}\Bigr)$, 
+%which is for a large $n$ roughly $\sqrt{\frac{d\ln n}{p(B)n}}$.
+
+A relevant remark is that a weaker statement than \ref{thm:UCECM}
+can be derived as a corollary of the classical uniform convergence
+result~\cite{vapnik}. 
+Indeed, since the VC dimension of $\{B\cap A : i\in \I\}$ is at most $d$, it follows that 
+\[p_n(A\vert B)\approx\frac{p(A\cap B) \pm \sqrt{d/n}}{p(B)\pm \sqrt{d/n}}.\]
+However, this bound guarantees non-trivial estimates only once $p(B)$ is roughly $\sqrt{d/n}$.
+This is similar to the learning rate in the agnostic learning.
+
+Another practical advantage of the uniform convergence bound in \ref{thm:UCECM} is its dependence on $k(B)$,
+which may be thought of as a ``lucky-case'' bound:
+if (by ``luck'') many points from the sample belong to $B$ 
+then $p_n(A\vert B)$ is a good estimate of $p(A\vert B)$.
+
+\section{Ball Specialists}
+
+We restrict our attention to a special case which corresponds,
+roughly, to nearest neighbor methods.
+\begin{enumerate}
+\item The input space $\X$ is a finite set in $R^d$. We assume a
+  uniform distribution over $\X$.
+  \item We consider labels $y\in \{-1,+1\}$. For There is a fixed but
+    unknown conditional probability defined over $\X$, i.e. $P(Y=+1 |
+    X=\x)$. Our goal is to estimate whether $P(Y=+1|X=\x)$ is smaller
+    or larger than $1/2$.
+  \item
+    The notation is simpler if we use expected values instead of
+    probabilities. We use the term {\em bias} of a ball to refer to the conditional
+    expectation of the label for a ball by
+    \[
+    \bias(\x) \doteq P(Y=+1|X=\x) - P(Y=-1|X=\x)
+    \]
+  \item
+    The rules that we use are ``specialists'' that are balls. The set
+    $\B$ contains all rules of the form
+    \[
+    B_{r,\cc,s}(\x) =
+    \begin{cases}
+      s & \text{if } \| \cc- \x \| \leq r \\
+    0 & \text{otherwise }
+    \end{cases}
+    \]
+    Where $r \geq 0$ is the radius of the ball, $\cc \in R^d$ is the
+    center of the ball and $s \in \{-1,+1\}$ is the polarity of the ball.
+    We will drop the subscripts of $B$ when clear from context.
+  \item
+    We use $\x \in B$ to indicate that $B(\x) \neq 0$.
+  \item
+    We denote the {\em probability} of a ball $B$ by $p(B) \doteq
+    \frac{|B|}{|\X|}$.
+  \item
+    We define term {\em bias} of a ball to refer to the conditional
+    expectation of the label for a ball by
+    \[
+    \bias(B) \doteq E\left( y|\x \in B \right).
+    \]
+  \item We define a sample $\samp$ as a sequence of labeled examples:
+    \[\samp= \left\langle (\x_1,y_1),(\x_2,y_2),\ldots,(\x_m,y_m)
+    \right\rangle \]
+    Where $\x_i$ are chosen uniformly at random (with replacement)
+    from $\X$ and $y_i$ are chosen according to the (unknown)
+    conditional distribution of the label given $\x$.
+  \item Given a sample $\samp$, we define the number of instances in
+    $(\x,y) \in \samp$ such that $\x \in B$ to be the {\em size} of
+    $B$ according to the sample $\samp$ and denote it by $k_{\samp}$. We define
+    the {\em empirical probability} of the ball $B$ according to
+    $\samp$ by $p_{\samp}(B) \doteq k_{\samp}(B)/|\samp|$.
+  \item Given a sample $\samp$ we define the estimate of the
+    $\bias(B)$ to be
+    \[
+    \ebias_{\samp}(B) = \frac{\sum_{i=1}^m y_i B(\x_i)}{\sum_{i=1}^m B(\x_i)}
+    \]
+  \item Using uniform convergence bounds we define for each ball $B$
+    a confidence interval:
+    $[l,h]=[\ebias(B)-\Delta,\ebias(B)+\Delta]$.
+    if $l>0$ we say that $B$ imposes a {\em positive constraint}, if
+    $h<0$ we say that $B$ imposes a {\em negative constraint}, i
+    $l\leq 0 \leq h$ we say that $B$ does not impose a constraint.
+\end{enumerate}
+
+
+\section{The algoithm}
+
+\subsection{Defining safe sets}
+
+Given a set of constraints, and given a polarity  $s \in
+\{-1,+1\}$ we define a point $\x$ as a $s$-safe if
+the following holds
+\begin{itemize}
+\item There is an $s$ constraint that contains $\x$.
+\item For any $-s$ constraint $C$ that contains $\x$, there exists an
+  $s$ constraint $D$ such that $D \subset C$. 
+\end{itemize}
+
+Points that are neither positive nor negative safe are called
+``unsafe''
+
+\subsection{Active Learning}
+
+At each stage of Active Learning we query the label of two sets, each
+of size $n$
+\begin{itemize}
+\item {\bf Uniform Set :} select points uniformly at random from the whole
+  domain.
+\item {\bf Active Set :} select points uniformaly at random from the unsafe
+  set.
+\end{itemize}
+
+The Uniform sets from different stages are combined to form one
+large label set. The active set from each stage is considered
+separately.
+
+The bias of each constraint is calculated with respect to the
+cumulative uniform sample, and with respect to each one of the active
+sets. Each of these sets defines a contraint on a subset of the $z_i$'s 
+
+\section{Sufficient conditions on the true bias}
+\newcommand{\Bayes}{f^*}
+The goal of our algorithm is to generate a rule $f$ that
+approximates the Bayes decision rule $\Bayes(\x) = \sign(\bias(\x))$.
+Specifically, we set our goal to be minimizing the regret $\err(f) - \err(\Bayes)$.
+
+In this section we define conditions on $\bias(x)$ that guarantee that
+the algorithm will achieve a regret of $\epsilon$ after querying the
+labels of $O(\log 1/\epsilon)$ instances.
+
+We do this in two steps. First, we describe a technical condition on
+$\bias(\x)$. Second, we give two more natural conditions that
+guarantee the technical condition.
+
+\subsection{$\epsilon$ approximation using Balls}
+
+Let $\D$ be the distribution over $\X\times \{-1,+1\}$ where the
+distribution over $\X$ is uniform and the conditional distribution
+over the label $y$ given $\x$ is define by $\bias(\x)$.
+
+\newcommand{\Be}{{\cal B}_{\epsilon}}
+\newcommand{\fBe}{f_{\Be}}
+\newcommand{\UBe}{U_{\epsilon}}
+We say that $\D$ is $\epsilon$ approximable using balls for $\epsilon>0$ if
+there exists a collection of balls $\Be$ such that 
+\begin{itemize}
+\item For all $B \in \Be$, $P_{\D}(B)>\epsilon$
+\item For all $B \in \Be$, $|\bias(B)-1/2| > \epsilon$
+\item For all $B \in \Be$ and for any point $\x \in B$, $\sign(\bias(\x))=\sign(\bias(B))$
+\item %Let $\UBe$ be the union of all of the balls in $\Be$, i.e. $\UBe
+  %\doteq \bigcup_{B \in \Be} B$\\
+  Define the prediction function $\fBe$ as follows:
+  \[
+  \fBe(\x) \doteq \begin{cases}
+    1 & \exists B \in \Be, \;\;\mbox{such that}\;\; \x \in B,
+    \bias(B)>0 \\
+    0 & \nexists B \in \Be \;\;\mbox{such that}\;\; \x \in B \\
+    -1 & \exists B \in \Be, \;\;\mbox{such that}\;\; \x \in B,
+    \bias(B)<0
+  \end{cases}
+  \]
+  The final requirement is that $\err(\fBe) \leq \err(\Bayes)+\epsilon$
+\end{itemize}
+
+\subsection{Specific conditions}
+
+I believe either of the following conditions implies
+$\epsilon$-approximation using balls.
+
+\begin{enumerate}
+\item
+  {\bf The conditional probability is Lipshitz smooth}. In other words, for
+any $\x,\y \in \X$:
+\[
+|\bias(\x) - \bias(\y)| \leq \alpha \|\x-\y\|_2^{\beta}
+\]
+\item
+The bias is bounded away from zero and {\bf the boundary is low
+dimensional}. More technically:
+\begin{itemize}
+\item There exists some $\epsilon_0$ such that $\forall \x \in \X$, $|\bias(\x)|>\epsilon_0$.
+\item Recall that $\X \subset R^d$. Define boundary balls as balls
+  that contain and element with positive bias and an element with
+  negative bias. Let $G_{\epsilon}$ be the union of all boundary balls
+  with probability at most $\epsilon$. We say that the boundary has
+  low dimension if $P_{\D}(G_{\epsilon}) \to 0$ as $\epsilon \to 0$
+  (one has to be a bit careful in the definition here because $\X$ is finite, so
+  $G_{1/2|\X|}=\emptyset$ trivially).  
+\end{itemize}
+\end{enumerate}
+
+\appendix
+
+\section{Proof of \ref{thm:UCECM}}
+
+The idea is to follow the standard argument due to~\cite{vapnik} 
+which derives the standard uniform convergence result (and to modify it accordingly). 
+We follow the exposition of~\cite{anthony}:
+consider a double-sample of size $2n$ from~$p$, denoted by $x_1,\ldots,x_{2n}$.
+Let $S_1$ denote the first half of the sample and $S_2$ the second.
+Define $E_1$ to be the event whose probability we want to bound:
+\[E_1 = \Bigl\{ S_1\in X^n : (\exists B\in \B):~ 
+\bigl\lvert p(A \vert B) - p_{n,1}(A \vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k_{1}(B)}} \Bigr\},\]
+where $p_{n,1}$ is the empirical measure induced by $S_1$, 
+and $k_{1}(B)=\sum_{i=1}^n 1[x_i\in B]$ ($p_{n,2}, k_{2}$ are defined similarly).
+Let $E_2$ denote the event
+\[E_2 = 
+\Bigl\{
+S_1S_2\in X^{2n} : (\exists B\in\B):~
+\bigl\lvert p_{n,1}(A \vert B)   -  p_{n,2}(A \vert B) \bigr\rvert >  
+{\frac{1}{2}}\sqrt{\frac{k_0}{k(B)}}
+\Bigr\},
+\]
+where $k(B) = k_{1}(B)+k_{2}(B)$.
+The strategy of showing that $\Pr[E_1]$ is by reducing it to showing that $\Pr[E_2]$ 
+is small, and then to show that the latter is small using a standard \emph{symmetrization} argument. 
+For the first part, we would like to argue like in~\cite{anthony}, that
+\begin{equation}\label{eq:anthony} 
+(\forall S_1\in E_1): \Pr_{S_2}[S_1S_2\in E_2]\geq \frac{1}{100},
+\end{equation}
+which would imply that $\Pr[E_1]\leq 100\Pr[E_2]$ and yield the reduction.
+However, \ref{eq:anthony} does not necessarily hold: indeed consider
+$S_1\in E_1$ such that there is a single $B$ for which 
+\[
+\bigl\lvert p(A \vert B) - p_{n,1}(A \vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k_{1}(B)}}
+\]
+and further assume that 
+(i) $B$ has a tiny measure, say $p(B) = 1/n$,
+(ii) $p(A\vert B)= 1/2$, and
+(iii) $p_{n,1}(A\vert B) = 0$.
+Therefore, $k_2(B)=1$ with probability at least $1/4$
+and therefore $p_{n,2}(A \vert B)=p_{n,1}(A \vert B)$
+with probability at least $1/8$, which is the negation of $E_2$.
+
+To get around this, we introduce an auxiliary event $F$, defined by
+\[F = \Bigl\{S_1\in X^{n} : (\forall B\in\B): k_{1}(B) \geq k_0 \implies p(B)\geq \frac{k_{1}(B)}{4n}\Bigr\}. \]
+\yoav{I find it more natural to define the complement of $F$, i.e. the
+  set of samples for which there exists a ball where the bad thing happens.}
+Note that $F$ discards the problematic example from above 
+(by constraining every $B$ that witnesses $E_1$ to have a large probability). 
+As we will see, $F$ is a typical event that happens with high probability,
+and so, it enables us to replace \ref{eq:anthony} with the following:
+\begin{lemma}\label{lem:reduction}
+If $\Pr[E_1]\geq \delta$ then 
+\begin{enumerate}
+\item $\Pr[E_1\cap F] \geq \frac{1}{2}\Pr[E_1]$, and
+\item $(\forall S_1\in E_1\cap F): \Pr_{S_2}[S_1S_2\in E_2] \geq \frac{1}{8}$. 
+\end{enumerate}
+\end{lemma}
+We defer the proof of \ref{lem:reduction} to a later section, 
+and assume it for now towards proving \ref{thm:UCECM}.
+
+\ref{lem:reduction} yields the following win-win situation:
+either $\Pr[E_1 \leq \delta]$ and we are done, 
+or that $\Pr[E_1]\leq 16\Pr[E_2]$:
+\[\frac{\Pr[E_2]}{\Pr[E_1]} \geq  \frac{1}{2}\frac{\Pr[E_2]}{\Pr[E_1\cap F]} \geq \frac{\Pr[E_2 \vert E_1\cap F]}{2} \geq \frac{1}{16},\]
+where the first inequality uses the first item of \ref{lem:reduction}, 
+the second inequality follows by definition of conditional probability,
+and the last inequality is implied by the the second item of \ref{lem:reduction}.
+
+
+We proceed to the standard symmetrization argument
+that establishes $\Pr[E_2]\leq\delta/16$. 
+Instead of sampling $S_1S_2\sim p^{2n}$,
+consider the following equivalent process:
+\begin{itemize}
+\item[(i)] Sample $S\sim p^{2n}$.
+\item[(ii)] Partition $S$ uniformly into two subsamples $S_1,S_2$, each of size $n$.
+\end{itemize}
+The following lemma implies that $\Pr[E_2]\leq \delta/16$, and finishes the proof.
+\begin{lemma}\label{lem:e2}
+For every $S\in X^{2n}$
+\[\Pr_{S\to S_1S_2}\bigl[S_1S_2\in E_2\bigr]\leq \frac{\delta}{16},\]
+where the randomness is over the uniform partitioning
+of $S$ into $S_1,S_2$.
+\end{lemma}
+\qed
+
+\subsection{Proof of \ref{lem:reduction}}
+
+\paragraph{Item {\it 1}.}
+We begin with the first item;
+it suffices to show that $\Pr[F]\geq 1-\delta/2$.
+This follows from the standard uniform convergence bound with
+the difference that of using the multiplicative Chernoff bound instead
+of the additive bound:
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $F_1$ denote the event whose probability we want to bound:
+\[
+F_1 =\bigl\{ S_1\in X^n : (\exists {B\in\B}):
+  k_{1}(B) \geq k_0 \mbox{ and } p(B) \leq \frac{k_{1}(B)}{4n}\bigr\}, 
+\]
+and let $F_2$ denote the event:
+\[
+F_2 = 
+\bigl\{ S_1S_2\in X^{2n} : (\exists {B\in\B}):
+  k_{1}(B) \geq k_0 \mbox{ and } k_{2}(B) \leq \frac{k_{1}(B)}{2}\bigr\}.
+\]
+The proof follows from the following two lemmas:
+\begin{lemma}\label{lem:aux11}
+$\Pr[F_1]\leq 10\Pr[F_2].$
+\end{lemma}
+\begin{lemma}\label{lem:aux12}
+$\Pr[F_2]\leq \delta/20.$
+\end{lemma}
+\begin{proof}[Proof of Lemma~\ref{lem:aux11}]
+It suffices to show that $\Pr[F_2 \vert F_1]\geq 1/10$.
+Indeed, this would imply that 
+$\Pr[F_1] \leq 10\Pr[F_1 \cap F_2]\leq 10\Pr[F_2]$.
+
+Let $S_1\in F_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in F_2\bigr] \geq 1/10.\]
+Let $B\in\B$ such that $p(B)\leq \frac{k_{1}(B)}{4n}$.
+We want to show that $k_{2}(B)\leq \frac{k_{1}(B)}{2}$ with probability at least $1/10$.
+We consider two cases:
+(i) if $p(B) < 1/2n$
+then we bound as follows:
+\begin{align*}
+\Pr\Bigl[ k_{2}(B) > \frac{k_{1}(B)}{2}\Bigr]
+&\leq
+\Pr\Bigl[ k_{2}(B) > 0 \Bigr]\\
+&\leq np(B) < 1/2 < 9/10.
+\end{align*}
+(ii) Else, if $p(B) \geq 1/2n$, then by the multiplicative Chernoff bound (see e.g.\cite{} page ??):
+\[
+\Pr\Bigl[ k_{2}(B) > \frac{k_{1}(B)}{2}\Bigr]
+\leq
+\Pr\Bigl[ k_{2}(B) > 2p(B)\cdot n\Bigr]
+\leq
+\exp\Bigl( \frac{-p(B)\cdot n}{3}\Bigr)\leq \exp(-1/6)\leq 9/10.
+\]
+So, conditioned on $F_1$, 
+the event $F_2$ occurs with probability at least $1/10$.
+
+\begin{proof}[Proof of Lemma~\ref{lem:aux12}]
+
+Instead of sampling $\samp_1$ and then $\samp_2$,
+we first sample $\samp=\samp_1\cup \samp_2$ and 
+then partition it to $\samp_1$ and $\samp_2$ uniformly.
+Now, for a fixed $\samp$ what is the probability (over the random partition)
+that $F_2$ occurs?
+Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+It suffices to show that the event
+\[F_2|_{\samp} = 
+\bigl\{ \{S_1,S_2\}\text{ is a partition of $S$ into two equal parts} :
+\exists {B\in\B|_{\samp}}:
+  k_{i,1}>k_0 \mbox{ and } k_{i,2} \leq \frac{k_{i,1}}{2}
+  \bigr\}
+\]
+has probability at most $\delta/10$, for every every $\samp$ 
+(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
+To analyze this we use a union bound. 
+We only need to consider $B$'s in $\B|_{\samp}$ such that $k(B) > k_0$,
+where $k(B) = k_{1}(B)+ k_{2}(B)$.
+Fix such a $B$;
+without loss of generality assume that
+first $k(B)$ points out of the~$2n$
+points in $S$ are in $B$. 
+For every $i\leq k(B)$,
+let $X_i$ denote the indicator of the event
+that the $i$'th point in $S$ was drawn into $S_2$.
+Set~$X=\sum_{i=1}^{k(B)}X_i$.
+Note that $B$ causes $F_2|_{\samp}$ to occur if and only if $X\leq k(B)/3$.
+To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$. 
+Its moment-generating function upper-bounds that of $X$, i.e. $\evp{\exp(tX)}{} \leq \evp{\exp(tY)}{}$ 
+(\cite{H63}, Thm. 4), 
+so we can bound the tail probability $\Pr\bigl[X\leq k(B)/3\bigr]$ using a Chernoff bound on $Y$:
+\footnote{We repeatedly use this standard trick of relaxing sampling-without-replacement tail bounds based on moment-generating functions to their with-replacement counterparts in what follows.} 
+\yoav{Akshay, I can see how this argument works for a single ball $B$,
+  but not how it would work for a uniform bound over a set of balls.}
+\akshay{Yoav, where is the issue? I believe the proof from the line ``Fix such a $B$" (before this comment inline) to ``By Sauer's Lemma" is for a fixed $B$, then the standard uniform bound applies over the Sauer class $B\mid_S$. And similarly for the other applications of Chernoff to without-replacement in this writeup.}
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\yoav{This comment by shay appears verbatim in three different
+  places. Should all of them be there? (instead of uncommenting
+  comments, change the newcommands that create them).}
+\begin{align*}
+\Pr\bigl[X\leq k(B)/3\bigr]
+%&\leq \Pr\bigl[Y\leq k(B)/3\bigr]\\
+&=\Pr\bigl[Y- k(B)/2 < -k(B)/6\bigr]\leq
+\exp\bigl(-2(1/6)^2k(B)\bigr) < \exp(-k_0/100)
+\end{align*}
+(where the last inequality is because $k(B) > k_0$).
+By Sauer's Lemma
+the number of distinct restrictions $B|_S$ is at most $\bigl(\frac{2en}{d}\bigr)^d$, and therefore 
+\[\Pr[F_2]\leq \Bigl(\frac{2en}{d}\Bigr)^d\exp(-k_0/100).\]
+Having $k_0\geq 200\bigl(d\ln(3n) + \ln(1/\delta) \bigr)$ yields
+that this probability is at most $\delta/20$.
+\end{proof}
+
+\paragraph{Item {\it 2}.}
+We now derive the second item;
+let $S_1\in E_1\cap F$; we want to show that $\Pr_{S_2}[S_1S_2\in E_2]\geq 1/8$.
+Fix a $B$ such that $\bigl\lvert p_{n,1}(A\vert B) - p(A\vert B) \bigr\rvert > \sqrt{\frac{k_0}{k(B)}}$.
+Thus, it follows that $k(B) > k_0$, and having $S_1\in F$ implies that $p(B)\geq \frac{k_1(B)}{4n} > \frac{k_0}{4n}$.
+Therefore, by basic properties\footnote{We use here that if $n\geq 2/p$ then $Z\sim Bin(n,p)$ satisfies $Z\geq np$,
+with probability at least $1/4$.} of the binomial distribution it follows that $k_2(B) \geq np(B)\geq \frac{k_1(B)}{4}$ 
+with probability at least $1/4$, and that conditioned on this event, by Chernoff:
+\[ \bigl\lvert p_{n,2}(A \vert B) - p(A\vert B) \bigr\rvert \leq \sqrt{\frac{2\ln(2)}{k_2(B)}} < \sqrt{\frac{10}{k(B)}} \]
+with probability at least $1/2$. 
+(where in the last inequality we used that if $k_{2}(B)\geq k_1(B)/4$ then $k(B) \leq 5k_2(B)$).
+To summarize, 
+with probability at least~$\frac{1}{8}=\frac{1}{2}\cdot\frac{1}{4}$ we have that
+$\bigl\lvert p_{n,2}(A \vert B) - p(A\vert B) \bigr\rvert < \sqrt{\frac{10}{k(B)}}$,
+and therefore
+\[
+\bigl\lvert p_{n,2}(A \vert B) - p_{n,1}(A\vert B) \bigr\rvert > 
+\sqrt{\frac{k_0}{k(B)}} - \sqrt{\frac{10}{k(B)}}\geq 
+\sqrt{\frac{k_0}{k(B)}} - \frac{1}{2}\sqrt{\frac{k_0}{k(B)}}=
+\frac{1}{2}\sqrt{\frac{k_0}{k(B)}},
+\]
+with probability at least $1/8$, which which implies that $S_1S_2\in E_2$ with this probability.
+\end{proof}
+
+
+\subsection{Proof of \ref{lem:e2}}
+
+Let $S\in X^{2n}$. 
+We need to show that
+\[\Pr_{S\to S_1S_2}\Bigl[(\exists B\in \B|_S) : \bigl\lvert p_{n,1}(A \vert B) - p_{n,2}(A \vert B)  \bigr\rvert > \frac{1}{2}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{\delta}{16}.\]
+To this end we show that
+for every $B\in \B|_S$, 
+\[\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n,2}(A \vert B)  \bigr\rvert > \frac{1}{2}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{\delta/16}{\lvert \B|_S\rvert},\]
+which would finish the proof by a union bound.
+Fix $B\in \B|_S$. 
+We may assume that $k(B)> k_0$ (otherwise the above event has probability $0$). 
+Denote by $k(A\cap B)$ the number of points in $S$
+that are in $A\cap B$, and denote by $p_n(A\vert B) = \frac{k(A\cap B}{k(B)}$.
+Since $p_{n,1},p_{n,2}$ are identically distributed, it suffices to show that
+\[\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n}(A \vert B)  \bigr\rvert > \frac{1}{2}\cdot\frac{1}{2}\sqrt{\frac{k_0}{k(B)}} \Bigr] \leq \frac{1}{2}\cdot\frac{\delta/16}{\lvert \B|_S\rvert}.\]
+To this end we show that with a sufficiently large probability, 
+$k_1(B)\geq k(B)/2$, where $k_1(B)$ is the number of points in $S_1$ that belong to $B$,
+and that conditioned on this typical event, the above event occurs with a sufficiently small probability.
+
+Using the multiplicative Chernoff bound, we get 
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\[ \Pr[k_1(B) < k(B)/2] \leq \exp(-k(B)/8) \leq \exp(-k_0/8).\]
+Now, conditioned on that $k_1(B) \geq k(B)/2\geq k_0/2$, by Chernoff:
+\[\Pr\Biggl[ \bigl\lvert p_{n,1}(A \vert B) - p_n(A \vert B) \bigr\rvert >\sqrt{\frac{2\ln(1/\delta')}{k(B)/2}}~ \Biggr\vert~ k_1(B) \geq k(B)/2\Biggr] \leq \delta',
+\]
+for every $\delta'$. 
+Thus, plugging $\delta'$ such that $\sqrt{\frac{2\ln(1/\delta')}{k(B)/2}} = \frac{1}{4}\sqrt{\frac{k_0}{k(B)}}$
+(namely $\delta = \exp(-k_0/128)$) yields that
+\begin{align*}
+\Pr_{S\to S_1S_2}\Bigl[\bigl\lvert p_{n,1}(A \vert B) - p_{n}(A \vert B)  \bigr\rvert > \frac{1}{2}\cdot\frac{1}{4}\sqrt{\frac{k_0}{k(B)}} \Bigr] 
+&\leq  \delta' + \exp(-k_0/8)\\
+&\leq  \exp(-k_0/128) + \exp(-k_0/8)\\
+&\leq 2\exp(-k_0/128).
+\end{align*}
+Now, $\bigl\lvert \B|_S\bigr\rvert \leq \bigl(\frac{2en}{d}\bigr)^d$ by Sauer's Lemma,  and so, for $k_0\geq 200(d\ln(3n) + \ln(1/\delta))$ this probability is at most $\frac{1}{2}\cdot\frac{\delta/16}{\lvert \B|_S\rvert}$, as required.
+\qed
+
+%\newpage
+
+%\section{Uniform convergence bounds for sepcialists.}
+%
+%\subsection{Uniform convergence of biases}
+%
+%We will use the following Lemma, which we prove in the appendix, in Section~\ref{sec:auxuc}.
+%\begin{lemma}\label{lem:auxuc}
+%Let $\B$ be a family of specialists of VC dimension $d$.
+%Set $p_0 = \frac{100\bigl(d\ln(2n) + \ln(10/\delta)\bigr)}{n}$, 
+%where $1/2\geq \delta>0$,
+%and let $S=\bigl((x_i,y_i)\bigr) \sim p^n$.
+%Then:
+%\[
+%\Pr
+%\Bigl[
+%\exists {B\in\B}: p_{\samp}(B) \geq p_0 \mbox{ and } p(B) \leq \frac{p_{\samp}(B)}{10}
+%\Bigr]\leq \delta
+%\]
+%and
+%\[
+%\Pr
+%\Bigl[
+%\exists {B\in\B}: p(B) \geq p_0 \mbox{ and } p_{\samp}(B) \leq \frac{p(B)}{10}
+%\Bigr]\leq \delta.
+%\]
+%\end{lemma}
+%
+%
+%\appendix
+
+\section{Proof of \ref{lem:uconeside}}\label{sec:auxuc}
+\begin{proof}
+Consider a double sample $S=(\samp_1,\samp_2)\sim p^{2n}$.
+Let $E_1$ denote the event whose probability we want to bound:
+\[
+E_1 = \bigl\{S_1\in X^n : (\exists B\in\B): p_{n,1}(B) < \frac{p(B)}{4} - \frac{k_0}{n} \bigr\},
+\]
+and let $E_2$ denote the event:
+\[
+E_2 = \bigl\{S_1S_2\in X^{2n} : (\exists B\in\B): p_{n,1}(B) < \frac{p_{n,2}(B)}{2} - \frac{k_0}{n} \bigr\}.
+\]
+The proof follows from the next two lemmas:
+\begin{lemma}\label{lem:auxuc1}
+\[\Pr[E_1]\leq 2\Pr[E_2].\]
+\end{lemma}
+\begin{lemma}\label{lem:auxuc2}
+\[\Pr[E_2]\leq \delta/2.\]
+\end{lemma}
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc1}]
+It suffices to show that $\Pr[E_2 \vert E_1]\geq 1/2$.
+Indeed, this would imply that 
+$\Pr[E_1] \leq 2\Pr[E_1 \land E_2]\leq 10\Pr[E_2]$.
+
+Let $S_1\in E_1$. Since $S_2$ and $S_1$ are independent,
+it suffices to show that 
+\[\Pr_{S_2\sim p^n}\bigl[(S_1,S_2)\in E_2\bigr] \geq 1/2.\]
+Let $B\in\B$ such that $p_{n,1}(B)< \frac{p(B)}{4} - \frac{k_0}{n}$.
+We show that $p_{n,1}(B) < \frac{p_{n,2}(B)}{2} - \frac{k_0}{n}$ with probability at least~$1/2$.
+For this, it suffices to show that $p_{n,2}(B)\geq \frac{p(B)}{2}$ with probability at least $1/2$;
+indeed, this will imply $E_2$ by
+\[p_1(B) < \frac{p(B)}{4}- \frac{k_0}{n} \leq  \frac{p_{n,2}(B)}{2}- \frac{k_0}{n}.\]
+First, observe that $p(B) \geq \frac{k_0}{n}$ (because $p_{n,1}(B) \geq 0$).
+Therefore, by the multiplicative Chernoff bound:
+\[
+\Pr\Bigl[ p_2(B) < \frac{p(B)}{2}\Bigr]
+=
+\Pr\Bigl[ k_2(B) < \frac{np(B)}{2}\Bigr]
+\leq
+\exp\Bigl( \frac{-p(B)\cdot n}{8}\Bigr) = \exp(-k_0/8)< \frac{1}{2}.
+\]
+So, conditioned on $E_1$, 
+the event $E_2$ occurs with probability at least $1/2$.
+
+
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:auxuc2}]
+
+Sample $\samp=\samp_1\cup \samp_2$ and 
+then partition it to $\samp_1$ and $\samp_2$ uniformly.
+Let $\B|_{\samp} = \{B|_{\samp} : B\in\B\}$.
+It suffices to show that the event
+\[E_2|_{\samp} = 
+\bigl\{ \{S_1,S_2\}\text{ is a partition of $S$ into two equal parts} :
+\exists {B\in\B|_{\samp}}:
+p_{n,1}(B) < \frac{p_{n,2}(B)}{2} - \frac{k_0}{n}
+  \bigr\}
+\]
+has probability at most $\delta/2$, for every every $\samp$ 
+(where the probability is over the partition of $\samp$ into $\samp_1,\samp_2$).
+To analyze this we use a union bound. 
+It suffices to consider $B$'s in $\B|_{\samp}$ such that $k(B) \geq k_0$,
+where $k(B)$ is the number of $x\in B$ that appear in $S$.
+Fix such a $B$.
+Without loss of generality assume that
+first $k(B)$ points out of the $2n$
+points in $S$ are in $B$. 
+For every $i\leq k(B)$,
+let $X_i$ denote the indicator of the event
+that the $i$'th point in $S$ was drawn into $S_1$.
+Set~$X=\sum_{i=1}^{k(B)}X_i$.
+Note that $B$ causes $E_2|_{\samp}$ to occur only if $X\leq k(B)/3$.
+To analyze this event define a random variable $Y=\sum_{i=1}^{k(B)}Y_i$,
+where the $Y_i$'s are independent Bernoulli random variables with probability $1/2$.
+%\new{One can verify} that $\Pr[X\geq k(B)/3]\leq \Pr[Y\geq k(B)/3]$,
+%and therefore it suffices to analyze the latter, 
+Again note that the multiplicative Chernoff bound on $Y$ bounds the corresponding tail probability on $X$, so that:
+\shay{Here we should refer to the statement that sampling without repetitions is more concentrated.}
+\begin{align*}
+\Pr\bigl[X\leq \frac{k(B)}{3}\bigr]&\leq 
+\Pr\bigl[Y\leq \frac{k(B)}{3}\bigr]\\
+&=\Pr\bigl[Y < \frac{2}{3}\cdot\frac{k(B)}{2}\bigr]\leq
+\exp\Bigl(\frac{-(2/3)^2\bigl(k(B)\bigr)/2}{2}\Bigr) < \exp(-k_0/9)
+\end{align*}
+(where the last inequality is because $k(B) \geq k_0$).
+By Sauer's Lemma
+the number of distinct restrictions $B|_S$ is at most $\bigl(\frac{2en}{d}\bigr)^d$, and therefore 
+\[\Pr[E_2]\leq \Bigl(\frac{2en}{d}\Bigr)^d\exp(-k_0/9).\]
+Having $k_0\geq 100\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$ yields
+that this probability is at most $\delta/2$.
+\end{proof}
+\end{proof}
+
+%\input{WithoutReplacement}
+
+\bibliography{UnifConfCondProb}
+\bibliographystyle{alpha}
+
+\end{document}
