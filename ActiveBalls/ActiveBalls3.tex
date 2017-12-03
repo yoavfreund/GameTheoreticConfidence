@@ -315,37 +315,45 @@ of queried instances and the corresponding labels. We define the {\em
 \frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{ \sum_{(x,y) \in \samp} \ones(x_i \in B)}
 \]
 
-\ActiveLearn operates in batches, in each batch it queries a set of
-instances and recieves labels for these instances generated according
-to the conditional probability $P(y=+1 | X=x)$. If the algorithm
-samples the same instance $x$ more than once, it might recieve
-different labels.
-
 \newcommand{\set}{G}
 \newcommand{\sample}[1]{{\mathbf #1}}
 \newcommand{\constr}[3]{#1 \left(#2,\sample{#3}\right)}
   
-Let $\set \subseteq X$ be a subset of the input space, and let
-$\sample{S}$ be a set of labeled examples
-$[(x_1,y_1),\ldots,(x_n,y_n)]$ drawn independently at random according
-to ${\cal D}$.
-
 Let $\cB$ be a collection of support sets corresponding to a set of
-specialists as defined above.
+specialists.
 
-Given the sample $\sample{S}$ we partition the collecion $\cB$ into
+Given the sample $\sample{S}$ we partition the collection $\cB$ into
 three sets:
 \begin{itemize}
-\item $\constr{\cB}{+}{S}$ contains all $B \in \cB$
-\item $\constr{\cB}{0}{S}$
-\item $\constr{\cB}{-}{S}$
+\item $\constr{\cB}{+}{S}$ contains all $B \in \cB$ such that
+  $\ebias(B) \geq \sqrt{\frac{k_0}{k(B)}}$
+\item $\constr{\cB}{-}{S}$ contains all $B \in \cB$ such that
+  $\ebias(B) \leq -\sqrt{\frac{k_0}{k(B)}}$
+\item $\constr{\cB}{0}{S}$ contains $B \in \cB$ that are neither in
+  $\constr{\cB}{+}{S}$ nor in $\constr{\cB}{+}{S}$.
 \end{itemize}
-
-The core of \ActiveLearn is a rule which partitions the input space
-into {\em conforming} and a {\em non-conforming} sets.
 
 \newcommand{\conform}{{\cal C}}
 \newcommand{\nonconform}{{\cal N}}
+
+The partition of the specialists in $\cB$ into three sets defines
+a partition of the instances in $\universe$ into {\em conforming} and
+a {\em non-conforming} sets.
+\begin{itemize}
+\item {\em Positive Conforming set} $x \in \universe$ is in the
+  positive conforming set $\conform_{\constr{\cB}{+}{S}}$ if there
+    exists $B \in \constr{\cB}{+}{S}$ such that $x \in B$ and for any
+    $A \in \constr{\cB}{-}{S}$ such that $x \in A$ there exists $C \in
+    \constr{\cB}{+}{S}$ such that $x\in C$ and $C \subset A$.
+\item {\em Negative Conforming set} $x \in \universe$ is in the
+  Negative conforming set $\conform_{\constr{\cB}{-}{S}}$ if there
+    exists $B \in \constr{\cB}{-}{S}$ such that $x \in B$ and for any
+    $A \in \constr{\cB}{+}{S}$ such that $x \in A$ there exists $C \in
+    \constr{\cB}{-}{S}$ such that $x\in C$ and $C \subset A$.
+\item {\em Nonconforming set} contains all points that do not belong
+  to either the positive or the negative conforming sets.
+\end{itemize}
+
 
 At each iteration $t$
 \begin{itemize}
