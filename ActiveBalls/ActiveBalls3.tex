@@ -204,31 +204,49 @@ prediction''. The performance of CRC is measured by two parameters,
 one is the conditional accuracy $P(c(x) \neq y | c(x) \neq 0)$, the other
 is the coverage, i.e. $P(c(x) \neq 0)$.
 
-Specialists are a special case of CRC, in which the outputs of the
-classifier are either in $\{0,+1\}$ (positive specialists) or in
-$\{0,-1\}$ (negative specialists). For a specialist $s$ we refer to
-the set $\{x|s(x)\neq 0\}$ as the {\em support} of $s$.
+{\em Specialists} are a special case of CRC in which the outputs of
+the classifier are either in $\{0,+1\}$ (positive specialists) or in
+$\{0,-1\}$ (negative specialists).  We use the following notation: the
+support of a specialist is a set $A$ on which the classification of
+the specialist is non-zero. We denote by $A^+: X \to \{0,+1\}$ the
+function the corresponds to the positive specialist and by $A^-$ the
+function that corresponds to the negative specialist.
 
-We define the {\em true bias} of a specialist $B$ as
+\newcommand{\ActiveLearn}{{\bf ConfLearn}}
+\newcommand{\universe}[1]{{\cal #1}}
+
+\ActiveLearn\  is a transductive algorithm. In other words, the input
+to the algorithm is a set of unlabeled instances $\universe{X} =
+[x_1,\ldots,x_N]$. All probabilities and expectations are defined with
+respect to the uniform distribution over $\universe{X}$. The hidden
+target is represented by a conditional distribution over the binary label
+$y \in \{-1,+1\}$. We define the {\em bias} of instance $x$ as
 \[
-  \bias(B) \doteq E\left( y|\x \in B \right).
+\bias(x) \doteq P(y=+1|x) - P(y=-1|X=x)
 \]
 
+Let $B$ be (the support set of) a specialist. We define the {\em true
+  bias} of the specialist as:
+\[
+\bias(B) \doteq
+\frac{\sum_{x \in \universe{X}} \bias(x) \ones(x \in B)}
+{\sum_{x \in \universe{X}} \ones(x \in B)}
+\]
+
+\ActiveLearn\ can query the label for any instance $x \in \universe{X}$, the
+response to the query is a label drawn independently at random
+according to $P(y=+1 | X=x)$.\footnote{If the same instance is queried
+  more than once, the responses are independent and can be different.}
+
+Let $\samp= \left\langle (\x_1,y_1),\ldots,(\x_m,y_m) \right\rangle$ be a sequence
+of queried instances and the corresponding labels. We define the {\em
+  empirical bias} of a specialist $B$ with respect to $\samp$ to be 
+\[
+\ebias(B,\samp) \doteq
+\frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{ \sum_{(x,y) \in \samp} \ones(x_i \in B)}
+\]
 
 \iffalse
-Later in the paper we will restrict our attention to
-``ball''-specialists which have the form:
-    \[
-    B_{r,\cc,s}(\x) =
-    \begin{cases}
-      s & \text{if } \| \cc- \x \| \leq r \\
-    0 & \text{otherwise }
-    \end{cases}
-    \]
-
-For now, we allow any family of specialists with small VC dimension $d$
-small) VC dimension.
-
 When learning using standard classifiers (to which we refer here as
 {\em generalists} the learning algorithm typically searches for the
 ``empirical risk minimizer'' or ERM. The role of generalization bounds
@@ -243,174 +261,181 @@ probability of a $+1$ label is close to $1/2$. In this work
 we calculate convergence bounds {\em inside the
   learning algorithm}, this is similar to work on ``self-bounding
 algorithms''.
-\fi
-
-Let $\samp = [(x_0,y_0),\ldots,(x_n,y_n)]$ be a sample of $n$ examples
-drawn independently at random according to $p$ and let $p_n$ be the
-empirical distribution defined by $S$.  Let $k(B) = \sum_{i=1}^n
-1[x_i\in B]$ denote the number of sample points that are in $B$.
-
-We define the {\em empirical bias} of a support set $B$ to be
-\[
-\ebias_{\samp}(B) = \frac{\sum_{i=1}^m y_i B(\x_i)}{\sum_{i=1}^m B(\x_i)}
-\]
-
-
 
 The algorithm uses the bounds to compute confidence
-intervals on $P(y=+1|s(x) \neq 0)$ - the probability of the label $+1$
-conditioned on the instance $x$ being in the support of $s$.
+intervals on $\bias(B)$ the probability of the label $+1$
+conditioned on the instance $x$ being in the support set $B$.
+\fi
+
 
 Let $\cB$ be a collection of support sets corresponding to a set of
-specialists. We assume that $\cB$ has VC dimension $d$. Let $p$ be a
-distribution over the space of examples $(x,y) \in X \times
-\{-1,+1\}$.
+specialists. We assume that $\cB$ has VC dimension $d$. 
 
-
-We now state the Convergence bound theorm. The proof is given in Section~(\ref{sec:convergence-bounds}).
+We now state our Convergence bound theorm. The proof is given in
+Section~(\ref{sec:convergence-bounds}).
 
 \yoav{I don't think that the term ``uniform'' is appropriate here,
   because the bound is not uniform - there is a different bound for
   each rule, depending on $k$.}
 \begin{theorem}\label{thm:UCECM}
-The following holds with probability at least $1-\delta$ over the
-random choice of $p_n$:
-\[\bigl(\forall B\in\B\bigr):\bigl\lvert p( y=+1 \vert x \in B) -
-p_n(y=+1 \vert x \in B) \bigr\rvert \leq \sqrt{\frac{k_0}{k(B)}},\]
+Let $\cB$ be a set of specialists with VC dimension $d$, let
+$\delta>0$ ,and let $\samp$ be a labeled sample of size $n$.  The
+following holds with probability at least $1-\delta$ over the random
+choice of $\samp$:
+
+\[\forall B\in\cB :\;\;
+\lvert \bias(B) - \ebias(B,\samp) \bigr) \rvert
+\leq \sqrt{\frac{k_0}{k(B)}},
+\]
 where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
 \end{theorem}
 
-\section{The active learning algorithm}
-
-\newcommand{\ActiveLearn}{{\bf ConfLearn}}
-\newcommand{\universe}{{\cal G}}
-
-\ActiveLearn\  is a transductive algorithm. In other words, the input
-to the algorithm is a set of unlabeled instances $\universe =
-[x_1,\ldots,x_N]$. All probabilities and expectations are defined with
-respect to the uniform distribution over $\universe$. The hidden
-target is represented by a conditional distribution over the binary label
-$y \in \{-1,+1\}$. We define the {\em bias} of instance $x$ as
-\[
-\bias(x) \doteq P(y=+1|x) - P(y=-1|X=x)
-\]
-
-Let $B$ be (the support set of) a specialist. We define the {\em true
-  bias} of the specialist as:
-\[
-\bias(B) \doteq \frac{\sum_{x \in \universe} \bias(x) \ones(x \in
-  B)}{\sum_{x \in \universe} \ones(x \in B)}
-\]
-
-\ActiveLearn\ can query the label for any instance $x \in \universe$, the
-response to the query is a label drawn independently at random
-according to $P(y=+1 | X=x)$.\footnote{If the same instance is queried
-  more than once, the responses are independent and can be different.}
-
-Let $\samp= \left\langle (\x_1,y_1),\ldots,(\x_m,y_m) \right\rangle$ be a sequence
-of queried instances and the corresponding labels. We define the {\em
-  empirical bias} of a specialist $B$ with respect to $\samp$ to be 
-\[
-\ebias(B,\samp) \doteq
-\frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{ \sum_{(x,y) \in \samp} \ones(x_i \in B)}
-\]
 
 \newcommand{\set}{G}
 \newcommand{\sample}[1]{{\mathbf #1}}
 \newcommand{\constr}[3]{#1 \left(#2,\sample{#3}\right)}
   
-Let $\cB$ be a collection of support sets corresponding to a set of
-specialists.
-
-Given the sample $\sample{S}$ we partition the collection $\cB$ into
-three sets:
+Using this theorem and given a sample $\sample{S}$ \ActiveLearn
+partition the collection $\cB$ into three sets:
 \begin{itemize}
-\item $\constr{\cB}{+}{S}$ contains all $B \in \cB$ such that
+\item The probably positive set $\constr{\cB}{+}{\sample{S}}$ contains all $B \in \cB$ such that
   $\ebias(B) \geq \sqrt{\frac{k_0}{k(B)}}$
-\item $\constr{\cB}{-}{S}$ contains all $B \in \cB$ such that
+\item The probably negatively set $\constr{\cB}{-}{\sample{S}}$ contains all $B \in \cB$ such that
   $\ebias(B) \leq -\sqrt{\frac{k_0}{k(B)}}$
-\item $\constr{\cB}{0}{S}$ contains $B \in \cB$ that are neither in
-  $\constr{\cB}{+}{S}$ nor in $\constr{\cB}{+}{S}$.
+\item The undertermined set $\constr{\cB}{0}{\sample{S}}$ contains $B \in \cB$ that are neither in
+  $\constr{\cB}{+}{\sample{S}}$ nor in $\constr{\cB}{+}{\sample{S}}$.
 \end{itemize}
+
+\section{The active learning algorithm}
 
 \newcommand{\conform}{{\cal C}}
 \newcommand{\nonconform}{{\cal N}}
 
-The partition of the specialists in $\cB$ into three sets defines
-a partition of the instances in $\universe$ into {\em conforming} and
-a {\em non-conforming} sets.
+Like many other active learning algorithms~\cite{} the intuition
+behind \ActiveLearn is to preferably query instances that are close to
+the decision boundary. A related intuition is to prefer instances on
+which there is disagreement among the best rules.
+
+Specifically, given a partition of $\cB$ into
+$\constr{\cB}{+}{\sample{S}},\constr{\cB}{-}{\sample{S}}$ and $\constr{\cB}{0}{\sample{S}}$, we
+partition the instances in $\universe{X}$ into {\em interior} and
+a {\em boundary} sets. Roughly speaking, interior points are those on
+which all of the specialists agree. To this set of points we
+add points where all of the specialists with small support
+agree. \yoav{I am planning to create a jupyter notebook and
+  generate some figures that will be added here, to aid intuition.}
+
+Similarly to Chadhuri and Dasguta~\cite{ChadhuriDasgupta2015}, we
+define a partition of a set of points $\universe{Z}$ into effective
+interior and boundary sets.
 \begin{itemize}
-\item {\em Positive Conforming set} $x \in \universe$ is in the
-  positive conforming set $\conform_{\constr{\cB}{+}{S}}$ if there
-    exists $B \in \constr{\cB}{+}{S}$ such that $x \in B$ and for any
-    $A \in \constr{\cB}{-}{S}$ such that $x \in A$ there exists $C \in
-    \constr{\cB}{+}{S}$ such that $x\in C$ and $C \subset A$.
-\item {\em Negative Conforming set} $x \in \universe$ is in the
-  Negative conforming set $\conform_{\constr{\cB}{-}{S}}$ if there
-    exists $B \in \constr{\cB}{-}{S}$ such that $x \in B$ and for any
-    $A \in \constr{\cB}{+}{S}$ such that $x \in A$ there exists $C \in
-    \constr{\cB}{-}{S}$ such that $x\in C$ and $C \subset A$.
-\item {\em Nonconforming set} contains all points that do not belong
-  to either the positive or the negative conforming sets.
+\item {\em  Effective Interior Sets:} There are two interior sets, one for each label.
+  Let $y \in \{-1,+1\}$ be that label. Let $\cB^{+1},\cB^{-1}$ be positive and negative conforming
+  sets. We define the $y$-interior subset of $\universe{Z}$ as
+  \[
+  \conform(\universe{Z},\cB^{+1},\cB^{-1},y) =
+  \left\{ x \in \universe{Z} \left|
+  \begin{array}{c}
+    \exists B \in B \in \cB^{y} \mbox{ s.t. } x \in B
+    \\ \mbox{ and } \\
+    \forall A \in \cB^{-y} \mbox{ s.t. } x \in
+    A,\;\;\;
+    \exists C \in \cB^{y} \mbox{ s.t. } x\in C
+    \mbox{ and } C \subset A
+  \end{array}
+  \right. \right\}
+\]
+\item {\em Effective Boundary} contains all points that are not in
+  either interior set:
+  \[
+  \nonconform(\universe{Z},\cB^{-1},\cB^{+1},0) =
+  \universe{Z} - (\conform(\universe{Z},\cB^{-1},\cB^{+1},+1) \cup \conform(\universe{Z},\cB^{-1},\cB^{+1},-1))
+  \]
 \end{itemize}
 
+With these definitions, we can now describe \ActiveLearn\
 
-At each iteration $t$
-\begin{itemize}
-\item Query $n$ points independently at random from
-  $\nonconform_{t-1}$ and $n$ points from $X$.
-\item Define the bias of each $B \in \cB$ using the 
-\item
-  
+\newcommand{\Unconf}{\universe{U}}
+\newcommand{\all}{\universe{X}}
+\noindent
+\begin{enumerate}
+\item Define the initial boundary to be all of the instances $\Unconf_0=\all$
+\item for $t=1,2,\ldots$:
+\begin{enumerate}
+\item Query $n$ points chosen uniformly at random from $\all$ and $n$
+  points chosen uniformly at random from $\Unconf_{t-1}$. Define
+  $\sample{S}_t$ and $\sample{U}_t$ to be the corresponding labeled
+  datasets.
+\item Partition the specialists in $\cB$ into conforming and non-conforming:
+  \[
+  \mbox{For } s \in \{-1,0,1\}:\;\; \cB^s_t = \constr{\cB}{s}{\bigcup_{i=1}^t \sample{S}_i}
+  \]
+\item Define the {\em constrained set of specialists}:
+  \[
+  \cC_t = \left\{ B \cap \Unconf_{t-1} \left| B \in \cB \right.\right\}
+  \]
+\item Partition the specialists in $\cC_t$ into conforming and non-conforming:
+  \[
+  \mbox{For } s \in \{-1,0,1\}:\;\; \cC^s_t =
+  \constr{\cC_t}{s}{\bigcup_{i=1}^t \sample{S}_i \cup \sample{U}_t}
+  \]
+\item Combine the conforming specialists:
+  \[
+  \mbox{For } s \in \{-1,0,1\}:\;\; \cA^s_t = \cB^s_t \cup \cC^s_t
+  \]
+\item Define a new effective boundary set:
+  \[
+  \Unconf_t = \nonconform(\universe{X},\cA_t^{-1},\cA_t^{+1},0)
+  \]
+\end{enumerate}
+\end{enumerate}
+\yoav{The set of samples that can be used to evaluate specialists in
+  $\cC_t$ is potentially larger. When there is no change of mind the
+  unconforming sets shrinks with each epoch. The general rule is: you
+  can use any samples from a batch whose support set contains the specialist.}
+
+\section{Analysis}
+
+The analysis was inspired by the convergence analysis of kNN done
+in~\cite{ChadhuriDasgupta2015}.  The idea we use here is to
+characterize the true conditional distribution. This characterization
+will allow us to bound the number of queries made by \ActiveLearn.
+
+The true distribution is the uniform distribution over
+$\all$, together with $\bias(x)$ for each $x \in \all$. We denote by
+$P(B)$ the probability of the specialist $B$ with respect to the
+uniform distribution over $\all$.
+
+\newcommand{\interior}[3]{{#1}^{#2}_{#3}}
+
+\begin{definition}
+  \begin{itemize}
+  \item The $(p,\Delta)$-interior set for $y=+1$ is
+      \[
+      \interior{\all}{+1}{p,\Delta} =
+      \left\{x \in \all \left|
+      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } P(B) \leq
+      p)\;\; \forall z \in B; \bias(z)>\Delta
+      \right.\right\}
+  \]
+  \item The $(p,\Delta)$-interior set for $y=-1$ is
+      \[
+      \interior{\all}{+1}{p,\Delta} =
+      \left\{x \in \all \left|
+      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } P(B) \leq
+      p)\;\; \forall z \in B; \bias(z)<-\Delta
+      \right.\right\}
+  \]
+\item The $(p,\Delta)$-boundary set is the complement of the two
+  interior sets.
+  \[
+\interior{\all}{0}{p,\Delta} = \all - (\interior{\all}{+1}{p,\Delta}
+\cup \interior{\all}{-1}{p,\Delta})
+  \]
 \end{itemize}
+\end{definition}
 
-At each step
-\begin{algorithm2e}[htp]
-\label{alg:unlablearn}
-\SetKwInput{Input}{Given}
-\SetKwInput{Output}{Output}
-\SetKwFunction{StoreExample}{StoreExample}
-\SetKwFunction{GDUpdate}{GDUpdate}
-\SetKwFunction{UpdateRegion}{UpdateRegion}
-
-\KwIn{A set of unlabeled Examples $X$; 
-confidence parameter $\delta$; A batch size $n$}
-\For{$t=1,2,\dots$}{ 
-\lIf{$r_t^\delta = r_{t-1}^\delta$ and $t > 1$}{break}
-$S_t \gets \emptyset$ \tcp*{$S_t$ will store $k$
-    examples. $S_{t-1}$ is discarded.}
-$\mu_t \gets 0^p$\;
-$q_t \gets 0$\tcp*{Number of examples seen but not stored this epoch}
-\While{$|S_t| < k\;\;$}{
-Draw $x \sim \cD$\;
-\If{$\abs{\abs{x^\top \sigma_t} - 1} \geq r_t^\delta$}
-{
-$q_t \gets q_t + 1$\;
-$\mu_t \gets \mu_t + x \sgn(x^\top \sigma_t)$
-}
-{\lElse{  %else
-Add $x$ to $S_t$
-}}
-}
-$\sigma_t \gets \GDUpdate{$\sigma_{t-1}, S_t, \mu_t, q_t$}$\;
-}
-%$\Delta_t^{\delta} \gets \Delta(t,\delta,p,|S_t|+q_t)$\;}
-\Return $\sigma_t, r_t^{\delta}$
-\caption{Unsupervised Selective Sampling for Learning $\sigma^*$}
-\end{algorithm2e}
-\begin{function}
-\label{func:GDUpdate}
-\KwIn{$\sigma_{t-1}, S_t, \mu_t, q_t$; given learning rate $\eta_t \propto \frac{1}{\sqrt{t}}$}
-\KwOut{Best weight vector $\sigma_t$}
-$ \displaystyle \sigma_t \gets \sigma_{t-1} + \eta_t 
-\lrp{ \frac{1}{|S_t| + q_t} 
-\lrp{ \mu_t + \sum_{x \in S_t} x \sgn (x^\top \sigma) \ifn( | x^\top \sigma | > 1) } 
-- \vb }$ \;
-\Return{$\sigma_t$}
-\caption{GDUpdate()}
-\end{function}
-
-\section{Uniform convergence bounds for sepcialists}
+\section{Uniform convergence bounds for specialists}
 \label{sec:convergence-bounds}
 
 \yoav{I think that stating using the general term $A$ is an event,
@@ -1081,7 +1106,7 @@ that this probability is at most $\delta/2$.
 
 %\input{WithoutReplacement}
 
-\bibliography{UnifConfCondProb}
+\bibliography{UnifConfCondProb,refs}
 \bibliographystyle{alpha}
 
 \end{document}
