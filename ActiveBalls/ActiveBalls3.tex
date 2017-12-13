@@ -195,14 +195,16 @@ simplest prediction possible given the constraints.
 
 \section{Learning using Specialists}
 
-In the standard classification learning framework, a classifier is a
-mapping from a domain $X$ to a binary label. For reasons that will be
-clear soon, we define the binary labels to be $\{-1.+1\}$. In
-confidence rated classification (CRC) we allow the classifier to output one
-of {\em three} labels: $\{-1,0,+1\}$, where the meaning of $0$ is ``no
-prediction''. The performance of CRC is measured by two parameters,
-one is the conditional accuracy $P(c(x) \neq y | c(x) \neq 0)$, the other
-is the coverage, i.e. $P(c(x) \neq 0)$.
+We start with some standard definitions. A classifier is a
+mapping from a domain $X$ to a binary label. For the sake of symmetry,
+we define the binary labels to be $\{-1,+1\}$. We assume a
+distribution $\D$ over $X \times \{-1,+1\}$.
+
+In confidence rated classification (CRC) we allow the classifier to
+output one of {\em three} labels: $\{-1,0,+1\}$, where the meaning of
+$0$ is ``no prediction''. The performance of CRC is measured by two
+parameters, one is the conditional accuracy $\D(c(x) \neq y | c(x) \neq
+0)$, the other is the coverage, i.e. $\D(c(x) \neq 0)$.
 
 {\em Specialists} are a special case of CRC in which the outputs of
 the classifier are either in $\{0,+1\}$ (positive specialists) or in
@@ -403,8 +405,9 @@ will allow us to bound the number of queries made by \ActiveLearn.
 
 The true distribution is the uniform distribution over
 $\all$, together with $\bias(x)$ for each $x \in \all$. We denote by
-$P(B)$ the probability of the specialist $B$ with respect to the
-uniform distribution over $\all$.
+$\D(B)$ the probability of the specialist $B$ with respect to the
+distribution $\D$.
+
 
 \newcommand{\interior}[3]{{#1}^{#2}_{#3}}
 
@@ -414,7 +417,7 @@ uniform distribution over $\all$.
       \[
       \interior{\all}{+1}{p,\Delta} =
       \left\{x \in \all \left|
-      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } P(B) \leq
+      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } \D(B) \leq
       p)\;\; \forall z \in B; \bias(z)>\Delta
       \right.\right\}
   \]
@@ -422,7 +425,7 @@ uniform distribution over $\all$.
       \[
       \interior{\all}{+1}{p,\Delta} =
       \left\{x \in \all \left|
-      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } P(B) \leq
+      \forall B \in \cB \mbox{ s.t. } (x \in B \mbox{ and } \D(B) \leq
       p)\;\; \forall z \in B; \bias(z)<-\Delta
       \right.\right\}
   \]
@@ -435,7 +438,24 @@ uniform distribution over $\all$.
 \end{itemize}
 \end{definition}
 
-\section{Uniform convergence bounds for specialists}
+The boundary sets are nested. If $p_1\leq p_2$ and $\Delta_1 \leq \Delta_2$, then
+$\interior{\all}{0}{p_1,\Delta_1} \subseteq
+\interior{\all}{0}{p_2,\Delta_2}$. The Non-conforming sets of
+\ActiveLearn\ are related to the boundary sets. It is therefore
+natural to characterize the query complexity of a distribution using
+the dependence of the probability of the boundary set on $p$ and $\Delta$.
+
+\begin{definition}
+  For a given distribution $\D$ and specialist class $\cB$, we define
+  the $(\p,\Delta)$-boundary size to be $V(\epsilon,\Delta) =
+  \D(\interior{\all}{0}{p,\Delta})$.
+\end{definition}
+
+We will show that if $V(\epsilon,\Delta)<\epsilon^\alpha \Delta^\beta$
+then \ActiveLearn\ has exponential speedup.
+
+
+\section{Universal convergence bounds for specialists}
 \label{sec:convergence-bounds}
 
 \yoav{I think that stating using the general term $A$ is an event,
