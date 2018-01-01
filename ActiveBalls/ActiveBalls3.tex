@@ -319,13 +319,14 @@ the decision boundary. A related intuition is to prefer instances on
 which there is disagreement among the best rules.
 
 Specifically, given a partition of $\cB$ into
-$\constr{\cB}{+}{\sample{S}},\constr{\cB}{-}{\sample{S}}$ and $\constr{\cB}{0}{\sample{S}}$, we
-partition the instances in $\universe{X}$ into {\em interior} and
-a {\em boundary} sets. Roughly speaking, interior points are those on
-which all of the specialists agree. To this set of points we
-add points where all of the specialists with small support
-agree. \yoav{I am planning to create a jupyter notebook and
-  generate some figures that will be added here, to aid intuition.}
+$\constr{\cB}{+}{\sample{S}},\constr{\cB}{-}{\sample{S}}$ and
+$\constr{\cB}{0}{\sample{S}}$, we partition the instances in
+$\universe{X}$ into {\em interior} and a {\em boundary} sets. Roughly
+speaking, interior points are those on which all of the specialists
+agree. To this set of points we add points where all of the
+specialists with small support agree. \yoav{I am planning to create a
+  jupyter notebook and generate some figures that will be added here,
+  to aid intuition.}
 
 Similarly to Chadhuri and Dasguta~\cite{ChadhuriDasgupta2015}, we
 define a partition of a set of points $\universe{Z}$ into effective
@@ -350,10 +351,17 @@ interior and boundary sets.
 \item {\em Effective Boundary} contains all points that are not in
   either interior set:
   \[
-  \nonconform(\universe{Z},\cB^{-1},\cB^{+1},0) =
-  \universe{Z} - (\conform(\universe{Z},\cB^{-1},\cB^{+1},+1) \cup \conform(\universe{Z},\cB^{-1},\cB^{+1},-1))
+  \nonconform(\universe{Z},\cB^{-1},\cB^{+1},0) = \universe{Z} -
+  (\conform(\universe{Z},\cB^{-1},\cB^{+1},+1) \cup
+  \conform(\universe{Z},\cB^{-1},\cB^{+1},-1))
   \]
 \end{itemize}
+
+Intuitively, we want \ActiveLearn\ to focus its queries on the
+effective boundary set
+$\nonconform(\universe{Z},\cB^{-1},\cB^{+1},0)$. However, for
+technical reasons, we need to expand this set to include the
+neighborhoods of the boundary sets.
 
 With these definitions, we can now describe \ActiveLearn\
 
@@ -361,10 +369,13 @@ With these definitions, we can now describe \ActiveLearn\
 \newcommand{\all}{\universe{X}}
 \noindent
 \begin{enumerate}
-\item Define the initial boundary to be all of the instances $\Unconf_0=\all$
+\item Define the initial boundary cover to be all of the instances
+  $\Unconf_0=\all$
+\item Query $n_0$ points uniformly at random.
 \item for $t=1,2,\ldots$:
 \begin{enumerate}
-\item Query $n$ points chosen uniformly at random from $\all$ and $n$
+\item Let $m_t$ be the number of points in the boundary cover.
+  Query $m_t$ points chosen uniformly at random from $\all$ and $m_t$
   points chosen uniformly at random from $\Unconf_{t-1}$. Define
   $\sample{S}_t$ and $\sample{U}_t$ to be the corresponding labeled
   datasets.
