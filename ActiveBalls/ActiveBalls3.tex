@@ -189,24 +189,25 @@
 
 \maketitle
 \section{Introduction}
-
+\shay{Was the Muffler ever used in the literature of Active Learning? }
 In this paper we suggest a different approach to the problem of active
-learning using balls. Instead of using the min/max solution given by
-Muffler, we consider an Occam's razor approach by which we make the
+learning using balls. \new{Instead of using the min/max solution given by
+Muffler}, we consider an Occam's razor approach by which we make the
 simplest prediction possible given the constraints.
+
 
 \section{Learning using Specialists}
 
 We start with some standard definitions. A classifier is a
 mapping from a domain $\cX$ to a binary label. For the sake of symmetry,
-we define the binary labels to be $\{-1,+1\}$. We assume a
-distribution $\D$ over $X \times \{-1,+1\}$.
+we define the binary labels to be $\{-1,+1\}$. 
+We assume an (unknown) distribution $\D$ over $X \times \{-1,+1\}$.
 
 In confidence rated classification (CRC) we allow the classifier to
 output one of {\em three} labels: $\{-1,0,+1\}$, where the meaning of
 $0$ is ``no prediction''. The performance of CRC is measured by two
-parameters, one is the conditional accuracy $\D(c(x) \neq y | c(x) \neq
-0)$, the other is the coverage, i.e. $\D(c(x) \neq 0)$.
+parameters, one is the conditional accuracy $\D\bigl(c(x) \neq y | c(x) \neq
+0\bigr)$, the other is the coverage, i.e. $\D\bigl(c(x) \neq 0\bigr)$.
 
 We address a special case of CRC with {\em specialist} ensembles, 
 in which the outputs of the classifier are either in $\{0,+1\}$ (positive specialists) or in
@@ -217,7 +218,10 @@ function the corresponds to the positive specialist with support $A$, and by $A^
 function that corresponds to the negative specialist.
 
 
-$\ActiveLearn$ is a transductive algorithm. In other words, the input
+\new{$\ActiveLearn$ is a transductive algorithm}.
+\shay{What does this mean? How is it different from
+standard algorithms in pool-based active learning?}
+ In other words, the input
 to the algorithm is a set of unlabeled instances $\universe{X} =
 [x_1,\ldots,x_N]$. All probabilities and expectations are defined with
 respect to the uniform distribution over $\universe{X}$. The hidden
@@ -226,26 +230,33 @@ $y \in \{-1,+1\}$. We define the {\em bias} of instance $x$ as
 \[
 \bias(x) \doteq P(y=+1|X=x) - P(y=-1|X=x)
 \]
-
-Let $B$ be (the support set of) a specialist. We define the {\em true
-  bias} of the specialist as:
+Let $B$ be (the support set of) a specialist. 
+\new{The {\em true size} of $B$ is defined by
+\[\lvert B \rvert =  {\sum_{x \in \universe{X}} \ones(x \in B)}.\]}
+The {\em true bias} of the specialist as:
 \[
 \bias(B) \doteq
 \frac{\sum_{x \in \universe{X}} \bias(x) \ones(x \in B)}
-{\sum_{x \in \universe{X}} \ones(x \in B)}
+{\lvert B \rvert}
+\new{= P(y=+1 \vert X\in B) - P(y=-1 \vert X\in B)}.
 \]
 
 $\ActiveLearn$\ can query the label for any instance $x \in \universe{X}$, the
 response to the query is a label drawn independently at random
 according to $P(y=+1 | X=x)$.\footnote{If the same instance is queried
-  more than once, the responses are independent and can be different.}
+more than once, the responses are independent and can be different.}
 
 Let $\samp= \left\langle (\x_1,y_1),\ldots,(\x_m,y_m) \right\rangle$ be a sequence
-of queried instances and the corresponding labels. We define the {\em
-  empirical bias} of a specialist $B$ with respect to $\samp$ to be 
+of queried instances and the corresponding labels. 
+\new{The {\em empirical size} of $B$ with respect to $\samp$ is defined by
+\[\lvert B \rvert_S =  {\sum_{(x,y) \in \samp} \ones(x \in B)}.\]}
+\shay{The definition of $k(B)$ was missing. 
+I added it and changed the notation from $k(B)$ to $\lvert B\rvert_S$.
+If you agree then we should also change it in the simultaneous convergence proof.}
+The {\em empirical bias} of a specialist $B$ with respect to $\samp$ to be 
 \[
 \ebias(B,\samp) \doteq
-\frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{ \sum_{(x,y) \in \samp} \ones(x_i \in B)}
+\frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{\lvert B\rvert_S}.
 \]
 
 \iffalse
@@ -270,11 +281,11 @@ conditioned on the instance $x$ being in the support set $B$.
 \fi
 
 
-Let $\cB$ be a collection of support sets corresponding to a set of
+Let $\cB$ be the collection of support sets corresponding to a set of
 specialists. We assume that $\cB$ has VC dimension $d$. 
 
 We now state a convergence bound that establishes the strong (almost sure) \emph{simultaneous} convergence 
-of the empirical errors of a set of specialists to their means, 
+of the empirical biases of a set of specialists to their true biases, 
 at rates which depend on the number of samples collected (roughly the support size) for each specialist.
 The proof is given in Section~(\ref{sec:convergence-bounds}).
 
@@ -290,7 +301,7 @@ choice of $\samp$:
 
 \[\forall B\in\cB :\;\;
 \lvert \bias(B) - \ebias(B,\samp) \bigr) \rvert
-\leq \sqrt{\frac{k_0}{k(B)}},
+\leq \sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}},
 \]
 where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
 \end{theorem}
@@ -305,9 +316,9 @@ $\ActiveLearn$
 partitions the collection $\cB$ into three sets:
 \begin{itemize}
 \item The \emph{probably positive specialists} $\cB^{+} (\sample{S})$ contains all $B \in \cB$ such that
-  $\ebias(B) \geq \sqrt{\frac{k_0}{k(B)}}$.
+  $\ebias(B) \new{>} \sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}}$.
 \item The \emph{probably negative specialists} $\cB^{-} (\sample{S})$ contains all $B \in \cB$ such that
-  $\ebias(B) \leq -\sqrt{\frac{k_0}{k(B)}}$.
+  $\ebias(B) \new{<} -\sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}}$.
 \item The \emph{undetermined specialists} $\cB^{0} (\sample{S})$ contains $B \in \cB$ that are neither in
   $\cB^{+} (\sample{S})$ nor in $\cB^{-} (\sample{S})$.
 \end{itemize}
@@ -319,8 +330,8 @@ partitions the collection $\cB$ into three sets:
 
 Like many other active learning algorithms~\cite{}, 
 the intuition behind $\ActiveLearn$ is to preferably query instances that are close to
-the decision boundary. A related viewpoint is to prefer instances on
-which there is disagreement among the best rules. 
+the decision boundary \new{(which we formally define next)}. 
+A related viewpoint is to prefer instances on which there is disagreement among the best rules. 
 
 
 \subsection{Definitions}
@@ -331,8 +342,9 @@ $\cB^{+1} (\sample{S}),\cB^{-1} (\sample{S}), \cB^{0} (\sample{S})$
 we partition the instances in $\universe{X}$ into {\em interior} and
 {\em boundary} sets, as in \cite{ChadhuriDasgupta2015}. 
 
-Roughly speaking, interior points are those on which the label is known w.h.p. all of the specialists agree. 
+Roughly speaking, interior points are those on which the label is known w.h.p.\ all of the specialists agree. 
 To this set of points, we add points where all of the specialists with small support agree. 
+\shay{I do not understand this paragraph}
 
 \yoav{I am planning to create a jupyter notebook and generate some figures that will be added here, to aid intuition.}
 
@@ -355,13 +367,16 @@ interior and boundary sets.
     \mbox{ and } D \subset A
   \end{array}
   \right. 
-  \right\}
+  \right\}.
 \]
+\new{Thus, $x$ is in the $y$-interior if all the minimal specialists in $\cB^y\cup\cB^{-y}$
+that contain $x$ are in $\cB^{y}$.}
 \item {\em Effective Boundary:} This set contains all points that are not in either interior set:
   \[
   \nonconform(\universe{X},\cB^{\pm 1}) =
-  \universe{X} \setminus \lrb{ \conform^{+1} (\universe{X},\cB^{\pm 1}) \cup \conform^{-1} (\universe{X},\cB^{\pm 1}) }
+  \universe{X} \setminus \lrb{ \conform^{+1} (\universe{X},\cB^{\pm 1}) \cup \conform^{-1} (\universe{X},\cB^{\pm 1}) }.
   \]
+  \new{Thus, $x$ is in the effective boundary if there are are two minimal specialists in $\cB^{+1}\cup\cB^{-1}$ that contain $x$ and one of them is in $\cB^{+1}$ and the other is in $\cB^{-1}$.}
 \end{itemize}
 
 
@@ -375,7 +390,8 @@ With these definitions, we can now describe the active learning algorithm $\Acti
 \begin{enumerate}
 \item Define the initial boundary cover to be all of the instances
   $\Unconf_0=\all$
-\item Query $n_0$ points uniformly at random.
+\item Query \new{$n_0$} points uniformly at random.
+\shay{How is $n_0$ defined?}
 \item for $t=1,2,\ldots$:
 \begin{enumerate}
 \item Let $m_t$ be the number of points in the boundary cover.
@@ -385,8 +401,9 @@ With these definitions, we can now describe the active learning algorithm $\Acti
   datasets.
 \item Partition the specialists in $\cB$ into conforming and non-conforming:
   $$
-  \mbox{For } s \in \{-1,0,1\}:\;\; \cB^s_t := \cB^{s} \lrp{\bigcup_{i=1}^t \sample{S}_i}
+  \mbox{For } s \in \{-1,0,1\}:\;\; \cB^s_t := \cB^{s} \lrp{\bigcup_{i=1}^t \new{\sample{S}_i}}
   $$
+  \shay{Should it be $\cB^{s} \lrp{\bigcup_{i=1}^t {\sample{S}_i\cup\sample{U}_i}}$?}
 \item Define the {\em constrained set of specialists}:
   $
   \cC_t := \left\{ B \cap \Unconf_{t-1} \left| B \in \cB \right.\right\}
@@ -398,6 +415,8 @@ $$  \mbox{For } s \in \{-1,0,1\}:\;\;
   $
   \mbox{For } s \in \{-1,0,1\}:\;\; \cA^s_t = \cB^s_t \cup \cC^s_t
   $
+  \shay{Should $\cA^s_t$ contain $\cA^s_{t-1}$?
+Currently it does not contain constrained specialists from the previous iterations.}
 \item Define a new effective boundary set:
   $
   \Unconf_t = \nonconform(\universe{X},\cA_t^{\pm 1})
@@ -409,29 +428,36 @@ $$  \mbox{For } s \in \{-1,0,1\}:\;\;
   unconforming sets shrinks with each epoch. The general rule is: you
   can use any samples from a batch whose support set contains the specialist.}
 
+
 \section{Analysis}
 
-The analysis was inspired by the convergence analysis of kNN done
+\new{Shay: What is the main statement we wish to prove in the Analysis section?}
+
+The analysis is inspired by the convergence analysis of kNN done
 in~\cite{ChadhuriDasgupta2015}.  The idea we use here is to
-characterize the true conditional distribution. This characterization
+characterize the true conditional distribution (\new{defined below}). This characterization
 will allow us to bound the number of queries made by $\ActiveLearn$.
 
-The true distribution is the uniform distribution over
+The \new{true distribution} is the uniform distribution over
 $\all$, together with $\bias(x)$ for each $x \in \all$. We denote by
 $\D(B)$ the probability of the specialist $B$ with respect to the	
 distribution $\D$.
+\shay{``True distribution'' is used in a confusing way. 
+Perhaps our main theorems should consider the standard setting of an unknown 
+(not necessarily uniform)  distribution over the whole domain, and in our proofs we can use a reduction
+to the transductive setting.}
 
 \newcommand{\restricted}[2]{{#1}(#2)}
 
 We denote by $\cB_x$ the set of specialists $B \in \cB$ that {\em
   cover} $x$, i.e. $x \in \cB$.
-Call a specialist $B$ uniformly $(s,\Delta)$-biased if for all $x \in B$, $(s)\bias(x) \geq \Delta$.
+Call a specialist $B$ uniformly $(s,\Delta)$-biased if $s\cdot\bias(x) \geq \Delta$ for all $x \in B$.
 Define restricted sets of specialists to be subsets of $\cB_x$ that
 satisfy the following conditions on $\bias(B)$ and $\D(B)$:
 \[ \restricted{\cB_x}{s,\Delta,\leq p}
 =
 \left\{
-B \in \cB_{x} \left| s \bias(B) \geq \Delta \mbox{ and } \D(B) \leq p
+B \in \cB_{x} \left| s \cdot\bias(B) \geq \Delta \mbox{ and } \D(B) \leq p
 \right.\right\}
 \]
 Instead of $\leq p$, the condition in this definition can be
@@ -446,7 +472,8 @@ For $s = \pm 1$, $p_1>p_2>0$, $\Delta>0$ the {\em interior set}
 $\interior{\all}{s}{p_1,p_2,\Delta}$ contains all points $x \in \all$ such that
 \begin{enumerate}
 \item {\bf No mind changes:} $\forall B \in
-  \restricted{\cB_x}{s,\Delta,\leq p_1}$, $B$ is uniformly $(s,\Delta)$-biased.
+  \restricted{\cB_x}{s,\Delta,\leq p_1}$, $B$ is \new{uniformly} $(s,\Delta)$-biased.
+  \new{Shay: What does ``uniformly'' means?}
 \item {\bf Witness:} $\exists B \in \restricted{\cB_x}{s,\Delta,\leq p_1}$ such that $\D(B) \geq p_2$.
 \item {\bf Masking:} For all $C \in \restricted{\cB_x}{-s,0,> p_1}$
   there exists $B \in \restricted{\cB_x}{s,\Delta,\geq p_2}$ such
@@ -485,7 +512,7 @@ set on $p_1,p_2$ and $\Delta$.
 \end{definition}
 
 As $\ActiveLearn$\ is at its core a nearest neighbor algorithm, we
-quantify its performance by consider the difference between its error
+quantify its performance by considering the difference between its error
 rate and the error rate of the Bayes optimal
 algorithm. We say that the algorithm is $\epsilon$-competitive if its
 error rate is at most $\epsilon$ higher than the error of the Bayes algorithm.
@@ -495,6 +522,9 @@ Let $a,b,c,d>0$ be positive constants. If $V(a/n,b/n,c/\sqrt{n}) <
 d/n$ then after querying $\log(1/\epsilon)$ points the prediction of
 the algorithm is $\epsilon$-competitive.
 \end{theorem}
+\new{Shay: Something seems off with this theorem; it gives the same bound on the query complexity for any set of specialists! This is clearly false: for example, imagine there is only one singleton specialist $\{x\}$.
+Clearly, in this case the algorithm will not output a classifier that is competitive with the Bayes optimal.}
+
 
 \section{\color{red} [old material] Ball Specialists}
 
@@ -569,6 +599,11 @@ roughly, to nearest neighbor methods.
   rather than the more problem specific $y=+1$ is confusing. I like
   the discussion but I would like to shorten it and not use ``too good
   to be true'' non-theorems.}
+ \shay{ I believe this statement can be interesting beyond this context (e.g. it is related to discrepancy). Therefore,  I think it is better if one can read and understand the statement without knowing our definitions of bias, etc\ldots
+We can explain how we use it in detail to avoid confusion.
+I can remove the ``too good to be true'' part after I am back to Princeton.}
+
+
 
 Let $p$ be a distribution over $X$.
 Let $\cB$ be a collection of events, and let $A$ be an event.
@@ -683,6 +718,7 @@ any $\x,\y \in \X$:
 \[
 |\bias(\x) - \bias(\y)| \leq \alpha \|\x-\y\|_2^{\beta}
 \]
+\shay{This condition seems relevant only when the specialists ``behave like balls'' }
 \item
 The bias is bounded away from zero and {\bf the boundary is low
 dimensional}. More technically:
@@ -695,6 +731,9 @@ dimensional}. More technically:
   low dimension if $P_{\D}(G_{\epsilon}) \to 0$ as $\epsilon \to 0$
   (one has to be a bit careful in the definition here because $\X$ is finite, so
   $G_{1/2|\X|}=\emptyset$ trivially).  
+  \shay{It seems these definitions make more sense for infinite domains.
+  I suggest that we assume an infinite domain and reduce to the transductive finite setting
+  in our proofs.}
 \end{itemize}
 \end{enumerate}
 
