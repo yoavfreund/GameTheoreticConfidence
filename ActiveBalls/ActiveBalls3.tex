@@ -189,12 +189,13 @@
 
 \maketitle
 \section{Introduction}
+\iffalse
 \shay{Was the Muffler ever used in the literature of Active Learning? }
 In this paper we suggest a different approach to the problem of active
 learning using balls. \new{Instead of using the min/max solution given by
 Muffler}, we consider an Occam's razor approach by which we make the
 simplest prediction possible given the constraints.
-
+\fi
 
 \section{Learning using Specialists}
 
@@ -220,7 +221,13 @@ function that corresponds to the negative specialist.
 
 \new{$\ActiveLearn$ is a transductive algorithm}.
 \shay{What does this mean? How is it different from
-standard algorithms in pool-based active learning?}
+  standard algorithms in pool-based active learning?}
+\yoav{The reason that transductive is easier is that the set of
+  specialists is finite and we don't need to worry about intersections
+  and unions of infinite sets when defining the boundary and the
+  interior. The difference with pools of generalists comes from the
+  fact that that specialists can concentrate on smaller parts of the
+  input space.}
  In other words, the input
 to the algorithm is a set of unlabeled instances $\universe{X} =
 [x_1,\ldots,x_N]$. All probabilities and expectations are defined with
@@ -323,40 +330,106 @@ partitions the collection $\cB$ into three sets:
   $\cB^{+} (\sample{S})$ nor in $\cB^{-} (\sample{S})$.
 \end{itemize}
 
+\section{Using Specialists}
+
+Specialists abstain on potentially large parts of the input
+space. Therefor, when predicting with specialists, we use a rule that
+combines many specialists. Suppose our transductive sample is $\X$.
+Define the {\em weight} of a specialist to be the number of points in
+$\X$ on which it predicts (rather than abstain).
+
+Consider two sets of specialists: one in which all of the specialists
+have large weight, the other in which each specialist has weight one.
+(and each point in $\X$ is covered by a specialist.  Suppose a
+randomly chosen subset of the instances in $\X$ are labeled.
+
+Consider first the light specialists. Clearly with these specialists
+any labeling of the instances is possible. On the the other hand,
+unless the number of labeled examples is much larger than $|\X|$ it is
+unlikely that we can identify any specialist as being probably
+positive or probably negative (see definitions above).
+
+On the other hand, if the specialists are heavy we are likely to be
+able to identify whether they are probably positive or probably
+negative because the number of labeled examples that they contain is
+large. However, combinations of heavy, low-VC rules have low
+representational power.
+
+Intuitively, combinations of light specialists have low bias and
+high-variance, while combinations of heavy specialists have high bias
+but low variance. Combining specialists of different weights for
+different parts of the input space gives us a location-sensitive way
+to balance bias and variance.
+
 \section{The active learning algorithm}
 
-\newcommand{\conform}{{\cal C}}
-\newcommand{\nonconform}{{\cal N}}
+Our active learning algorithm $\ActiveLearn$ is based the
+bias/variance tradeoff described in the last section.
 
+The algorithm starts by querying a small number of randomly chosen
+instances. As the number of labels is small, only heavy specialists
+can be placed in the probably positive or probably negative sets.
+
+Given a partition of $\cB$ into $\cB^{+1} (\sample{S}),\cB^{-1}
+(\sample{S}), \cB^{0} (\sample{S})$ (a partial determination of the
+signs of specialist biases in $\cB$), the algorithm partitions the
+instances in $\universe{X}$ into {\em interior} and {\em boundary}
+sets, as in \cite{ChadhuriDasgupta2015}. Roughly speaking, interior
+points are the ones on which all of the specialists agrees, the
+complement, the boundary points are the ones on which there is
+disagreement among the specialists.
+
+At this point we want to query the labels for more points so that we
+can identify the polarity of specialists with smaller weight.
+Intuitively, we would like to query only boundary points. However,
+there is a catch, the apparent agreement between the specialists on
+the interior points might be a result of the fact that the labels are
+too sparse to define the polarity of lighter specialists.
+
+We therefor use a hybrid query selection method: we make half of the
+queries on the boundary set and half uniformly from the whole
+space. We can think of querying the boundary as exploring the {\em
+  ``known unknown''}\footnote{Donald Rumsfeld 2002:
+  {\tt http://archive.defense.gov/Transcripts/Transcript.aspx?TranscriptID=2636}}
+while querying the interior as looking for the {\em ``unknown
+  unknown''}
+
+The fact that we select half of the queries randomly from the whole
+space guarantees that the number of queries issued by the algorith is
+never mode than twice that of the passive algorithm.  On the other
+hand, as we will show, if there are no ``unknown unknowns'' to be
+found and if the size of the boundary shrinks with the number of
+examples, then $\ActiveLearn$ makes significantly fewer queries than
+the passive algorithm.
+
+\iffalse
 Like many other active learning algorithms~\cite{}, 
 the intuition behind $\ActiveLearn$ is to preferably query instances that are close to
 the decision boundary \new{(which we formally define next)}. 
 A related viewpoint is to prefer instances on which there is disagreement among the best rules. 
 
+At a high level, our algorithm 
+As Theorem~\ref{thm:UCECM} demonstrates, the ability to identify
+whether a spe
+\fi
 
-\subsection{Definitions}
+\subsection{The details}
 
-Specifically, given a partition of $\cB$ into
-$\cB^{+1} (\sample{S}),\cB^{-1} (\sample{S}), \cB^{0} (\sample{S})$ 
-(a partial determination of the signs of specialist biases in $\cB$), 
-we partition the instances in $\universe{X}$ into {\em interior} and
-{\em boundary} sets, as in \cite{ChadhuriDasgupta2015}. 
-
-Roughly speaking, interior points are those on which the label is known w.h.p.\ all of the specialists agree. 
-To this set of points, we add points where all of the specialists with small support agree. 
-\shay{I do not understand this paragraph}
-
-\yoav{I am planning to create a jupyter notebook and generate some figures that will be added here, to aid intuition.}
+We now formalize the intuitive description of $\ActiveLearn$..
 
 We define a partition of a set of points $\universe{Z}$ into effective
 interior and boundary sets. 
 %Given a sample $S$, let $\cB^{\pm} := \cB (\pm, S)$ be positive and negative conforming sets on $S$. 
 
+\newcommand{\algInterior}{{\cal C}}
+\newcommand{\algBoundary}{{\cal N}}
+\newcommand{\algCover}{{\cal M}}
+
 \begin{itemize}
 \item {\em  Effective Interior Sets:} There are two interior sets, one for each label.
   Let $y \in \{-1,+1\}$ be that label. We define the $y$-interior subset of $\universe{X}$ as
   \[
-  \conform^{y} (\universe{X},\cB^{\pm 1}) =
+  \algInterior^{y} (\universe{X},\cB^{\pm 1}) =
   \left\{ x \in \universe{X} \left|
   \begin{array}{c}
     \exists B \in \cB^{y} \mbox{ s.t. } x \in B
@@ -370,13 +443,25 @@ interior and boundary sets.
   \right\}.
 \]
 \new{Thus, $x$ is in the $y$-interior if all the minimal specialists in $\cB^y\cup\cB^{-y}$
-that contain $x$ are in $\cB^{y}$.}
+  that contain $x$ are in $\cB^{y}$.}
+
 \item {\em Effective Boundary:} This set contains all points that are not in either interior set:
   \[
-  \nonconform(\universe{X},\cB^{\pm 1}) =
-  \universe{X} \setminus \lrb{ \conform^{+1} (\universe{X},\cB^{\pm 1}) \cup \conform^{-1} (\universe{X},\cB^{\pm 1}) }.
+  \algBoundary(\universe{X},\cB^{\pm 1}) =
+  \universe{X} \setminus \lrb{ \algInterior^{+1} (\universe{X},\cB^{\pm 1}) \cup \algInterior^{-1} (\universe{X},\cB^{\pm 1}) }.
   \]
   \new{Thus, $x$ is in the effective boundary if there are are two minimal specialists in $\cB^{+1}\cup\cB^{-1}$ that contain $x$ and one of them is in $\cB^{+1}$ and the other is in $\cB^{-1}$.}
+
+\item {\em Boundary Cover:} To ensure that the specialists that
+  contain boundary points recieve a sufficient number of queries we
+  need to expand the boundary to a set we call the boundary cover.
+  \[
+  \algCover(p,\X,\cB^{\pm 1}) =
+  \bigcup \left\{ B \in \cB^{\pm 1} \left|
+  \D(B)<p,\;\mbox { and } B \cap \algBoundary(\universe{X},\cB^{\pm 1}) \neq \emptyset
+  \right.
+  \right\}.
+  \]
 \end{itemize}
 
 
@@ -384,29 +469,37 @@ that contain $x$ are in $\cB^{y}$.}
 
 With these definitions, we can now describe the active learning algorithm $\ActiveLearn$.
 
-\newcommand{\Unconf}{\universe{U}}
+\newcommand{\boundaryIter}{\universe{U}}
 \newcommand{\all}{\universe{X}}
 \noindent
 \begin{enumerate}
 \item Define the initial boundary cover to be all of the instances
-  $\Unconf_0=\all$
+  $\boundaryIter_0=\all$
 \item Query \new{$n_0$} points uniformly at random.
-\shay{How is $n_0$ defined?}
+  \shay{How is $n_0$ defined?}
+  \yoav{It is a parameter that will come in the analysis. We could set
+    $n_0=1$. The algorithm is equivalent to the Passive algorithm
+    until the boundary is different from the whole set $\X$}
 \item for $t=1,2,\ldots$:
 \begin{enumerate}
 \item Let $m_t$ be the number of points in the boundary cover.
-  Query $m_t$ points chosen uniformly at random from $\all$ and $m_t$
-  points chosen uniformly at random from $\Unconf_{t-1}$. Define
+  Query $4m_t$ points chosen uniformly at random from $\all$ and $4m_t$
+  points chosen uniformly at random from $\boundaryIter_{t-1}$. Define
   $\sample{S}_t$ and $\sample{U}_t$ to be the corresponding labeled
   datasets.
 \item Partition the specialists in $\cB$ into conforming and non-conforming:
   $$
   \mbox{For } s \in \{-1,0,1\}:\;\; \cB^s_t := \cB^{s} \lrp{\bigcup_{i=1}^t \new{\sample{S}_i}}
   $$
-  \shay{Should it be $\cB^{s} \lrp{\bigcup_{i=1}^t {\sample{S}_i\cup\sample{U}_i}}$?}
-\item Define the {\em constrained set of specialists}:
+  \shay{Should it be $\cB^{s} \lrp{\bigcup_{i=1}^t
+      {\sample{S}_i\cup\sample{U}_i}}$?}
+  \yoav{No, The boundary sets are not guaranteed to always
+    shrink. There might be an ``unknown unknown'' region which creates
+    a new boundary set. In fact, I think that the analysis will only
+    depend on the the size of $\sample{S}_i$.}
+  \item Define the {\em constrained set of specialists}:
   $
-  \cC_t := \left\{ B \cap \Unconf_{t-1} \left| B \in \cB \right.\right\}
+  \cC_t := \left\{ B \cap \boundaryIter_{t-1} \left| B \in \cB \right.\right\}
   $
 \item Partition $\cC_t$ into conforming and non-conforming sets:
 $$  \mbox{For } s \in \{-1,0,1\}:\;\; 
@@ -419,7 +512,7 @@ $$  \mbox{For } s \in \{-1,0,1\}:\;\;
 Currently it does not contain constrained specialists from the previous iterations.}
 \item Define a new effective boundary set:
   $
-  \Unconf_t = \nonconform(\universe{X},\cA_t^{\pm 1})
+  \boundaryIter_t = \algCover(2^{-t},\X,\cA^{\pm 1})
   $
 \end{enumerate}
 \end{enumerate}
@@ -431,26 +524,35 @@ Currently it does not contain constrained specialists from the previous iteratio
 
 \section{Analysis}
 
-\new{Shay: What is the main statement we wish to prove in the Analysis section?}
+%\new{Shay: What is the main statement we wish to prove in the Analysis section?}
+
+In this section we give sufficient conditions under which
+the number of queries of $\ActiveLearn$ is significantly smaller (in a
+sense to be defined) than the number of queries required when using
+passive sampling.
 
 The analysis is inspired by the convergence analysis of kNN done
 in~\cite{ChadhuriDasgupta2015}.  The idea we use here is to
 characterize the true conditional distribution (\new{defined below}). This characterization
 will allow us to bound the number of queries made by $\ActiveLearn$.
 
-The \new{true distribution} is the uniform distribution over
-$\all$, together with $\bias(x)$ for each $x \in \all$. We denote by
-$\D(B)$ the probability of the specialist $B$ with respect to the	
-distribution $\D$.
-\shay{``True distribution'' is used in a confusing way. 
-Perhaps our main theorems should consider the standard setting of an unknown 
-(not necessarily uniform)  distribution over the whole domain, and in our proofs we can use a reduction
-to the transductive setting.}
+Let $\D$ define the joint distribution over $X \times \{-1,+1\}$. The
+transductive sample $\X$ is chosen IID according to the marginal
+$\D|_{X}$. The answer to a query $x \in \X$ is chosen according to the
+conditional distribution $\D(y,x)$.
+%\shay{``True distribution'' is used in a confusing way. 
+%Perhaps our main theorems should consider the standard setting of an unknown 
+%(not necessarily uniform)  distribution over the whole domain, and in our proofs we can use a reduction
+%to the transductive setting.}
 
 \newcommand{\restricted}[2]{{#1}(#2)}
 
 We denote by $\cB_x$ the set of specialists $B \in \cB$ that {\em
   cover} $x$, i.e. $x \in \cB$.
+
+%We define the {\em neighborhood} of a
+%point $x$ to be the union of the sets in $N_x=\cup{B | B \in \cB_x}$ 
+
 Call a specialist $B$ uniformly $(s,\Delta)$-biased if $s\cdot\bias(x) \geq \Delta$ for all $x \in B$.
 Define restricted sets of specialists to be subsets of $\cB_x$ that
 satisfy the following conditions on $\bias(B)$ and $\D(B)$:
@@ -524,7 +626,6 @@ the algorithm is $\epsilon$-competitive.
 \end{theorem}
 \new{Shay: Something seems off with this theorem; it gives the same bound on the query complexity for any set of specialists! This is clearly false: for example, imagine there is only one singleton specialist $\{x\}$.
 Clearly, in this case the algorithm will not output a classifier that is competitive with the Bayes optimal.}
-
 
 \section{\color{red} [old material] Ball Specialists}
 
