@@ -219,7 +219,7 @@ function the corresponds to the positive specialist with support $A$, and by $A^
 function that corresponds to the negative specialist.
 
 
-\new{$\ActiveLearn$ is a transductive algorithm}.
+\new{\ActiveLearn is a transductive algorithm}.
 \shay{What does this mean? How is it different from
   standard algorithms in pool-based active learning?}
 \yoav{The reason that transductive is easier is that the set of
@@ -478,14 +478,14 @@ Currently it does not contain constrained specialists from the previous iteratio
 %\new{Shay: What is the main statement we wish to prove in the Analysis section?}
 
 In this section we give sufficient conditions under which
-the number of queries of $\ActiveLearn$ is significantly smaller (in a
+the number of queries of \ActiveLearn\ is significantly smaller (in a
 sense to be defined) than the number of queries required when using
 passive sampling.
 
 The analysis is inspired by the convergence analysis of kNN done
 in~\cite{ChadhuriDasgupta2015}.  The idea we use here is to
 characterize the true conditional distribution (\new{defined below}). This characterization
-will allow us to bound the number of queries made by $\ActiveLearn$.
+will allow us to bound the number of queries made by \ActiveLearn.
 
 Let $\D$ define the joint distribution over $X \times \{-1,+1\}$. The
 transductive sample $\X$ is chosen IID according to the marginal
@@ -564,7 +564,7 @@ set on $p_1,p_2$ and $\Delta$.
   \D(\boundry{p_1,p_2,\Delta})$$
 \end{definition}
 
-As $\ActiveLearn$\ is at its core a nearest neighbor algorithm, we
+As \ActiveLearn\ is at its core a nearest neighbor algorithm, we
 quantify its performance by considering the difference between its error
 rate and the error rate of the Bayes optimal
 algorithm. We say that the algorithm is $\epsilon$-competitive if its
