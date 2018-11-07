@@ -63,6 +63,46 @@ and if $i > \p t$ then
 Both $P$ and $Q$ are unimodal and achieve their maximal value close to
 $\p t$.
 
+\begin{lemma}
+  For sampling with replacement, define $\fmode{P} = (t+1)\frac{k}{n}-1$. If
+  $i<\fmode{P}$ then $\prob{P}{t,i-1}<\prob{P}{t,i}$, if $i>\fmode{P}$
+  then $\prob{P}{t,i+1}<\prob{P}{t,i}$.\newline
+  For sampling with replacement, define $\fmode{Q} =(t+1)\frac{k+1}{n+2}-1$,
+  If $i<\fmode{Q}$ then $\prob{Q}{t,i-1}<\prob{Q}{t,i}$, if $i>\fmode{Q}$
+  then $\prob{Q}{t,i+1}<\prob{Q}{t,i}$.\newline
+\end{lemma}
+\begin{proof}
+  The idea of the proof is to consider the ratio between the
+  probabilities for consecutive values of $i$. Both distributions have
+  closed form expressions:
+
+  For sampling with replacement we have 
+  \[
+  \prob{P}{t,i}={t \choose i} \p^i (1-\p)^{t-i}
+  \]
+  From which we get that
+  \[
+  \frac{\prob{P}{t,i}}{\prob{P}{t,i}} = \frac{(t-i)\p}{(i+1)(1-\p)}
+  \]
+  Noting that the last expression is monotone decreasing with $i$ and
+  solving for $\frac{\prob{P}{t,i}}{\prob{P}{t,i}}$ yields the first
+  part of the lemma.\newline
+
+  For sampling without replacement we have 
+  \[
+  \prob{Q}{t,i}=\frac{{k \choose i}{n-k \choose t-i}}{{n \choose t}}
+  \]
+  From which we get that
+  \[
+  \frac{\prob{Q}{t,i}}{\prob{Q}{t,i}} = \frac{(k-i)(t-i)}{(i+1)(n-k-t+i+1)}
+  \]
+  Again, the last expression is monotone decreasing with $i$ and
+  solving for $\frac{\prob{Q}{t,i}}{\prob{Q}{t,i}}$ yields the second
+  part of the lemma.
+  \end{proof}
+
+
+\iffalse
 Let $S$ stand for $P$ or $Q$, The mode $S$ is a set of one or two
 integers such that  $\mode{\prob{S}{t}} \doteq \argmax_{i} \prob{S}{t,i}$.
   
@@ -80,12 +120,7 @@ integers such that  $\mode{\prob{S}{t}} \doteq \argmax_{i} \prob{S}{t,i}$.
   \end{cases}
   \end{equation}
   
-\begin{lemma} The modes for $P$ and $Q$ are:\newline
-   For sampling with replacement the mode is defined by
-   Equation~\ref{eqn:mode} with $S=P$ and $\fmode{P} = (t+1)\p-1$.\newline
-   For sampling with replacement  the mode is defined by
-   Equation~\ref{eqn:mode} with $S=Q$ and $\fmode{Q} = (t+1)\frac{k+1}{n+2}-1$.
-\end{lemma}
+\fi
 
 Next we give a recursive formulation for $P$ and $Q$. \newline
 For $t=0$ we have that 

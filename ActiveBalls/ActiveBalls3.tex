@@ -170,7 +170,7 @@
 
 \newcommand{\I}{\mathcal{I}}
 \newcommand{\N}{\mathbb{N}}
-\newcommand{\ActiveLearn}{\mathbf{ConfLearn}}
+\newcommand{\ActiveLearn}{$\mathbf{ConfLearn}$}
 \newcommand{\universe}[1]{{\cal #1}}
 
 \newcommand{\samp}{S}
@@ -217,7 +217,7 @@ function the corresponds to the positive specialist with support $A$, and by $A^
 function that corresponds to the negative specialist.
 
 
-$\ActiveLearn$ is a transductive algorithm. In other words, the input
+\ActiveLearn is a transductive algorithm. In other words, the input
 to the algorithm is a set of unlabeled instances $\universe{X} =
 [x_1,\ldots,x_N]$. All probabilities and expectations are defined with
 respect to the uniform distribution over $\universe{X}$. The hidden
@@ -235,7 +235,7 @@ Let $B$ be (the support set of) a specialist. We define the {\em true
 {\sum_{x \in \universe{X}} \ones(x \in B)}
 \]
 
-$\ActiveLearn$\ can query the label for any instance $x \in \universe{X}$, the
+\ActiveLearn\ can query the label for any instance $x \in \universe{X}$, the
 response to the query is a label drawn independently at random
 according to $P(y=+1 | X=x)$.\footnote{If the same instance is queried
   more than once, the responses are independent and can be different.}
@@ -269,7 +269,6 @@ intervals on $\bias(B)$ the probability of the label $+1$
 conditioned on the instance $x$ being in the support set $B$.
 \fi
 
-
 Let $\cB$ be a collection of support sets corresponding to a set of
 specialists. We assume that $\cB$ has VC dimension $d$. 
 
@@ -278,10 +277,15 @@ of the empirical errors of a set of specialists to their means,
 at rates which depend on the number of samples collected (roughly the support size) for each specialist.
 The proof is given in Section~(\ref{sec:convergence-bounds}).
 
-\yoav{I don't think that the term ``uniform'' is appropriate here,
-  because the bound is not uniform - there is a different bound for
-  each rule, depending on $k$.}
-\akshay{Changed it to say the plain mathematical statement of strong simultaneous convergence. Also simplified some notation, mostly around "conforming sets," and omitting the space $\cX$ as an explicit argument.}
+%% \yoav{I don't think that the term ``uniform'' is appropriate here,
+%%   because the bound is not uniform - there is a different bound for
+%%   each rule, depending on $k$.}
+
+%% \akshay{Changed it to say the plain mathematical statement of strong
+%%   simultaneous convergence. Also simplified some notation, mostly
+%%   around "conforming sets," and omitting the space $\cX$ as an
+%%   explicit argument.}
+
 \begin{theorem}\label{thm:UCECM}
 Let $\cB$ be a set of specialists with VC dimension $d$, let
 $\delta>0$ ,and let $\samp$ be a labeled sample of size $n$.  The
@@ -301,50 +305,50 @@ where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
 \newcommand{\constr}[3]{#1 \left(#2,\sample{#3}\right)}
   
 Using this theorem and given a sample $\sample{S}$, 
-$\ActiveLearn$ 
-partitions the collection $\cB$ into three sets:
+\ActiveLearn\ identifies those specialists $B \in \cB$ for which the sign of
+$\bias(B)$ can be determined (with high probability). 
 \begin{itemize}
-\item The \emph{probably positive specialists} $\cB^{+} (\sample{S})$ contains all $B \in \cB$ such that
+\item The \emph{positive determined specialists} $\cB^{+} (\sample{S})$ contains all $B \in \cB$ such that
   $\ebias(B) \geq \sqrt{\frac{k_0}{k(B)}}$.
-\item The \emph{probably negative specialists} $\cB^{-} (\sample{S})$ contains all $B \in \cB$ such that
+\item The \emph{negative determined specialists} $\cB^{-} (\sample{S})$ contains all $B \in \cB$ such that
   $\ebias(B) \leq -\sqrt{\frac{k_0}{k(B)}}$.
 \item The \emph{undetermined specialists} $\cB^{0} (\sample{S})$ contains $B \in \cB$ that are neither in
   $\cB^{+} (\sample{S})$ nor in $\cB^{-} (\sample{S})$.
 \end{itemize}
 
+Note that the statement of the theorem holds simultaneously for all $B \in
+\cB$. Therefor with probability $1-\delta$ we have that $\forall B \in
+\cB^{+} (\sample{S})$, $\bias(B)>0$ and $\forall B \in \cB^{-}
+(\sample{S})$, $\bias(B)<0$. As \ActiveLearn\ accumulates labeled
+examples, it also accumulates positive and negative specialists. We
+denote the union of the positive specialists and the union of the negative
+specialists by $\cB^+$ and $\cB^-$ respectively.
+
+
 \section{The active learning algorithm}
 
 \newcommand{\conform}{{\cal C}}
 \newcommand{\nonconform}{{\cal N}}
+\newcommand{\cover}{{\cal M}}
+Like many other active learning algorithms~\cite{}, the intuition
+behind \ActiveLearn is to preferably query instances that are close
+to the decision boundary. A related viewpoint is to prefer instances
+on which there is disagreement among the best rules.
 
-Like many other active learning algorithms~\cite{}, 
-the intuition behind $\ActiveLearn$ is to preferably query instances that are close to
-the decision boundary. A related viewpoint is to prefer instances on
-which there is disagreement among the best rules. 
-
-
-\subsection{Definitions}
-
-Specifically, given a partition of $\cB$ into
-$\cB^{+1} (\sample{S}),\cB^{-1} (\sample{S}), \cB^{0} (\sample{S})$ 
-(a partial determination of the signs of specialist biases in $\cB$), 
-we partition the instances in $\universe{X}$ into {\em interior} and
+\ActiveLearn\ operates in epochs. In each epoch it uses the set of
+determined specialists accumulated in previous epochs:
+$\cB^+_t,\cB^-_t$ to partition $\universe{X}$ into {\em interior} and
 {\em boundary} sets, as in \cite{ChadhuriDasgupta2015}. 
 
-Roughly speaking, interior points are those on which the label is known w.h.p. all of the specialists agree. 
-To this set of points, we add points where all of the specialists with small support agree. 
-
-\yoav{I am planning to create a jupyter notebook and generate some figures that will be added here, to aid intuition.}
-
-We define a partition of a set of points $\universe{Z}$ into effective
+We define a partition of a set of points $\universe{X}$ into effective
 interior and boundary sets. 
 %Given a sample $S$, let $\cB^{\pm} := \cB (\pm, S)$ be positive and negative conforming sets on $S$. 
 
 \begin{itemize}
 \item {\em  Effective Interior Sets:} There are two interior sets, one for each label.
-  Let $y \in \{-1,+1\}$ be that label. We define the $y$-interior subset of $\universe{X}$ as
+  Let $y \in \{-1,+1\}$ be that label. We define the $y$-interior subset of $\X$ as
   \[
-  \conform^{y} (\universe{X},\cB^{\pm 1}) =
+  \conform^{y} (\cB^{\pm 1}) =
   \left\{ x \in \universe{X} \left|
   \begin{array}{c}
     \exists B \in \cB^{y} \mbox{ s.t. } x \in B
@@ -359,15 +363,24 @@ interior and boundary sets.
 \]
 \item {\em Effective Boundary:} This set contains all points that are not in either interior set:
   \[
-  \nonconform(\universe{X},\cB^{\pm 1}) =
+  \nonconform(\cB^{\pm 1}) =
   \universe{X} \setminus \lrb{ \conform^{+1} (\universe{X},\cB^{\pm 1}) \cup \conform^{-1} (\universe{X},\cB^{\pm 1}) }
+  \]
+\item {\em Boundary cover:} This set contains all of the specialist of
+  probability $\leq p$ that contain a point of the effective boundary.
+  \[
+  \cover(p,\cB^{\pm 1}) =
+  \left\{ x \in \X \left|
+  \exists B \in \cB \mbox{ s.t. } \D(B) \leq p \mbox{ and } B \cap
+  \nonconform(\cB^{\pm 1}) \neq \empty
+  \right.\right\}
   \]
 \end{itemize}
 
 
 \subsection{Algorithm}
 
-With these definitions, we can now describe the active learning algorithm $\ActiveLearn$.
+With these definitions, we can now describe the active learning algorithm \ActiveLearn.
 
 \newcommand{\Unconf}{\universe{U}}
 \newcommand{\all}{\universe{X}}
@@ -378,6 +391,7 @@ With these definitions, we can now describe the active learning algorithm $\Acti
 \item Query $n_0$ points uniformly at random.
 \item for $t=1,2,\ldots$:
 \begin{enumerate}
+\item Let $p_t = 2^{-t}$
 \item Let $m_t$ be the number of points in the boundary cover.
   Query $m_t$ points chosen uniformly at random from $\all$ and $m_t$
   points chosen uniformly at random from $\Unconf_{t-1}$. Define
@@ -387,10 +401,6 @@ With these definitions, we can now describe the active learning algorithm $\Acti
   $$
   \mbox{For } s \in \{-1,0,1\}:\;\; \cB^s_t := \cB^{s} \lrp{\bigcup_{i=1}^t \sample{S}_i}
   $$
-\item Define the {\em constrained set of specialists}:
-  $
-  \cC_t := \left\{ B \cap \Unconf_{t-1} \left| B \in \cB \right.\right\}
-  $
 \item Partition $\cC_t$ into conforming and non-conforming sets:
 $$  \mbox{For } s \in \{-1,0,1\}:\;\; 
   \cC^s_t = \cC^{s} \lrp{\bigcup_{i=1}^t \sample{S}_i \cup \sample{U}_t}$$
@@ -414,7 +424,7 @@ $$  \mbox{For } s \in \{-1,0,1\}:\;\;
 The analysis was inspired by the convergence analysis of kNN done
 in~\cite{ChadhuriDasgupta2015}.  The idea we use here is to
 characterize the true conditional distribution. This characterization
-will allow us to bound the number of queries made by $\ActiveLearn$.
+will allow us to bound the number of queries made by \ActiveLearn.
 
 The true distribution is the uniform distribution over
 $\all$, together with $\bias(x)$ for each $x \in \all$. We denote by
@@ -466,13 +476,13 @@ specialists.~\footnote{Note that this is a condition defined for the
   be a mind-change.} The ``Witness'' condition
 guarantees that there is at least one specialist with weight
 larger than $p_2$ predicts in the right direction. The third condition
-``Masking'' is related to the masking condition used in $\ActiveLearn$.
+``Masking'' is related to the masking condition used in \ActiveLearn.
 
 The boundary sets are nested. If $p_1\geq p'_1$, $p_2 \leq p'_2$ and $\Delta \geq \Delta'$, then
 $\boundry{p_1,p_2,\Delta} \subseteq
 \boundry{p'_1,p'_2,\Delta'}$.
 
-The Non-conforming sets of $\ActiveLearn$\ are related to the boundary
+The Non-conforming sets of \ActiveLearn\ are related to the boundary
 sets. It is therefore natural to characterize the query complexity of
 a distribution using the dependence of the probability of the boundary
 set on $p_1,p_2$ and $\Delta$.
@@ -484,7 +494,7 @@ set on $p_1,p_2$ and $\Delta$.
   \D(\boundry{p_1,p_2,\Delta})$$
 \end{definition}
 
-As $\ActiveLearn$\ is at its core a nearest neighbor algorithm, we
+As \ActiveLearn\ is at its core a nearest neighbor algorithm, we
 quantify its performance by consider the difference between its error
 rate and the error rate of the Bayes optimal
 algorithm. We say that the algorithm is $\epsilon$-competitive if its

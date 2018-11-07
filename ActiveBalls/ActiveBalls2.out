@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Ball Specialists}{}% 2
+\BOOKMARK [1][-]{section.3}{Uniform convergence bounds for sepcialists.}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Uniform convergence of biases}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{sampling without replacement}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{End of section on sampling withuout replacement}{section.3}% 6
+\BOOKMARK [1][-]{section.4}{The algoithm}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{Defining safe sets}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{Active Learning}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Sufficient conditions on the true bias}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{ approximation using Balls}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.2}{Specific conditions}{section.5}% 12
+\BOOKMARK [1][-]{appendix.A}{Proof of Lemma 3.1}{}% 13

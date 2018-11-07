@@ -1,0 +1,15 @@
+\begin{thebibliography}{Hoe63}
+
+\bibitem[CD14]{ChadhuriDasgupta2015}
+Kamalika Chaudhuri and Sanjoy Dasgupta.
+\newblock Rates of convergence for nearest neighbor classification.
+\newblock In Z.~Ghahramani, M.~Welling, C.~Cortes, N.~D. Lawrence, and K.~Q.
+  Weinberger, editors, {\em Advances in Neural Information Processing Systems
+  27}, pages 3437--3445. Curran Associates, Inc., 2014.
+
+\bibitem[Hoe63]{H63}
+Wassily Hoeffding.
+\newblock Probability inequalities for sums of bounded random variables.
+\newblock {\em J. Amer. Statist. Assoc.}, 58:13--30, 1963.
+
+\end{thebibliography}

@@ -1,0 +1,30 @@
+\begin{thebibliography}{1}
+
+\bibitem{andrea2017adaptivity}
+Carpentier Alexandra~Locatelli Andrea and Kpotufe Samory.
+\newblock Adaptivity to noise parameters in nonparametric active learning.
+\newblock In {\em Conference on Learning Theory}, pages 1383--1416, 2017.
+
+\bibitem{castro2008minimax}
+Rui~M Castro and Robert~D Nowak.
+\newblock Minimax bounds for active learning.
+\newblock {\em IEEE Transactions on Information Theory}, 54(5):2339--2353,
+  2008.
+
+\bibitem{koltchinskii2010rademacher}
+Vladimir Koltchinskii.
+\newblock Rademacher complexities and bounding the excess risk in active
+  learning.
+\newblock {\em Journal of Machine Learning Research}, 11(Sep):2457--2485, 2010.
+
+\bibitem{kpotufe2015hierarchical}
+Samory Kpotufe, Ruth Urner, and Shai Ben-David.
+\newblock Hierarchical label queries with data-dependent partitions.
+\newblock In {\em Conference on Learning Theory}, pages 1176--1189, 2015.
+
+\bibitem{minsker2012plug}
+Stanislav Minsker.
+\newblock Plug-in approach to active learning.
+\newblock {\em Journal of Machine Learning Research}, 13(Jan):67--90, 2012.
+
+\end{thebibliography}
