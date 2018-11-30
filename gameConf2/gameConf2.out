@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}
+\BOOKMARK [1][-]{section.2}{Preliminaries}{}
+\BOOKMARK [1][-]{section.3}{The Confidence-Rated Prediction Game}{}
+\BOOKMARK [2][-]{subsection.3.1}{Analytical Solution}{section.3}
+\BOOKMARK [2][-]{subsection.3.2}{Discussion}{section.3}
+\BOOKMARK [1][-]{section.4}{A PAC-Bayes Analysis of a Transductive Prediction Rule}{}
+\BOOKMARK [2][-]{subsection.4.1}{An Algorithm with a PAC-Bayes Analysis}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Discussion}{section.4}
+\BOOKMARK [1][-]{section.5}{Extension to Abstention}{}
+\BOOKMARK [2][-]{subsection.5.1}{Value of the Abstain Game}{section.5}
+\BOOKMARK [2][-]{subsection.5.2}{Near-Optimal Strategy for the Abstain Game}{section.5}
+\BOOKMARK [2][-]{subsection.5.3}{Discussion}{section.5}
+\BOOKMARK [2][-]{subsection.5.4}{Guarantees for a Learning Algorithm with Abstentions}{section.5}
+\BOOKMARK [1][-]{appendix.A}{Proofs}{}
+\BOOKMARK [1][-]{appendix.B}{PAC-Bayes Calculations for the Abstain Game}{}
+\BOOKMARK [1][-]{appendix.C}{Application of the Minimax Theorem}{}

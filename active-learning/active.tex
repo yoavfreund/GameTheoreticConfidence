@@ -1,0 +1,93 @@
+\documentclass{article}
+%\documentclass[anon,12pt]{colt2015} % Anonymized submission
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+%\usepackage{fullpage}
+%\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage[mathscr]{euscript}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+
+\newcommand{\bu}{{\mathbf u}}
+\newcommand{\bv}{{\mathbf v}}
+\newcommand{\bx}{{\mathbf x}}
+
+\newcommand{\authcmt}[2]{\textcolor{#1}{}}
+\newcommand{\akshay}[1]{\authcmt{red}{[AB: #1]}}
+\newcommand{\yoav}[1]{\authcmt{blue}{[YF: #1]}}
+
+\makeatletter
+\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}
+\makeatother
+
+
+\begin{document}
+
+\title{Active learning using the Muffler algorithm}
+
+\maketitle
+
+\section{Rough sketch}
+We start with generalists (as opposed to specialists), i.e. rules that
+predict $-1,+1$ but never $0$. We also assume that there a fixed
+finite set of $p$ rules, not a hierarchy of concept classes.
+
+The algorithm we propose is a simpler version of Algorithm 1 in
+Akshay's draft:
+
+\begin{itemize}
+\item Initialize $X_0$ to be the set of all unlabeled points.
+\item For $i=0,1,2,...$:
+  \begin{itemize}
+  \item Query the label on $n$ randomly selected point from $X_i$
+  \item Compute the upper and lower bounds on the correlations of the
+    rules
+  \item Compute the safe set 
+  
+  \end{itemize}
+\end{itemize}
+
+
+In this case there
+is no need to sample from everywhere. The algorithm can focus
+completely on the examples for which the predictions are unsafe.
+
+Akshay defines the {\em safe set} for given upper and lower bounds
+$(\bv,\bu)$ on the errors of the rules:
+
+$$S(\bv,\bu) := \left\{x \in X : \left| \bx^T \sigma \right|\geq
+1 \;\; \forall \sigma \in \Sigma(\bv,\bu) \right\} $$
+
+We want to show two things:
+\begin{enumerate}
+\item The safe set is a superset of the ``agreement set'' of CAL. From
+  which it follows that a finite disagreement coefficient is a
+  sufficient 
+\item The predictions   
+\item Restricting Muffler to any subset of the input domain
+    generates a prediction rule that is at least as accurate as the
+    unrestricted rule.
+\end{enumerate}
+
+
+\end{document}
+
+

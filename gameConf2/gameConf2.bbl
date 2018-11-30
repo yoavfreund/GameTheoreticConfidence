@@ -1,0 +1,81 @@
+\begin{thebibliography}{10}
+
+\bibitem{EYW10}
+Ran El-Yaniv and Yair Wiener.
+\newblock On the foundations of noise-free selective classification.
+\newblock {\em The Journal of Machine Learning Research}, 11:1605--1641, 2010.
+
+\bibitem{SV08}
+Glenn Shafer and Vladimir Vovk.
+\newblock A tutorial on conformal prediction.
+\newblock {\em The Journal of Machine Learning Research}, 9:371--421, 2008.
+
+\bibitem{L05}
+John Langford.
+\newblock Tutorial on practical prediction theory for classification.
+\newblock {\em Journal of Machine Learning Research}, 6:273--306, 2005.
+
+\bibitem{AB07}
+Jean-Yves Audibert and Olivier Bousquet.
+\newblock Combining pac-bayesian and generic chaining bounds.
+\newblock {\em The Journal of Machine Learning Research}, 8:863--889, 2007.
+
+\bibitem{BGLR14}
+Luc B{\`e}gin, Pascal Germain, Fran\c{c}ois Laviolette, and Jean-Francis Roy.
+\newblock Pac-bayesian theory for transductive learning.
+\newblock In {\em Artificial Intelligence and Statistics (AISTATS)}, 2014.
+
+\bibitem{EYW11}
+Ran El-Yaniv and Yair Wiener.
+\newblock Agnostic selective classification.
+\newblock In {\em Neural Information Processing Systems (NIPS)}, 2011.
+
+\bibitem{C70}
+C~K Chow.
+\newblock On optimum recognition error and reject tradeoff.
+\newblock {\em Information Theory, IEEE Transactions on}, 16(1):41--46, 1970.
+
+\bibitem{T00}
+Francesco Tortorella.
+\newblock An optimal reject rule for binary classifiers.
+\newblock In {\em Advances in Pattern Recognition}, pages 611--620. Springer,
+  2000.
+
+\bibitem{WY11}
+Marten Wegkamp, Ming Yuan, et~al.
+\newblock Support vector machines with a reject option.
+\newblock {\em Bernoulli}, 17(4):1368--1385, 2011.
+
+\bibitem{BW08}
+Peter~L Bartlett and Marten~H Wegkamp.
+\newblock Classification with a reject option using a hinge loss.
+\newblock {\em The Journal of Machine Learning Research}, 9:1823--1840, 2008.
+
+\bibitem{YW10}
+Ming Yuan and Marten Wegkamp.
+\newblock Classification methods with reject option based on convex risk
+  minimization.
+\newblock {\em The Journal of Machine Learning Research}, 11:111--130, 2010.
+
+\bibitem{FMS04}
+Yoav Freund, Yishay Mansour, and Robert~E Schapire.
+\newblock Generalization bounds for averaged classifiers.
+\newblock {\em Annals of Statistics}, pages 1698--1722, 2004.
+
+\bibitem{FMS00}
+Yoav Freund, Yishay Mansour, and Robert~E. Schapire.
+\newblock Why averaging classifiers can protect against overfitting.
+\newblock In {\em In Proceedings of the Eighth International Workshop on
+  Artificial Intelligence and Statistics}, 2000.
+
+\bibitem{EYW12}
+Ran El-Yaniv and Yair Wiener.
+\newblock Active learning via perfect selective classification.
+\newblock {\em The Journal of Machine Learning Research}, 13:255--279, 2012.
+
+\bibitem{CBL06}
+Nicolo Cesa-Bianchi and G{\`a}bor Lugosi.
+\newblock {\em Prediction, Learning, and Games}.
+\newblock Cambridge University Press, New York, NY, USA, 2006.
+
+\end{thebibliography}

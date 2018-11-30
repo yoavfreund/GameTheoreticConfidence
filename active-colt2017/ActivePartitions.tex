@@ -1,0 +1,486 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+
+\usepackage{geometry}
+\geometry{a4paper,
+  total={170mm,220mm},
+  marginparwidth=80mm,
+left=5mm,
+right=85mm,
+top=20mm,
+}
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+\title{Active learning using muffler and partitions}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+\date{December 2016}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}}
+\newcommand{\outcome}{z}
+\newcommand{\empoutcome}{\hat{\outcome}}
+\newcommand{\polarity}{p}
+\newcommand{\diameter}{D}
+\newcommand{\weight}{\omega}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\sign}{\text{sign}}
+\newcommand{\bayes}{\beta}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akhay}{magenta}{#1}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+As a first step towards using Muffler for active learning, we describe
+a setup in which Muffler converges to the Bayes optimal rule.
+
+We operate in a restricted context which emulates the kNN 
+convergence rate analysis of Chaudhuri and Dasgupta.
+
+\section{Problem setup}
+
+The input space $\X$ is a finite set of points in $R^d$.
+The label of each point is drawn according to a conditional
+distribution over $\{-1,+1\}$. Instead of the conditional
+probability, we use the conditional expectation
+$\outcome(\x) \doteq E[Y | X=\x]$.
+
+The goal is to achieve error close to the Bayes optimal rule, which is
+\[
+\beta(\x) =
+\begin{cases}
+ -1 & \outcome(\x)<0\\
+ 0 & \outcome(\x)=0\\
+ +1 & \outcome(\x)>0
+\end{cases}
+\]
+
+\subsection{Smoothness assumptions}
+
+In order to ensure that the problem is learnable we restrict the
+distribution over $R^d \times \{-1,+1\}$.
+\newcommand{\borderdist}{{\cal d}}
+We define the distance of $\x \in R^d$ to the boundary as
+\[
+\borderdist(\x) \doteq \min \left\{ d(\x,\y)\;\; \text {s. t.}\;\; \beta(\x) \neq
+\beta(\y) \right\}
+\]
+We say that the border is vanishingly small if the probability of the
+points for which $\borderdist(x) < \epsilon$ decreases to zero at
+least as fast as $O(1/\epsilon)$
+
+We also define The support 
+
+
+
+
+We define the 
+
+
+\section{Specialists}
+
+The base rules we use are ``specialists'', a specialist is defined by
+a set $S \subset R^D$ and a polarity $\polarity \in \{-,+\}$. The
+specialist $S_+$ maps points in $S$ to $+1$ and points outside $S$ to
+$0$. Similarly, the specialist $S_-$ maps points in $S$ to $-1$ and
+points outside $S$ to $0$.
+
+We define two properties for each specialist: a weight $\weight(S)$
+and a diameter $\diameter(D)$. Both depend just on the set $S$ and not
+on the polarity. The {\em weight} of a specialist to be the fraction $\X$
+that is in $S$:
+\[
+\weight(S) \doteq \frac{|S \cap \X|}{|S|}
+\]
+The diameter of a specialist is defined using euclidean distance:
+\[
+\diameter(S) = \text{sup} \left\{ \|\x-\y \|_2 \;\;\text{ s.t.}\;\;   \x,\y
+\in S \right\}
+\]
+
+In this paper we restrict ourselves to cubic specialists,
+i.e. specialists whose set $S$ is defined by a position $\x in R^d$
+and a size $r \in R^+$. More precisely we define a cubic set as
+\[
+\text{Cube}\left(\x,r\right) \doteq
+\left\{\y \in R^d\;\; \text{s.t.}\;\; \forall i \in 1,\ldots,d\;\;\; x_i
+\leq y_i < x_i+r   \right\}
+\]
+
+Clearly, the diameter of the cube $\text{Cube}(\x,r)$ is $\sqrt{d} r$
+
+\section{
+
+\section{Grid Sequence}
+
+The 
+
+The specialists are grouped in a sequence of sets called {\em levels}
+$\{\SS_i\}_{i=1}^\infty$.  Each level defines a {\em partition} of
+$\X$. In other words a collection of disjoint sets whose union covers
+$\X$.
+
+One of the sets in each level is called the {\em outliers set} and is
+denoted by $O_i$, this is a set on which all the specialists of level
+$i$ abstain.
+
+The other {\em regular} sets are denoted by $S \in \SS_i$.
+each regular set defines two specialists: a positive one and a negative one.
+
+The diameters and weights of the sets obey the following conditions:
+\begin{enumerate}
+\item We define the $\diameter_i$ to be the maximal diameter over the
+  sets of the corresponding partition. $$\diameter_i \doteq \max
+  \left\{ \diameter(S),\;\;S \in \SS_i \right\} $$
+\item We assume that the weights of each set in a partition to be
+  approximately equal. Specifically, we associate with level $i$ a
+  {\em weight} $\weight_i$ such that $$ \forall S \in \SS_i:\;\;
+  \weight_i/2 \leq \weight(S) \leq \weight_i $$
+\item The diameter of the outlier set $O_i$ unconstrained and it's
+  weight is denoted $\delta_i$.
+\end{enumerate}
+
+As $i$ increases, the sets become smaller. As $\X$ is finite, for a
+sufficiently large $i$ the outliers set is empty and each of the sets
+in $\SS_i$ contains exactly one point. The rate at which
+$\diameter_i, \weight_i$ and $\delta_i$ decrease characterizes the
+convergence rate of this system of specialists.
+
+We define the {\em bias} of a specialist $S \in \SS$ as the 
+conditional expectations over the support of $S$.
+$$
+\bias(B) \doteq \frac{1}{|S|} \sum_{\vv \in S} \outcome(\vv)
+$$
+
+\section{Idealized algorithm}
+
+The information given to Muffler is a set of constraints over
+$\bias(B)$. These constraints are of the form.
+
+Our analysis has two steps. First, we use an Idealized algorithm,
+which has access to e We
+use the idealized algorithm to characterize the convergence of
+Muffler to the Bayes optimal rule as $k$, the minimal weight of the balls
+decreases to one.
+
+After the analysis of the idealized algorithm, we will define and
+analyze the actual active learning algorithm which has access only to
+queried labels
+
+\begin{algorithm}[]
+   \caption{An Idealized Muffler Learning Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   \FOR{$k= |\X|,|\X|-1,\ldots,1$ }
+   \STATE \textbf{\textcolor{blue}{Compute Constraints}}
+   \STATE{Define the constraint set as
+     $L_k = \{\outcome(B)=\bar{\outcome}(B) | B \in S_k$}
+   \STATE \textbf{\textcolor{blue}{Solve}}
+   \STATE{Find the optimal muffler solution for the equality
+     constraints $\{L_k\}$ and find, for each $\x \in \X$, 
+   the prediction $f_k(\x) = \sign(\outcome(x))$; }
+   \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\section{Neighborhood size}
+
+The following definition characterizes the rate of convergence size of the neighborhood of a
+point $\x$ that is consistent with the Bayes prediction on $\x$
+\begin{definition}[Neighborhood support]
+Let $p(\x)$ be the Bayes optimal prediction at the point $\x$. In
+other words $p(\x) = \sign(\outcome(\x))$. We define the $k$ neighborhood
+support  of the  point $\x$ to be the minimal value of $p(\x)\bias(B)$
+over all balls $B$ such that $\x \in B$ and $|B|\leq k$. We use the
+notation $\gamma_k(\x)$ to denote this quantity.
+\end{definition}
+
+This definition is what we need for our analysis. We will show a
+non-trivial lower bound on $\gamma_k(\x)$ for the case where the
+points $\x$ are drawn from a density distribution over $R^n$ with a
+Lipshitz condition and the conditional probability $\outcome(\x)$ also
+satisfies a lipshitz condition.
+
+
+The second definition is a technical condition that we need for our
+proofs that (I believe) holds for $\X$ which is drawn from a density
+distribution over $R^n$
+\begin{definition}[Decreasing support]
+The set $\X$ provides decreasing support for the set of balls if for
+any $\x \in \X$ and for any ball $B$ that covers $\x$ there exists
+another ball $B' \subset B$ that also covers $\x$ such that $|B'| = |B|-1$.
+\end{definition}
+
+\shay{I think the above definition is satisfied by every finite set:
+Let $\x \in \X$, and let $B$ be a ball covering $\x$. 
+It seems possible to modify the ball ever-so-slightly, 
+such that (i) its intersection with $\X$ is unchanged,  and (ii) the 
+distances of the points in $\X$ from its center are distinct.
+Now, $B'$ is obtained by decreasing the radius of $B$ until
+the furthest point in it from its center is removed.  Does it make sense?}
+\yoav{Yes, sounds good, the only small refinement is that you need to
+  show that there is always a way to do this which does not remove the
+  special point $\x$.}
+
+\section{Passive learning}
+
+We first analyze the convergence rate of a passive learning algorithm.
+This algorithm is Muffler using balls as specialists. More
+specifically, we assume that the input space $\X \new{\subseteq}  R^n$ is finite
+and that the training set is generated by repeatedly drawing a point
+$\x$ from $\X$ uniformly at random and labeling the point according
+to the binary distribution of $y$ conditioned on $\X$. Note that two
+examples with $\x$ as the input can have different labels.
+
+It is trivial that this algorithm will asymptotically converge to the
+Bayes optimal rule. The rate of convergence at a point $\x$ depends on 
+the rate at which $\gamma_k(\x)$ increases as $k$ decreases.
+%
+%\shay{I am not sure why we assume a finite $\X$. 
+%Shouldn't we use the the standard assumptions usually made in the kNN setting?}
+%
+%\yoav{I am doing it because it makes the analysis simpler, finite
+%  number of instances, finite number of ball-induced subsets etc. On
+%  the other hand, we lose nothing, assuming non of our bounds depends
+%  on the size of $\X$.}
+%  
+%  \shay
+
+\pagebreak
+\section{Active Learning}
+
+In this section we provide a variant of the Muffler algorithm that
+requires the labeling of far fewer examples than passive sampling.
+
+We review and define some notation we use to describe the active learning algorithm: 
+
+\begin{itemize}
+\item $\X$ is the set of unlabeled data which defines the
+  universe for the problem.
+\item $\K_i \subset \X$ is the set of ``known unknowns'' after iteration $i$, in
+  other words the set of ``unsafe'' points. $\K_0=\emptyset$.
+\shay{I am a bit confused. Shouldn't at the beginning the set of ``unsafe''
+points be everything? At the beginning we have no knowledge and therefore can not be ``sure''
+of anything\ldots}
+  
+\item For any set $A\subseteq \X$, denote $Q(A,n)$ to be a set of
+  $n$ labeled examples $(\x,y)$ generated as follows. $\x$ chosen
+  independently at random from the uniform distibution over
+  $A$. The label $y$ is then chosen independently at random according
+  to the distribution $\outcome(\x)$. We say that the
+  labels in $Q(A,n)$ {\em support} a specialist $B \in S$ if $B
+  \subseteq A$.
+  \shay{The last definition does not make sense to me:
+  $Q(A,n)$ is a distribution over labeled samples of size $n$.
+  Therefore, it does not make sense to consider the ``labels in $Q(A,n)$''.
+  We may consider the labels of some sample $R\sim Q(A,n)$,
+  but then the wording "labels in $Q(A,n)$ support a specialist $B$\ldots"
+  does not make sense: it depends only on the distribution $Q(A,n)$, and
+  not on a particular sample from it.
+  }
+  \yoav{$Q(A,n)$ is a set of $n$ labeled examples. In other words, it
+    is a random set, not a distribution over labeled examples.}
+  \shay{I meant the same thing: by a sample I mean a sequence
+  of labeled examples. Thus, $Q(A,n)$ is a distribution over samples.}
+  \shay{Perhaps this will explain better my previous comment:
+  Fix some set $A$, and let $R$ be a random sample drawn according to $Q(A,n)$.
+ I see two possible interpretations for the definition "labels in $Q(A,n)$ support a specialist $B$'':
+ (i) All the points in $B$ appear as examples in $R$,
+ (ii) $B\subseteq A$.
+ I guess you mean the second one, but I find the wording confusing. }
+\item We define the restriction of a specialist set $S$ to a set of
+  examples $\K \subset \X$ as:
+  $$
+  S \restrictedto \K \doteq \left\{ B \cap \K : B \in S \right\}
+  $$
+  %\shay{Wouldn't $S \restrictedto \K \doteq \left\{ B \cap \K : B \in S \right\}$ work?}
+\end{itemize}
+
+
+\pagebreak
+Yoav: I moved the comments out of the algorithm because side comments
+don't seem to work with ``algorithm''
+
+   \akshay{This can be changed when we define a specialist hierarchy;
+     as it stands, it seems to me that $\SS_0 = S$ throughout. }
+   \yoav{$S \restrictedto \K_{i-1}$ is not equal to $S$ in most
+     cases. For example suppose that  $\K_{i-1}$ is the intersection
+     of a ball will $\X$. Then $S \restrictedto \K_{i-1}$ contains all
+     intersections of this ball with some other ball, and an
+     intersection of two balls is not a ball (in general).}
+
+    \akshay{I think here $L_i$ should just be the set in brackets, not
+     ``$\restrictedto B$".}
+   \yoav{In the sense of the prediction error, this does not matter,
+     because outside of $B$ the prediction is zero. However we want to
+     use the conditional probability, so we need to divide by the size
+     of $L_i$ and $L_i$ must contain only the points inside $B$}
+   \akshay{I understand this to be the set of predictions $\subseteq [-1,1]$ on $\x$ that are possible minimax optimal muffled predictions.} 
+   \yoav{That is correct, and it is important because the optimal
+     solution is constant on each atom of the algebra defined by the
+     balls, while an arbitrary solution does not need to be a constant.}
+   \akshay{I believe you mean $f(\x)$ as defined above. In this case, 
+   the unsafe set I defined in the earlier writeup (by analogy with CAL-style algorithms; call it $N_i$) is a superset of $\K_i$, 
+   because $N_i$ includes any point $\x$ which can be hedged, not just
+   the ones which can have score $0$. }
+   \yoav{I will have to think moew about this, but I think you are right. The
+     question is what can be said about the set of hedged examples of
+     the idealized algorithm.}
+
+\pagebreak
+\begin{algorithm}[]
+   \caption{An Active Learning Algorithm}
+   \label{alg:activealg}
+\begin{algorithmic}
+   \STATE \textbf{\textcolor{blue}{Initialize}}   $\K_0=\emptyset$, $\SS_0 = S$,
+   \FOR{$i = 1,\ldots$ }
+   \STATE \textbf{\textcolor{blue}{Query}}: Generate two new sets of labeled examples, $U_i$ and $F_i$. 
+   \STATE{$U_i = Q(\X,n)$}
+   \IF{$|\K_{i-1}|>0$}
+   \STATE{$F_i = Q(\K_{i-1},n)$ and $\SS_i = \SS_{i-1} \cup (S \restrictedto \K_{i-1})$}
+   \ELSE
+   \STATE{$F_i = \emptyset,\; \SS_i=\SS_{i-1}$}
+   \ENDIF
+   \STATE \textbf{\textcolor{blue}{combine labeled data}}
+   \FOR{$B \in \SS_i$}
+   \STATE Define the labeled set for $B$ as:
+   $$ L_i(B) = \left[ \cup_{j=1}^i U_j \bigcup \cup_{j \leq i: \{B \subseteq \K_j\}} F_j)\right] \restrictedto B$$
+   \ENDFOR
+   \STATE \textbf{\textcolor{blue}{Compute Constraints}}
+   \FOR{$B \in \SS_i$}
+   \STATE{Compute the empirical mean label for $B$:
+     $$\empoutcome(B) = \frac{\sum_{(\x,y) \in L_i(B)}y}{|L_i(B)|}$$}
+   \STATE{Compute the error bound for $B$:
+     $$\Delta(B) = \sqrt{\frac{\ln 2i^2/\delta + (d+1) \ln
+         |L_i(B)|}{|L_i(B)|/2}} $$
+   where $d$ is the dimension of the space and $\delta$ is the
+   confidence parameter.}
+   \STATE Set the confidence interval for $B$ to be 
+   of $C_i(B)=[\empoutcome(B) \pm \Delta(B)] \cap [-1,+1]$ 
+   \ENDFOR
+   \STATE \textbf{\textcolor{blue}{Solve}}
+   \STATE{Solve the linear constraints $\{L_i(B)\}$ and find, for each $\x \in \X$, 
+   the segment of feasible solutions $f(\x)$; 
+   Define the new set of known unknowns to be
+   $$ \K_i = \{\x | 0 \in f(\x)\} $$}
+     
+   \ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+The analysis of the algorithm consists of two steps.
+First, we analyze an idealized algorithm
+which operates under the assumption that exact conditional
+probabilities are available. Then, in the second step, we remove the
+assumption of exact conditional probabilities, replace it with
+estimates based on a sample, and analyze the sample based algorithm.
+
+We define the set of all balls whose support size is at most $k$ by $S_k$.
+
+The parametrized algorithm $I(k)$ uses $S_k$ as the set of specialists. 
+It receives as input the exact bias, ``$\bias(B)$'', for all $B \in S_r$.
+
+The algorithm solves the min-max weighting of the rules $\sigma^*(r)$.
+
+The main lemmas we use to analyze this algorithm are:
+\begin{lemma}[small set domination]
+  Let $S_k(\x)$ contain all $B \in S_k$ such that $\x \in B$, and
+  suppose $\gamma_k(\x)>0$. Then the prediction of the idealized
+  muffler on $\x$ is correct.
+\end{lemma}
+
+Which follows from the following
+
+\begin{lemma}[Subset Domination]
+Suppose $B_1 \subset B_2$ are two balls that cover a point $\x$ and
+suppose that the constraints have opposite polarity: $\bias(B_1)>a>
+>0>b>\bias(B_2)$ or $\bias(B_1)<a<0<b<\bias(B_2)$.  Then the
+prediction of Muffler on $\x$ remains uncanged if the constraint
+corresponding to $B_2$ is eliminated.
+\end{lemma}
+
+{\bf Sketch of Proof:}
+Assume w.l.o.g. that the first condition holds:
+$\bias(B_1)>a>0>b>\bias(B_2)$. As $\X$ is finite these conditions can
+be written as:
+$$
+\sum_{i=1}^n \bias(\x_i) > na
+\text{ and }
+\sum_{i=1}^m \bias(\x_i) < mb
+$$
+where $m>n$.
+But that is equivalent to the conditions
+$$
+\sum_{i=1}^n \bias(\x_i) > na
+\text{ and }
+\sum_{i=n+1}^m \bias(\x_i) < mb-na
+$$
+In other words, if $i \leq n$, which means that $\x_i \in B_1$, then
+the constraint on $B_2$ is irrelevant
+
+\yoav{I realize that this argument is incomplete, because the
+  influence on $b$ can be through other balls. However, I believe that
+if {\em all} balls of size at most $k$ containing $\x$ made the
+correct predictions, than they mask all larger balls.}
+
+\akshay{I agree that this is good for the analysis. However I am not sure how to prove it. \\ \\
+Here is one idea: this will happen if $B_2$ is small enough (suppose e.g. 
+that the balls have support size $2^i$ for integer $i$; then each specialist's prediction is  
+weighted proportionally to this $2^i$ by the muffler aggregation, 
+so if not too many balls of the same size predict at $\x$, 
+then the optimal prediction on $\x$ is essentially determined by the smallest specialist predicting on it). 
+}
+
+An adaptive version of the VC bound:
+\begin{lemma}
+Suppose $L$ is a set of labeled examples chosen IID from a
+joint distribution over $\X \times Y$. Suppose $S$ is a set of
+specialists of VC dimension $d$.
+Let $m(B)=|L \cap B|$ denote the number of elements of $L$ that are
+inside $B \in S$, let $\outcome(B)$ be the mean of the labels in $\X \cap B$ and
+let $\empoutcome(B)$ be the empirical average of the labels in $L \cap B$. 
+
+Then for all $\delta>0$:
+$$
+Pr\left[ \exists B\in S \text{ s.t. }  |\outcome(B) - \empoutcome(B)| >
+  \sqrt{\frac{\ln 2/\delta+d \ln m(B)}{m(B)/2}} \right] < \delta
+$$
+\end{lemma}
+
+
+
+
+\end{document}
