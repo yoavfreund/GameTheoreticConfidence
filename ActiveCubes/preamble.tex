@@ -1,0 +1,185 @@
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+\usepackage{color}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+\usepackage{fullpage}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage[mathscr]{euscript}
+
+
+\usepackage{geometry}
+%% \geometry{a4paper,
+%%   total={170mm,220mm},
+%%   marginparwidth=80mm,
+%% left=5mm,
+%% right=85mm,
+%% top=20mm,
+%% }
+
+% For algorithms
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+%% \setcounter{MaxMatrixCols}{20}
+
+%% \DeclareMathOperator{\id}{id}
+%% \DeclareMathOperator{\tr}{tr}
+%% \DeclareMathOperator*{\argmin}{arg\,min}
+%% \DeclareMathOperator*{\argmax}{arg\,max}
+%% \DeclareMathOperator{\sgn}{sgn}
+%% \DeclareMathOperator{\Prtxt}{Pr}
+%% \DeclareMathOperator{\var}{var}
+%% \DeclareMathOperator{\poly}{poly}
+%% \DeclareMathOperator{\polylog}{polylog}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\D}{{\cal D}}
+\newcommand{\B}{{\cal B}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}} % Specialists
+\newcommand{\CC}{{\cal C}}  % constraints
+
+\newcommand{\outcome}{z}
+\newcommand{\empoutcome}{\hat{\outcome}}
+\newcommand{\polarity}{p}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}{\mathbf{1}} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+\newcommand{\Ex}{\mathbb{E}} % expected value operator
+
+\newcommand{\Prob}[2]{P_{#1}\left( #2 \right)}
+\newcommand{\pdis}[1]{\Prob{dis}{#1}}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vI}{\mathbf{I}}  
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vl}{\mathbf{l}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}}   
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\vec{\alpha}}
+\newcommand{\vbeta}{\vec{\beta}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cO}{\mathcal{O}}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\ebias}{\widehat{\text{bias}}}
+\newcommand{\coverage}{\epsilon}
+\newcommand{\ecoverage}{\widehat{\coverage}}
+
+\newcommand{\sign}{\text{sign}}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ActiveLearn}{$\mathbf{ConfLearn}$}
+\newcommand{\universe}[1]{{\cal #1}}
+
+\newcommand{\samp}{T}
+\newcommand{\usamp}{\underline{T}}
+
+\renewcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{orange}{#1}}
+\newcommand{\sanjoy}[1]{\comment{Sanjoy}{purple}{#1}}
+
+

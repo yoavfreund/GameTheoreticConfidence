@@ -1,108 +1,231 @@
 \documentclass{article}
+\usepackage[utf8]{inputenc}
 
-\input{preamble}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+\usepackage{fullpage}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage{float}
+\usepackage[mathscr]{euscript}
+
+
+\usepackage{geometry}
+%% \geometry{a4paper,
+%%   total={170mm,220mm},
+%%   marginparwidth=80mm,
+%% left=5mm,
+%% right=85mm,
+%% top=20mm,
+%% }
+
+% For algorithms
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+
+
+\title{Non-Parametric Active Learning}
+\author{Akshay Balsubramani, Yoav Freund, Shay Moran}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{assumption}[theorem]{assumption}
+\newtheorem{definition}[theorem]{Definition}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+%% \setcounter{MaxMatrixCols}{20}
+
+%% \DeclareMathOperator{\id}{id}
+%% \DeclareMathOperator{\tr}{tr}
+%% \DeclareMathOperator*{\argmin}{arg\,min}
+%% \DeclareMathOperator*{\argmax}{arg\,max}
+%% \DeclareMathOperator{\sgn}{sgn}
+%% \DeclareMathOperator{\Prtxt}{Pr}
+%% \DeclareMathOperator{\var}{var}
+%% \DeclareMathOperator{\poly}{poly}
+%% \DeclareMathOperator{\polylog}{polylog}
+
+\newcommand{\err}{\mbox{err}}
+\newcommand{\X}{{\cal X}}
+\newcommand{\Y}{{\cal Y}}
+\newcommand{\D}{{\cal D}}
+\newcommand{\B}{{\cal B}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\cc}{\vec{c}}
+
+\newcommand{\K}{{\cal K}}
+\newcommand{\restrictedto}{\triangleright}
+\renewcommand{\SS}{{\cal S}} % Specialists
+\newcommand{\CC}{{\cal C}}  % constraints
+
+\newcommand{\outcome}{z}
+\newcommand{\empoutcome}{\hat{\outcome}}
+\newcommand{\polarity}{p}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}{\mathbf{1}} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+\newcommand{\Ex}{\mathbb{E}} % expected value operator
+
+
+\newcommand{\pdis}[1]{P_{dis}\left(#1\right)}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}{\mathbbm{1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vI}{\mathbf{I}}  
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vl}{\mathbf{l}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}}   
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\vec{\alpha}}
+\newcommand{\vbeta}{\vec{\beta}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cO}{\mathcal{O}}
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\ebias}{\widehat{\text{bias}}}
+
+\newcommand{\sign}{\text{sign}}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\ActiveLearn}{$\mathbf{ConfLearn}$}
+\newcommand{\universe}[1]{{\cal #1}}
+
+\newcommand{\samp}{S}
+\newcommand{\usamp}{\underline{S}}
+
+\renewcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\newcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{orange}{#1}}
+
+
 \title{Non-Parametric Active Learning}
 \author{Akshay Balsubramani, Sanjoy Dasgupta, Yoav Freund, Shay Moran}
 \begin{document}
 
 \maketitle
-\section{Skeleton}
-\begin{itemize}
-\item Cube specialists on a grid, atoms, cubes.
-\item Main Lemma: if $n > \frac{\alpha}{\epsilon(a) \gamma(a)^2}$ then
-the cube $a$ is determined. 
-\item A specialist is ``determined'' if from the examples that fall in
-  it one can deduce the sign whp.
-\item {\bf base classifier}: 
-\item 
-\end{itemize}
-
-
 \section{Learning using specialists}
-
 
 We start with some standard definitions. A classifier is a
 mapping from a domain $\cX$ to a binary label. For the sake of symmetry,
 we define the binary labels to be $\{-1,+1\}$. 
 We assume an (unknown) distribution $\D$ over $X \times \{-1,+1\}$.
 
-In confidence rated classification (CRC) we allow the classifier to
-output one of {\em three} labels: $\{-1,0,+1\}$, where the meaning of
-$0$ is ``no prediction''. The performance of CRC is measured by two
-parameters, one is the conditional accuracy $\D\bigl(c(x) \neq y | c(x) \neq
-0\bigr)$, the other is the coverage, i.e. $\D\bigl(c(x) \neq 0\bigr)$.
+A specialist is a mapping from $\cX$ to $\{0,1\}$ (A positive
+specialist) or from $\cX$ to $\{0,-1\}$ (a negative specialist). When a
+specialist outputs $0$ we say that it ``abstains''. The specialist
+``predicts'' when it does not abstain.
 
-We address a special case of CRC with {\em specialist} ensembles. A
-specialist $s$ can be either positive: $s: \cX \to \{0,+1\}$ or
-negative $s : \cX \to \{0,+1\}$. We refer to the probability of the
-support of a specialist $s$ as the {\em coverage} of $s$ and denote it
-by $\coverage(s) = \D\bigl(s(x) \neq 0\bigr)$. We refer to the
-expected label given that $x$ is in the support of $s$ as the {\em
-  bias} of $s$ and denote it by $\bias(s) = E_{x,y} \left[ y |s(x)\neq 0 \right]$
+We are interested in classifiers that combine specialists.
 
-Given a labeled sample of size $n$ drawn according to $\D^n$ we 
-define the empirical versions of the coverage and bias: 
-$\ecoverage(s), \ebias(s)$
+The {\em bias} of a specialist is the expected value of the label
+given that the specialist is predicting. We define the true and
+empirical biases of a specialist in the standard way. The difference
+between the empirical and the true biases of a set of specialists can
+be bounded uniformly in the standard way, using either the size of the set or
+its VC dimension.
 
-We denote by $S$ the set of specialists we use for learning. If $S$ is
-finite or has finite VC dimension then we can upper bound the
-differences between the empirical and true quantities: $|\bias(s) -
-\ebias(s)|$ and $|\coverage(s) - \ecoverage(s)|$ uniformly for all $s
-\in S$.
-
-The uniform bound on uniform bound on $|\coverage(s) - \ecoverage(s)|$ 
-satisfies our needs. However, the uniform bound on $|\bias(s) -
-\ebias(s)|$ is too loose for our needs. This bound is uniform over all
-specialists. However, it is intuitively clear that the bias estimate
-$\ebias(s)$ depends only on the examples that fall inside the support of
-$s$. Therefor we seek a bound on the estimation error $|\bias(s) -
-\ebias(s)| $ that depends on the number of examples in the support,
-rather than on the total number of examples $n$. This error bound should be
-small for specialists with large support and large for specialists
-with small support.
-
-The following theorem formalizes this intuition.
+Here we use a {\em non-uniform improvement} of the standard uniform
+bound.  As stated in the following theorem, the bounds on the
+difference between the true and empirical bias of each specialist is
+bounded by the number of training examples on which the specialist predicts.
 
 \begin{theorem}\label{thm:UCECM}
-Let $S$ be a set of specialists with VC dimension $d$, let
+Let $\cB$ be a set of specialists with VC dimension $d$, let
 $\delta>0$ ,and let $\samp$ be a labeled sample of size $n$.  The
 following holds with probability at least $1-\delta$ over the random
 choice of $\samp$:
 
-\[\forall s \in S :\;\;
-\lvert \bias(s) - \ebias(s,\samp) \bigr) \rvert
-\leq \sqrt{\frac{k_0}{\new{\lvert s\rvert_S}}},
+\[\forall B\in\cB :\;\;
+\lvert \bias(B) - \ebias(B,\samp) \bigr) \rvert
+\leq \sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}},
 \]
 where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
 \end{theorem}
-
-The basic inference step used in our algorithm is to identify those
-specialists $s \in S$ for which we can be sure, with high probability,
-that $\bias(s)>0$ or that $\bias(s)<0$. The rule that we use follows
-from Theorem~\ref{thm:UCECM} and has the form:
-\[
-\mbox{prediction}(s) = \begin{cases*}
-  -1 & if $\ebias(s,\samp) >  \sqrt{\frac{k_0}{\new{\lvert
-        s\rvert_\samp}}}$ \\
-  +1 & if $\ebias(s,\samp) < -\sqrt{\frac{k_0}{\new{\lvert
-        s\rvert_\samp}}}$ \\
-  0  & otherwise
-  \end{cases*}
-\]
-
-We use a Chernoff style uniform bound to lower bound $\ecoverage(s)$:
-
-\[
-\Prob{s \sim \D^n}{\exists s \in S \mbox{ s.t. } \ecoverage(s) <
-  \frac{1}{2}\coverage(s)}
-\leq |S|e^{-\frac{1}{8}n\coverage(s)}
-\]
-
-Intuitively, this bound implies that if our sample is of size $n$ then
-with probability at least $1-\delta$, with all specialists whose true
-coverage is $\coverage(s) = O(\log(|S|/\delta)/n$ have an empirical
-coverage that satisfies $\ecoverage(s)>\coverage(s)/2$.
-
 
 
 \section{Cube Specialists}
