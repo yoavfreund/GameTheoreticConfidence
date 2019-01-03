@@ -1,0 +1,1193 @@
+%\documentclass{article}
+\documentclass{colt2015} % Anonymized submission
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{times}
+\usepackage[algo2e]{algorithm2e}
+
+%\usepackage{fullpage}
+%\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{bbm}
+\usepackage{graphics, graphicx, xcolor}
+\usepackage{enumitem}
+\usepackage{verbatim}		% for misc commenting, etc.
+\usepackage{stmaryrd}
+\usepackage[mathscr]{euscript}
+
+\usepackage{geometry}
+\geometry{a4paper,
+  total={170mm,220mm},
+  marginparwidth=40mm,
+left=5mm,
+right=45mm,
+top=20mm,
+}
+
+\newtheorem{thm}{Theorem}%[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{obs}[thm]{Observation}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{alg}{Algorithm}
+\newtheorem{ass}{Assumption}
+\newtheorem{examp}{Example}
+\newtheorem{property}{Property}
+\setcounter{MaxMatrixCols}{20}
+
+\newcommand{\corr}{\mbox{corr}}
+\newcommand{\ones}[1]{\mathbbm{1}^{#1}}
+\newcommand{\vA}{\mathbf{A}}
+\newcommand{\va}{\mathbf{a}}
+\newcommand{\vd}{\mathbf{d}} 
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vF}{\mathbf{F}} 
+\newcommand{\vI}{\mathbf{I}}  
+\newcommand{\vh}{\mathbf{h}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vb}{\mathbf{b}} 
+\newcommand{\vu}{\mathbf{u}}   
+\newcommand{\vl}{\mathbf{l}}
+\newcommand{\vm}{\mathbf{m}}    
+\newcommand{\vg}{\mathbf{g}}   
+\newcommand{\vp}{\mathbf{p}}
+\newcommand{\vq}{\mathbf{q}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vs}{\mathbf{s}}
+\newcommand{\vt}{\mathbf{t}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\valpha}{\vec{\alpha}}
+\newcommand{\vbeta}{\vec{\beta}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\vone}{\mathbf{1}}
+\newcommand{\new}[1]{\textcolor{red}{#1}}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+
+\newcommand{\D}{{\cal D}}
+\newcommand{\x}{\vec{x}}
+\newcommand{\y}{\vec{y}}
+
+\newcommand{\ActiveLearn}{$\mathbf{ConfLearn}$}
+\newcommand{\universe}[1]{{\cal #1}}
+\newcommand{\samp}{S}
+
+
+\newcommand{\bias}{\text{bias}}
+\newcommand{\ebias}{\widehat{\text{bias}}}
+\newcommand{\sign}{\text{sign}}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Prtxt}{Pr}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+
+\newcommand{\bd}[1]{\mathbf{#1}}  % for bolding symbols
+\newcommand{\RR}{\mathbb{R}}      % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}}      % Integers
+\newcommand{\NN}{\mathbb{N}}      % natural numbers
+\newcommand{\RP}{\mathbb{RP}}      % real projective space
+\newcommand{\Sp}{\mathbb{S}}
+\newcommand{\HH}{\mathbb{H}}
+\newcommand{\col}[1]{\left[\begin{matrix} #1 \end{matrix} \right]}
+\newcommand{\comb}[2]{\binom{#1^2 + #2^2}{#1+#2}}
+\newcommand{\vnorm}[1]{\left\lVert#1\right\rVert} % vector norm
+\newcommand{\bfloor}[1]{\left\lfloor#1\right\rfloor} % floor function
+\newcommand{\bceil}[1]{\left\lceil#1\right\rceil} % ceiling function
+\newcommand{\ifn}{\mathbf{1}} % indicator function for sets
+\newcommand{\EV}{\mathbb{E}} % expected value operator
+\newcommand{\evp}[2]{\mathbb{E}_{#2} \left[#1\right]} % expected value operator
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\pr}[1]{\Prtxt \left(#1\right)}
+\newcommand{\prp}[2]{\Prtxt_{#2} \left(#1\right)}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\err}[1]{\mbox{err}\left(#1\right)}
+\newcommand{\emperr}[2]{\widehat{\mbox{err}}_{#2} \left(#1\right)}
+
+\newcommand{\zbr}{\textsc{ZBR}}
+\newcommand{\wmv}{\textsc{WMV}}
+\newcommand{\ns}{\textsc{NS}}
+\newcommand{\hc}{\mathscr{HC}}
+\newcommand*{\qedinp}{\hfill\ensuremath{\blacksquare}} %in-place qed theorem box; black box
+\newcommand*{\qedinpw}{\hfill\ensuremath{\square}} % white box
+
+\newcommand{\pderiv}[2]{\frac {\partial \left[ #1 \right]} {\partial #2}}
+\newcommand{\expp}[1]{\exp \left(#1\right)}
+\newcommand{\epshat}{\hat{\epsilon}}
+\newcommand{\sighat}{\hat{\sigma}}
+\newcommand{\gamhat}{\hat{\gamma}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\ctO}[1]{\tilde{\mathcal{O}}\left(#1\right)}
+\newcommand{\Ve}{V_\epsilon}
+\newcommand{\pdis}[1]{P_{dis}\left(#1\right)}
+\newcommand{\lrp}[1]{\left(#1\right)}
+\newcommand{\lrb}[1]{\left[#1\right]}
+\newcommand{\lrsetb}[1]{\left\{#1\right\}}
+
+\renewcommand{\comment}[3]{\marginpar{\textcolor{#2}{#1: #3}}}
+%\renewcommand{\comment}[3]{}
+\newcommand{\shay}[1]{\comment{Shay}{red}{#1}}
+\newcommand{\yoav}[1]{\comment{Yoav}{blue}{#1}}
+\newcommand{\akshay}[1]{\comment{Akshay}{orange}{#1}}
+\newcommand{\sanjoy}[1]{\command{Sanjoy}{purple}{#1}}
+
+
+\makeatletter
+\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}
+\makeatother
+
+
+\begin{document}
+
+\title{Two applications of specialists}
+
+  % \coltauthor{\Name{Author Name1} \Email{abc@sample.com}\and
+  %  \Name{Author Name2} \Email{xyz@sample.com}\\
+  %  \addr Address}
+%\coltauthor{\Name{Akshay Balsubramani} \Email{abalsubr@ucsd.edu}\\
+%\Name{Yoav Freund} \Email{yfreund@ucsd.edu}\\
+%\addr 9500 Gilman Drive, La Jolla, CA 92093}
+
+\maketitle
+
+\begin{abstract}
+We give an error bound on specialists which takes into account the
+converage of the specialist rule. We use that error bound to define a
+variant of $k-NN$ classification rule which adapts $k$ according to
+the distance from the decision boundary. Yielding improved convergence
+rates.
+
+We then apply the ``Muffler'' algorithm to sets of specialists that
+form partitions of the domain and show how this algorithm, combined
+with our new error bound can be used to guide active learning.
+\end{abstract}
+
+\section{Learning using Specialists}
+
+We start with some standard definitions. A classifier is a
+mapping from a domain $\cX$ to a binary label. For the sake of symmetry,
+we define the binary labels to be $\{-1,+1\}$. 
+We assume an (unknown) distribution $\D$ over $X \times \{-1,+1\}$.
+
+In confidence rated classification (CRC) we allow the classifier to
+output one of {\em three} labels: $\{-1,0,+1\}$, where the meaning of
+$0$ is ``no prediction''. The performance of CRC is measured by two
+parameters, one is the conditional accuracy $\D\bigl(c(x) \neq y | c(x) \neq
+0\bigr)$, the other is the coverage, i.e. $\D\bigl(c(x) \neq 0\bigr)$.
+
+We address a special case of CRC with {\em specialist} ensembles, 
+in which the outputs of the classifier are either in $\{0,+1\}$ (positive specialists) or in
+$\{0,-1\}$ (negative specialists). 
+The support of a specialist is a set $A$ on which the classification of
+the specialist is non-zero. Given such a set, we denote by $A^+: \cX \to \{0,+1\}$ the
+function the corresponds to the positive specialist with support $A$, and by $A^-$ the
+function that corresponds to the negative specialist.
+
+Let $\cB$ be a collection of support sets corresponding to a set of
+specialists. We assume that $\cB$ has VC dimension $d$. We now state a
+convergence bound that establishes the strong (almost sure)
+\emph{simultaneous} convergence of the empirical biases of a set of
+specialists to their true biases, at rates which depend on the number
+of samples collected (roughly the support size) for each specialist.
+
+\begin{theorem}\label{thm:UCECM}
+Let $\cB$ be a set of specialists with VC dimension $d$, let
+$\delta>0$ ,and let $\samp$ be a labeled sample of size $n$.  The
+following holds with probability at least $1-\delta$ over the random
+choice of $\samp$:
+
+\[\forall B\in\cB :\;\;
+\lvert \bias(B) - \ebias(B,\samp) \bigr) \rvert
+\leq \sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}},
+\]
+where $k_0 =200\bigl(d\ln(3n) + \ln(1/\delta)\bigr)$.
+\end{theorem}
+
+
+%\newcommand{\set}{G}
+\newcommand{\sample}[1]{{\mathbf #1}}
+\newcommand{\constr}[3]{#1 \left(#2,\sample{#3}\right)}
+  
+Using this theorem and given a sample $\sample{S}$, 
+a learning algorithm can identify those specialists $B \in \cB$ for which the sign of
+$\bias(B)$ can be determined (with high probability). 
+\begin{itemize}
+\item The \emph{probably positive specialists} $\cB^{+} (\sample{S})$ contains all $B \in \cB$ such that
+  $\ebias(B) \new{>} \sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}}$.
+\item The \emph{probably negative specialists} $\cB^{-} (\sample{S})$ contains all $B \in \cB$ such that
+  $\ebias(B) \new{<} -\sqrt{\frac{k_0}{\new{\lvert B\rvert_S}}}$.
+\item The \emph{undetermined specialists} $\cB^{0} (\sample{S})$ contains $B \in \cB$ that are neither in
+  $\cB^{+} (\sample{S})$ nor in $\cB^{-} (\sample{S})$.
+\end{itemize}
+
+Note that the statement of the theorem holds simultaneously for all $B \in
+\cB$. Therefor with probability $1-\delta$ we have that $\forall B \in
+\cB^{+} (\sample{S})$, $\bias(B)>0$ and $\forall B \in \cB^{-}
+(\sample{S})$, $\bias(B)<0$. As \ActiveLearn\ accumulates labeled
+examples, it also accumulates positive and negative specialists. We
+denote the union of the positive specialists and the union of the negative
+specialists by $\cB^+$ and $\cB^-$ respectively.
+
+\section{Adaptive $k-NN$}
+
+We now present a version of the $k-NN$ classification rule. We start
+with some intuition. In the standard definition of $k-NN$ the number
+of neightbors $k$ is chosen as a function of the total number of
+examples $n$. As was shown by Cover and Hart~\cite{}, any choice of
+$k(n)$ which satistfies $\lim_{n \to \infty}k(n)=\infty$ as well as
+$\lim_{n \to \infty}k(n)/n =0$ guarantees convergence to the Bayes
+optimal decision rule as $n \to \infty$.
+
+However, it is not hard to see that choosing $k$ only as a function of
+$n$ is sub-optimal. It is better to set $k$ large for query points
+that are far from the decision boundary and set it small for queries
+close to the decision boundary.
+
+This might seem like wishfull thinking, after all, the goal of
+learning is to find the decision boundary. However, there an algorithm
+that can approximate this optimal choice without having prior
+knowledge on the location of the boundary.
+
+The algorithm is simple: given a query point $\x$ sort all of the labeled
+points according to their distance from $\x$. This defines a sequence
+of concentric balls. Find the smallest ball whose sign is determined
+and predict with that sign.
+
+Details to follow...
+
+\section{Muffler}
+\label{sec:setup}
+
+The main tools we use in this paper are linear programming and uniform
+convergence. We therefore use a combination of matrix notation and
+probabilistic notation. The probabilistic notation was given in
+the introduction. The algorithm is described in a deterministic
+context where some inequalities are assumed to hold; probabilistic
+arguments are used to show that these assumptions are correct with high
+probability.
+
+The ensemble's predictions on the unlabeled data are denoted by $\vF$:
+\begin{equation}
+\vF = 
+ \begin{pmatrix}
+   h_1(x_1) & h_1(x_2) & \cdots & h_1 (x_n) \\
+   h_2(x_1) &  h_2(x_2) & \cdots & h_2 (x_n) \\
+   \vdots   & \vdots    & \ddots &  \vdots  \\
+   h_p(x_1)  &  h_p (x_2)  & \cdots &  h_p (x_n)
+ \end{pmatrix}
+ \in [-1, +1]^{p \times n}
+\end{equation}
+
+Note that we allow $\vF$, as well as other variables defined below, to
+take any value in the range $[-1,+1]$ rather than just the two
+endpoints. This relaxation does not change the analysis, because intermediate
+values can be interpreted as the expected value of randomized
+predictions.  For example, a value of $\frac{1}{2}$ indicates $\{+1\;
+\text{w.p.}\; \frac{3}{4} $, $-1\; \text{w.p.}\; \frac{1}{4} \}$. This
+interpretation extends to our definition of the empirical correlation
+on the test set,
+$\hat{\corr}(h) = \frac{1}{n} \sum_{i=1}^n h(x_i)y_i$.~\footnote{We are slightly abusing the
+  term ``correlation'' here. Strictly speaking this is the expected
+  value of the product without subtracting means and dividing by the
+  product of the standard deviations. We prefer this to
+  inventing a new term.}
+
+We use vector notation for the rows and columns of $\vF$: 
+$\vh_i = (h_i(x_1), h_i(x_2), \cdots, h_i (x_n))^\top$ and \\$\vx_j =
+(h_1(x_j), h_2(x_j), \cdots, h_p (x_j))^\top$.
+
+The \textbf{true labels} on the test data $T$ are represented by $\vz
+= (z_1; \dots; z_n) \in [-1,1]^n$. The labels $\vz$ are hidden from the predictor, 
+but we assume the predictor has knowledge of a {\bf correlation vector}
+$\vb \geq \vzero^n$ such that $ \frac{1}{n} \sum_j h_i (x_j) z_j \geq b_i$, 
+i.e. $ \frac{1}{n} \vF \vz \geq \vb$. 
+
+We establish the following notation: $[a]_{+} = \max (0, a)$ and $[a]_{-} = [-a]_{+}$,  
+$[n] = \{ 1,2,\dots,n \}$, $\vone^n = (1; 1; \dots; 1) \in \RR^n$, and $\vzero^n$
+similarly.  Also, write $I_n$ as the $n \times n$ identity matrix.
+All vector inequalities are componentwise. 
+
+The probability simplex in $d$ dimensions is denoted by $\Delta^d = \{ x \geq \vzero^d : \sum_{i=1}^d x_i = 1 \}$.
+
+\iffalse
+%----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+For the sake of compatibility with ``Muffler'' we perform our analysis
+in the transductive framework.
+In other words, the input to the algorithm is a set of unlabeled instances $\universe{X} =
+[x_1,\ldots,x_N]$. All probabilities and expectations are defined with
+respect to the uniform distribution over $\universe{X}$. The hidden
+target is represented by a conditional distribution over the binary label
+$y \in \{-1,+1\}$. We define the {\em bias} of instance $x$ as
+\[
+\bias(x) \doteq P(y=+1|X=x) - P(y=-1|X=x)
+\]
+Let $B$ be (the support set of) a specialist. 
+
+The {\em true size} of $B$ is defined by
+\[\lvert B \rvert =  {\sum_{x \in \universe{X}} \ones(x \in B)}.\]
+The {\em true bias} of the specialist as:
+\[
+\bias(B) \doteq
+\frac{\sum_{x \in \universe{X}} \bias(x) \ones(x \in B)}
+{\lvert B \rvert}
+= P(y=+1 \vert X\in B) - P(y=-1 \vert X\in B).
+\]
+
+can query the label for any instance $x \in \universe{X}$, the
+response to the query is a label drawn independently at random
+according to $P(y=+1 | X=x)$.\footnote{If the same instance is queried
+more than once, the responses are independent and can be different.}
+
+Let $\samp= \left\langle (\x_1,y_1),\ldots,(\x_m,y_m) \right\rangle$ be a sequence
+of queried instances and the corresponding labels. 
+\new{The {\em empirical size} of $B$ with respect to $\samp$ is defined by
+\[\lvert B \rvert_S =  {\sum_{(x,y) \in \samp} \ones(x \in B)}.\]}
+\shay{The definition of $k(B)$ was missing. 
+I added it and changed the notation from $k(B)$ to $\lvert B\rvert_S$.
+If you agree then we should also change it in the simultaneous convergence proof.}
+The {\em empirical bias} of a specialist $B$ with respect to $\samp$ to be 
+\[
+\ebias(B,\samp) \doteq
+\frac{\sum_{(x,y) \in \samp} y \ones(x \in B)}{\lvert B\rvert_S}.
+\]
+\fi
+
+\section{The Transductive Binary Classification Game}
+\label{sec:game1}
+
+We now describe our prediction problem, and formulate it as a
+two-player zero-sum game between a predictor and nature.
+
+In this game, the predictor is the first player, 
+who plays $\vg = (g_1; g_2; \dots; g_n)$, 
+a randomized label $g_i \in [-1,1]$ for each example $\{\vx_i\}_{i=1}^{n}$. 
+Nature then plays adversarially, setting the labels $\vz \in [-1,1]^n$ 
+under ensemble error constraints defined by $\vb$. 
+The predictor's goal is to minimize (and Nature's to maximize) 
+the \emph{worst-case expected classification error on the test data} 
+(w.r.t. the randomized labelings $\vz$ and $\vg$): 
+$\frac{1}{2} \lrp{1 - \frac{1}{n} \vz^\top \vg }$. 
+This is equivalently viewed as maximizing worst-case correlation $\frac{1}{n} \vz^\top \vg $. 
+
+To summarize concretely, we study the following game:
+\begin{align}
+\label{game1eq}
+\displaystyle 
+V\doteq\max_{\vg \in [-1,1]^n} \; \min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }} \;\; \frac{1}{n} \vz^\top \vg
+\end{align}
+
+It is important to note that we are only modeling ``test-time''
+prediction, and represent the information gleaned from the labeled data
+by the parameter $\vb$. Inferring the vector $\vb$ from training data
+is a standard application of Occam's Razor, which we provide in
+Section~\ref{sec:uniform-convergence}.
+
+The minimax theorem (e.g. \cite{CBL06}, Theorem 7.1) applies to the game \eqref{game1eq}, 
+since the constraint sets are convex and compact and the payoff linear. 
+Therefore, it has a minimax equilibrium and associated optimal 
+strategies $\vg^*, \vz^*$ for the two sides of the game, i.e. 
+$\min_{\vz}\; \frac{1}{n} \vz^\top \vg^* = V = \max_{\vg} \frac{1}{n} \vz^{*^\top} \vg$ .
+%\begin{align*}
+%\min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }}\; \frac{1}{n} \vz^\top \vg^* 
+%= V = \max_{\vg \in [-1,1]^n} \frac{1}{n} \vz^{*^\top} \vg
+%\end{align*}
+
+As we will show, both optimal strategies are simple functions of a
+particular weighting over the $p$ hypotheses -- a nonnegative $p$-vector. 
+Define this weighting as follows.
+\begin{defn}[\textbf{Slack Function}]
+Let $\sigma \geq 0^p$ be a weight vector over $\cH$ (not necessarily a distribution).
+The vector of \textbf{ensemble predictions} is
+$\vF^\top \sigma = (\vx_1^\top \sigma, \dots, \vx_n^\top \sigma)$, 
+whose elements' magnitudes are the \textbf{margins}. 
+The \textbf{prediction slack function} is
+\begin{align}
+\label{eqn:slack}
+\gamma (\sigma, \vb) \doteq \gamma (\sigma) \doteq \frac{1}{n} \sum_{j=1}^n \left[ \abs{\vx_{j}^\top \sigma} - 1 \right]_{+} - \vb^\top \sigma
+\end{align}
+\end{defn}
+\begin{defn}[\textbf{Optimal Weight Vector}]
+The \textbf{optimal weight vector} $\sigma^*$ is any minimizer of the slack function: 
+$\displaystyle \sigma^* \in \argmin_{\sigma \geq 0^p} \left[ \gamma (\sigma) \right]$.
+\end{defn}
+
+Our main result uses these to describe the minimax equilibrium of the game \eqref{game1eq}.
+\begin{thm}[Solution of the Game]
+\label{thm:gamesolngen}
+The minimax value of the game \eqref{game1eq} is 
+$V = - \gamma (\sigma^*)$. 
+The minimax optimal strategies are defined as follows:
+for all $i \in [n]$,
+\begin{align}
+g_i^* \doteq g_i (\sigma^*) = \begin{cases} x_{i}^\top \sigma^* & \abs{x_{i}^\top \sigma^*} < 1 \\ 
+\sgn(x_{i}^\top \sigma^*) & otherwise \end{cases}
+\quad \quad \text{and} \quad \quad
+z_i^* = 
+\begin{cases} 
+0 & \abs{x_{i}^\top \sigma^*} < 1 \\ 
+\sgn(x_{i}^\top \sigma^*) & \abs{x_{i}^\top \sigma^*} > 1 
+\end{cases}
+\label{eqn:opt-strats}
+\end{align}
+\end{thm}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.55\textwidth]{figs/optstrats.png}
+\caption{
+\label{fig:optstrats}
+The optimal strategies and slack function as a function of the ensemble prediction $x^\top \sigma^*$.}
+\end{figure}
+
+The proof of this theorem involves linear program analysis.
+The minimax value of the game (proved in Lemma \ref{lem:valgame1}) and 
+the optimal strategy for the predictor $\vg^*$ (Lemma~\ref{lem:game1gopt}) 
+are our main objects of study and are completely characterized, 
+and the theorem's partial description of $\vz^*$ (proved in Lemma \ref{lem:game1zopt}) 
+will suffice for our purposes. 
+\footnote{For completeness, Corollary \ref{cor:zoptfullpred} in the appendices 
+specifies $z_i^*$ when $\abs{x_{i}^\top \sigma^*} = 1$.}
+
+Theorem \ref{thm:gamesolngen} illuminates the importance of the optimal weighting $\sigma^*$ over hypotheses. 
+This weighting $\sigma^* \in \argmin_{\sigma \geq 0^p} \gamma (\sigma)$ is the solution 
+to a convex optimization problem (Lemma \ref{lem:helperthreshcvx}), 
+and therefore we can efficiently compute it and $\vg^*$ to any desired accuracy. 
+The ensemble prediction (w.r.t. this weighting) on the test set is $\vF^\top \sigma^*$, 
+which is the only dependence of the optimal solution on $\vF$.
+More specifically, the minimax optimal prediction/label \eqref{eqn:opt-strats} on any test set example $\vx_j$ 
+can be expressed as a function of the ensemble prediction $\vx_j^\top \sigma^*$.
+These functions are depicted in Figure \ref{fig:optstrats}. 
+
+
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Bounding the Correlation Vector}
+\label{sec:uniform-convergence}
+
+In the analysis presented above we assumed that a correlation vector
+$\vb$ is given and that it is guaranteed to be a lower bound  on the
+true correlations on the test set. In this section we analyze how
+$\vb$ can be calculated from a labeled training set.
+
+The algorithm that we use is the natural one: we compute the empirical
+correlation for the $p$ classifiers and add a uniform penalty term to guarantee
+that the $\vb$ is a lower bound on the correlation of the test data.
+
+For each classifier, we have three quantities to consider:
+\begin{itemize}
+\item The true correlation: $\corr(h) = \evp{y h(x)}{\cD}$
+\item The correlation on the training set: $\widehat{\corr}_{\mbox{trn}}(h) =
+  \frac{1}{m} \sum_{i=1}^m h(x'_i)y'_i$
+\item The correlation on the test set: $\widehat{\corr}_{\mbox{tst}}(h) =
+  \frac{1}{n} \sum_{i=1}^n h(x_i)y_i$
+\end{itemize}
+Using Chernoff bounds, we can bound the probability that each of the empirical
+correlations is $\epsilon$ far from the true correlation. For each
+individual classifier we have the inequalities 
+\begin{eqnarray*}
+\pr{\widehat{\corr}_{\mbox{trn}} > \corr(h)+\epsilon_{\mbox{trn}}} \leq e^{-2m \epsilon^2} \\
+\pr{\widehat{\corr}_{\mbox{tst}} < \corr(h)-\epsilon_{\mbox{tst}}} \leq e^{-2n \epsilon^2} 
+\end{eqnarray*}
+
+Let $\delta$ denote the probability we allow for failure. If we set 
+$\epsilon_{\mbox{trn}}=\sqrt{(\ln(p/\delta))/2m}$ and
+$\epsilon_{\mbox{tst}}=\sqrt{(\ln(p/\delta))/2n}$, we are guaranteed that {\em
+  all} of the inequalities hold concurrently with probability at
+least $1-\delta$.
+
+We thus set the correlation bound to:
+\[
+b_i=\widehat{\corr}(h_i)-\sqrt{(\ln(p/\delta))/2m}-\sqrt{(\ln(p/\delta))/2n}
+\]
+and have that $\vb$ is a good correlation vector with probability $1-\delta$.
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+\section{Discussion}
+\label{sec:discthmpred}
+
+Given $\sigma$, we partition the examples $\vx$ into three subsets, depending on the value of the ensemble prediction: 
+the {\bf hedged set} $ H (\sigma) := \left\{ \vx :  |\vx^\top \sigma|<1 \right\} $, 
+the {\bf clipped set} $C (\sigma) := \left\{ \vx :  |\vx^\top \sigma|>1 \right\} $, 
+and the {\bf borderline set} $B (\sigma) \doteq \left\{ \vx :  |\vx^\top \sigma|=1 \right\} $.
+Using these sets, we now give some intuition regarding the optimal
+choice of $\vg$ and $\vz$ given in~(\ref{eqn:opt-strats}), for some fixed $\sigma$.
+
+Consider first examples $\vx$ in $H(\sigma)$. The optimal strategy for the predictor is
+to predict with the ensemble average $\vx^\top \sigma$, which is
+a number between $-1$ and $+1$. Making such an intermediate prediction
+might seem to be a type of calibration, but this view is misleading. The
+optimal strategy for the adversary in this case is to set $\vz_i=0$, 
+equivalent to predicting $\pm 1$ with probability $1/2$ each. 
+The reason that the learner hedges is because if $g < \vx^\top \sigma$, 
+the adversary would respond with $z=1$
+and with $z=-1$ if $g > \vx^\top \sigma$. 
+In either case, the loss of the predictor would increase. 
+In other words, our ultimate rationale for hedging is not calibration, 
+but rather ``defensive forecasting'' in the spirit of \cite{VTS05}.
+
+Next we consider the clipped set $\vx \in C(\sigma)$. In this case, Nature's optimal strategy
+is to predict deterministically, and so the learner matches Nature. It
+is interesting to note that with all else held equal, increasing the margin 
+$\abs{\vx_j^\top \sigma}$ beyond 1 is sub-optimal for the learner. 
+Qualitatively, the reason is that while $\vx_j^\top \sigma$
+continues to increase, the prediction for the learner is clipped, 
+and so the value for the learner does not increase with the ensemble prediction.
+
+\subsection{Subgradient Conditions}
+For another perspective on the result of Theorem~\ref{thm:gamesolngen}, 
+consider the subdifferential set of the slack function $\gamma$ at an arbitrary weighting $\sigma$:
+\begin{align}
+\label{subdiffgammasig}
+\partial \gamma (\sigma) 
+= \left\{ \frac{1}{n} \lrp{ \sum_{\vx_j \in C(\sigma)} \vx_j \sgn(\vx_j^\top \sigma) 
++ \sum_{\vx_j \in B(\sigma)} c_j \vx_j \sgn(\vx_j^\top \sigma) } - \vb
+, \quad \forall c_j \in [0,1]  \right\}
+\end{align}
+Note that the hedged set plays no role in the gradient.
+Since the slack function $\gamma(\cdot)$ is convex (Lemma \ref{lem:helperthreshcvx}), 
+the sub-differential set \eqref{subdiffgammasig} at any $\sigma^*$ contains $\vec{0}$, 
+i.e.,
+\begin{align}
+\label{gammasgexact}
+\exists c_j \in [0,1] \qquad s.t. \qquad 
+n \vb - \sum_{j : x_{j}^\top \sigma^* > 1} x_{j} + \sum_{j : x_{j}^\top \sigma^* < -1} x_{j} 
+&= \sum_{j : \abs{x_{j}^\top \sigma^*} = 1} c_j x_{j} \sgn(x_{j}^\top \sigma^*)
+\end{align}
+The geometric interpretation of this equation is given in Figure~\ref{fig:optsigma}. 
+The optimal weighting $\sigma^*$ partitions the examples into five sets: 
+hedged, positive borderline and positive clipped, and negative borderline and negative clipped. 
+Taking the difference between the sum of the positive clipped and the sum of the negative
+clipped examples gives a vector that is approximately $\vb$. 
+By adding a weighted sum of the borderline examples, $\vb$ can be obtained exactly.
+
+\begin{figure}
+\label{fig:optsigma}
+\centering
+\includegraphics[width=0.6\textwidth]{figs/Opt-Sigma.pdf}
+\caption{\small An illustration of the optimal $\sigma^* \geq 0^p$. 
+The vector $n \vb$ is the difference between the sums of two categories of clipped examples: 
+those with high ensemble prediction ($x^\top \sigma^* > 1$) and low prediction ($< -1$).
+The effect of $\{ x : \abs{x^\top \sigma^*} = 1\}$ is neglected for simplicity. 
+}
+\end{figure}
+
+\iffalse 
+\yoav{I don't think this duality, while true,  gives much insight}
+
+A significant observation to make as we begin 
+is that predictions of the form $\vg (\sigma)$ 
+are closely related to dual optima and the slack function. 
+Indeed, by definition of $\vg (\sigma)$, the slack function value 
+$ - \gamma (\sigma) = b^\top \sigma - \frac{1}{n} \vnorm{\vF^\top \sigma - \vg (\sigma)}_1 
+\leq \max_{\sigma' \geq 0^p} \left[ b^\top \sigma' - \frac{1}{n} \vnorm{\vF^\top \sigma' - \vg (\sigma)}_1 \right]$, 
+which is simply the dual problem (Lemma \ref{lem:gamegeng}) of the worst-case correlation suffered by $\vg (\sigma)$: 
+$\displaystyle \quad \min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }} \;\frac{1}{n} \vz^\top [\vg (\sigma)]$. 
+We now state this formally.
+\begin{obs}
+\label{obs:slacksubopt}
+For any weight vector $\sigma \geq 0^p$, 
+the worst-case correlation after playing $\vg (\sigma)$ is bounded by 
+$\displaystyle \quad \min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }} \;\frac{1}{n} \vz^\top [\vg (\sigma)] 
+\geq - \gamma (\sigma) $\;.
+\end{obs}
+
+%--------------------------------------------------------------------------------------------------------------------------
+\fi
+
+
+\section{Muffler and parallel partitions}
+
+In this section we construct a family of specialists for which we can
+give a simple characterization of the matching strategies $\vz,\vg$.
+
+We make the following observations
+\begin{itemize}
+\item {\bf Partitions}Consider a set of specialists $\cB$ which defines a partitioning of
+the domain $\cX$. In other words, $\cup_{B \in \cB} B=\cX$ and if $B,C
+\in \cB, B \neq C$ then $B \cap C =\emptyset$ . In other words the
+matrix $\vF$ has a single one in each row and all of the other entries
+are zero. In that case each component optimal weight vector $\sigma$
+is defined by the corresponding component of $\vb$. If $\vb_i>0$ then
+$\sigma_i=1$ otherwise $\sigma_i=0$. \yoav{It might simplify notation to
+  allow $\vb_i$ to be either positive or negative. This would allow a
+  single row in $\vF$ rather than two: one positive and one negative.}
+\item {\bf Trees} We can define a hierarchical partition as a
+  tree. The root of the tree contains all of the data points and each
+  node is a subset of it's parent. The children of a node define a
+  partition of the set covered by the node.
+\item {\bf Mind-switches in trees} As datapoints are added it
+  becomes possible to determine the polarity of smaller nodes that are
+  deeper in the tree. However, there is a problem: some of the children of
+  a node can have enough points to determine their polarity, while
+  others are still undertermined. To avoid this case we use a
+  ``mind-switch rule'' where the constraint define by a determined
+  node is used instead of the constraints defined by it's descendent
+  {\em unless} the descendent has an opposite polarity. This is
+  allowed because by removing constraints we can only make the value
+  of the game lower (better for the adversary). The result is that any
+  tree defines a partition where the prediction on each part is either
+  -1 or +1.
+\item {\bf Voting across trees:} Suppose we construct $K$ trees
+  according to the same data. We thus have $K$ $-1,+1$ predictions for each
+  data point. We propose prediting using the average over the $K$
+  weight vectors $\sigma_i$. If all of the predictions are the same, then the
+  average is also the same and this forces the adversary to predict in
+  the same way. On the other hand, if the predictions are different
+  then the average is in $(-1,+1)$ and the adversary can choose
+  $0$. This region is the ``known unknown''.
+
+\end{itemize}
+
+
+
+
+\iffalse
+\subsection{Better than ERM Without Clipping}
+We now make some simple observations about the minimax solution.
+
+First, note that no $\sigma$ such that $\vnorm{\sigma}_1 < 1$ can be optimal, 
+because in such a case $-\gamma(\sigma) > -\gamma \lrp{\frac{\sigma}{\vnorm{\sigma}_1}}$; 
+therefore, $\vnorm{\sigma^*}_1 \geq 1$.
+
+Consider next a situation where we do not know the matrix $\vF$. 
+Then $\|\sigma^*\|_1=1$. This can be shown by proving the contra-positive; 
+assume the negation $\|\sigma^*\|_1 > 1$. Then there exists a 
+vector $x \in [-1,+1]^p$ such that $x^\top \sigma^* = \|\sigma^*\|_1 > 1$. 
+If each of the columns of $\vF$ is equal to $x$, 
+then $\sigma^*$ cannot be optimal since 
+$-\gamma \lrp{\frac{\sigma^*}{a}} > -\gamma(\sigma^*)$. 
+
+In other words, if we want to protect ourselves against the worst case $\vF$, then
+we have to set $\|\sigma\|_1=1$ so as to ensure that $C(\sigma)$ is empty. 
+In this case, the slack function simplifies to $\gamma (\sigma) = - \vb^\top \sigma$, 
+over the probability simplex. 
+Minimizing this is achieved by setting $\sigma_i$ to be $1$ at $\displaystyle \argmax_{i \in [p]} b_i$ and zero
+elsewhere. As might be expected, in the case that $\vF$ is unknown, the
+optimal strategy is to use the classifier with the minimal error guarantee. 
+
+This is because $C(\sigma^*)$ is empty, 
+and the set of all $\sigma$ such that this is true is of wider interest. 
+We name it the \emph{Zero Box Region}: $\zbr = \left\{ \sigma : C(\sigma) = \emptyset \right\}$.
+Another clean characterization of the $\zbr$ can be made by using a 
+duality argument similar to that used to prove Theorem \ref{thm:gamesolngen}. 
+
+\begin{thm}
+\label{thm:zbrunconstr}
+The best weighting in $\zbr$ satisfies 
+$\displaystyle \max_{\substack{ \abs{\vF^\top \sigma} \leq \mathbf{1}^n , \\ \sigma \geq 0^p }} \; \vb^\top \sigma 
+= \max_{\vg \in [-1,1]^n} \;\min_{\frac{1}{n} \vF \vz \geq \vb } \;\; \frac{1}{n} \vz^\top \vg  $\;. 
+In particular, the optimal $\sigma^* \in \zbr$ if and only if 
+the hypercube constraint $\vz \in [-1,1]^{n}$ is superfluous, i.e. when 
+$\displaystyle V = \min_{ \frac{1}{n} \vF \vz \geq \vb } \;\max_{\vg \in [-1,1]^n} \;\; \frac{1}{n} \vz^\top \vg $\;.
+\end{thm}
+The $\zbr$ is where the optimal strategy is always to hedge 
+and never to incorporate any clipping. 
+\iffalse
+\yoav{I don't understand this sentence.}
+So Theorem \ref{thm:zbrunconstr} states that the 
+hypercube constraint $\vz \in [-1,1]^n$ exactly corresponds 
+to the presence of clipping in $\vg$. 
+\fi
+Consider a situation in which the solution is in $\zbr$, $\sigma^*=\ones{p}$, 
+and all of the predictions are binary: $\vF \in \{-1,+1\}^{p \times n}$.
+This is an ideal case for our method; instead of the baseline value $\max_i b_i$
+obtained when $\vF$ is unknown, we get a superior value of $\sum_i b_i$. 
+
+In fact, we referred to such a case in the introduction, 
+and we will present a formal version here. 
+Take $p$ to be odd and suppose that $n=p$. 
+Then set $\vF$ to be a matrix where each row (classifier) and each column (example)
+contains $(p+1)/2$ entries equal to $+1$ and $(p-1)/2$ entries equal to $-1$.
+\footnote{For instance, by setting $F_{ij} = 2 * \ifn((i+j) \text{ is even}) - 1$.} 
+Finally choose an arbitrary subset of the columns (to have true label $-1$), 
+and invert all their entries. 
+
+In this setup, all classifiers (rows) have the same error: $\vb= \frac{1}{p} \ones{p}$. 
+The optimal weight vector in this case is $\sigma^*=\ones{p}$, 
+the solution is in $\zbr$ because $\abs{x^\top \sigma^*} = 1 \;\forall x$, and the minimax value is $V=1$, 
+which corresponds to zero error. 
+Any single rule has an error of $\frac{1}{2} - \frac{1}{p}$, 
+so using $\vF$ with $p$ classifiers has led to a $p$-fold improvement over random guessing!
+
+Of course, this particular case is extremal in some ways; in order to be in $\zbr$, 
+there must be many cancellations in $\vF^\top \sigma^*$. 
+This echoes the common belief that, when combining an ensemble of classifiers, 
+we want the classifiers to be ``diverse" (e.g. \cite{K03}). 
+The above example in fact has the maximal average disagreement between pairs of classifiers for a fixed $p$. 
+Similar results hold if $\vF$ is constructed using independent random draws.
+
+
+Another consequence of our formulation 
+is that predictions of the form $\vg (\sigma)$ 
+are closely related to dual optima and the slack function. 
+Indeed, by definition of $\vg (\sigma)$, the slack function value 
+$ - \gamma (\sigma) = b^\top \sigma - \frac{1}{n} \vnorm{\vF^\top \sigma - \vg (\sigma)}_1 
+\leq \max_{\sigma' \geq 0^p} \left[ b^\top \sigma' - \frac{1}{n} \vnorm{\vF^\top \sigma' - \vg (\sigma)}_1 \right]$, 
+which is simply the dual problem (Lemma \ref{lem:gamegeng}) of the worst-case correlation suffered by $\vg (\sigma)$: 
+$\displaystyle \quad \min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }} \;\frac{1}{n} \vz^\top [\vg (\sigma)]$. 
+We now state this formally.
+
+\begin{obs}
+\label{obs:slacksubopt}
+For any weight vector $\sigma \geq 0^p$, 
+the worst-case correlation after playing $\vg (\sigma)$ is bounded by 
+$$ \quad \min_{\substack{ \vz \in [-1,1]^n , \\ \frac{1}{n} \vF \vz \geq \vb }} \;\frac{1}{n} \vz^\top [\vg (\sigma)] 
+\geq - \gamma (\sigma) $$
+\end{obs}
+
+
+
+
+\subsection{Independent Label Noise}
+
+An interesting variation on the game is to limit the adversary to 
+$z_i \in [-\alpha_i,\alpha_i]^n$ for some $\vec{\alpha} = (\alpha_1 ; \dots ; \alpha_n) \in [0,1)^n$. 
+This corresponds to assuming a level $1 - \alpha_i$ of independent label noise on example $i$: 
+the adversary is not allowed to set the label deterministically, 
+but is forced to flip example $i$'s label independently 
+with probability $\frac{1}{2}(1 - \alpha_i)$. 
+
+Solving the game in this case gives the result (proof in appendices) 
+that if we know some of the ensemble's errors to be through random noise, 
+then we can find a weight vector $\sigma$ that would give us better performance than 
+without such information. 
+\begin{prop}[Independent Label Noise]
+\label{prop:labnoise}
+\begin{align*}
+\max_{\vg \in [-1,1]^n} \;\;\min_{\substack{ - \valpha \leq \vz \leq \valpha , \\ 
+\frac{1}{n} \vF \vz \geq \vb }} \;\; \frac{1}{n} \vz{^\top} \vg 
+= \max_{\sigma \geq 0^p } \;\;\vb^\top \sigma - \frac{1}{n} \sum_{j=1}^n \alpha_j \left[ \abs{x_{j}^\top \sigma} - 1 \right]_{+}
+> \max_{\sigma \geq 0^p } \;[- \gamma (\sigma)]
+= V 
+\end{align*}
+\end{prop}
+Our prediction tends to clip -- predict with the majority vote -- more on examples with more known random noise, 
+because it gains in minimax correlation by doing so. 
+This mimics the Bayes-optimal classifier, which is always a majority vote. 
+
+Indeed, this statement's generalization to the asymmetric-noise case 
+can be understood with precisely the same intuition. 
+The sign of the majority vote affects the clipping penalty in the same way:
+\begin{prop}[Asymmetric Label Noise] 
+For some $\vl, \vu \geq \vzero^n$,
+\begin{align*}
+\max_{\vg \in [-1,1]^n} \;\;\min_{\substack{ -\vl \leq \vz \leq \vu , \\ 
+\frac{1}{n} \vF \vz \geq \vb }} \;\; \frac{1}{n} \vz{^\top} \vg 
+= \max_{\sigma \geq 0^p } \;\;\vb^\top \sigma - \frac{1}{n} \sum_{j=1}^n \lrp{ u_j \left[ x_{j}^\top \sigma - 1 \right]_{+} + l_j \left[ - x_{j}^\top \sigma - 1 \right]_{+} }
+> V 
+\end{align*}
+\end{prop}
+
+
+
+
+
+
+
+\iffalse
+\akshay{If there's space: Point out that feasibility conditions make this a statement about 
+\emph{where we know the errors are coming from}, countering the naive objection that ``adding noise should not ever increase performance." }
+
+As a further aid to intuition, 
+consider the following scenario. 
+\akshay{I'll rewrite this example.}
+\begin{example}
+\label{ex:combavgvote}
+Suppose the data are divided into two subsets, 
+with a fraction $1-\alpha$ being in $\cX_1$ and $\alpha$ in $\cX_2$ for some $\alpha \in [0,1]$. 
+Also suppose all $p$ hypotheses predict with zero errors on $\cX_1$, 
+and each makes errors on a fraction $\epsilon$ of $\cX_2$ chosen uniformly at random. 
+Then w.h.p. we have that the examples in $\cX_1$ all have margin $1$, 
+those in $\cX_2$ have margin $1 - 2 \epsilon$, 
+and $\vb$ is $(1 - 2 \epsilon \alpha) \vone^p$.
+\end{example}
+\akshay{
+In Example \ref{ex:combavgvote}, the ZBR consists of weightings $\sighat$ with $\vnorm{\sighat}_1 \leq 1$, 
+since the examples in $\cX_1$ have margin $1$ under all distributions. 
+However, the optimal strategy is $\sigma^* = \frac{1}{p (1 - 2 \epsilon)} \vone^p$, 
+an unweighted majority vote with zero error: $V = -\gamma(\sigma^*) = 1$. 
+Choosing $\vnorm{\sigma^*}_1 > 1$ forces the examples in $\cX_1$ to have margin $> 1$, 
+but the hypotheses' errors are low enough to make this introduction of voting effects worthwhile.
+}
+
+At the other end of the spectrum from the $\zbr$ is the scenario 
+in which as much as possible, every prediction is clipped or borderline. 
+For the optimal $\vg^* = \vg (\sigma^*)$ to be such a strategy, 
+it must be of the form $\vg_{\wmv} (\sigma^*) = \sgn(F^\top \sigma^*)$, 
+which is familiar as a \emph{weighted majority vote} ($\wmv$). 
+
+There is a necessary subtlety in our definitions: the examples such that 
+the ensemble prediction $x^\top \sigma^* = 0$ have no clear majority prediction, 
+and therefore cannot be clipped or borderline in an optimal strategy - 
+they must be hedged perfectly randomly. 
+The set of such examples warrants special mention because of its role in the literature 
+(see Section \ref{sec:relwork} for details). 
+
+\begin{defn}[Hard Core w.r.t. $\sigma$]
+The \emph{hard core} with respect to any weighting $\sigma \geq 0^p$ is the set 
+\begin{align*}
+\hc (\sigma) = \lrsetb{ x : x^\top \sigma = 0 }
+\end{align*}
+\end{defn}
+In our setup, any optimal strategy must be of the form $\vg (\sigma)$ for some $\sigma$. 
+So if $\wmv(\sigma)$ is optimal, it must predict with $0$ on $\hc (\sigma)$, 
+therefore making errors on at least $\frac{1}{2} \prp{\hc (\sigma)}{}$. 
+So the hard core limits the performance of the optimal strategy. 
+
+Other than this limitation, however, we might expect that when the optimal strategy is a $\wmv$ 
+that predicts as decisively as possible on all examples, it would perform quite well. 
+Indeed, this can be formally shown (proof in appendices).
+\begin{thm}
+\label{thm:wmvoptcond}
+Suppose a weighted majority vote using a weighting $\sigma \geq 0^p$ 
+is the optimal strategy $\vg^* = \vg_{\wmv} (\sigma)$ for the game \eqref{game1eq}.
+Then the expected classification error $\epsilon_{\wmv} (\sigma) = \frac{1}{2} (1-V)$ is bounded by: 
+\begin{align*}
+\frac{1}{2} \prp{\hc (\sigma)}{} 
+\leq \epsilon_{\wmv} (\sigma)
+\leq \frac{1}{2} \lrp{ \prp{\hc (\sigma)}{} + \prp{ \abs{x_j^\top \sigma} = \min_{x \notin \hc(\sigma)} \abs{x^\top \sigma} }{j}}
+\end{align*}
+\end{thm}
+
+
+This shows that a WMV is minimax optimal only if it essentially matches the true labels exactly where it can, 
+as in Example \ref{ex:combavgvote}. 
+But in other cases, it is better for there to be some examples $i$ on which 
+the predictor hedges ($\abs{g_i} < 1$), as indicated by $\vg^*$. 
+
+\akshay{I can't prove an analogous result to Thm. \ref{thm:zbrunconstr}, 
+But I think we need an example here where it is better to hedge at all. \\ \\
+On another note, I have an error bound on an arbitrary WMV as well in terms of its margins - 
+but that might exceed our scope here.}
+
+\fi
+
+
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+\section{Computational Issues}
+\label{sec:alg}
+Theorem \ref{thm:gamesolngen} makes clear that our ability to produce $\vg^*$ 
+is dependent on our ability to find the optimal weighting $\sigma^*$, 
+i.e. to minimize the slack function $\gamma (\sigma)$ over $\sigma \geq 0^p$. 
+We discuss two extreme approaches to performing this minimization.
+
+The most straightforward approach is to treat the problem as a linear
+programming problem and use an LP solver. The main problem with this
+approach is that it requires storing all of the examples in memory. As
+unlabeled examples are typically much more plentiful than labeled
+examples, this approach could be infeasible without further modification.
+
+A different approach that exploits the structure of the equilibrium uses stochastic gradient descent. The fact
+that the slack function is convex guarantees that this approach will converge to the global minimum. 
+The convergence rate might be suboptimal, particularly near the intersections of hyperplanes 
+in the piecewise-linear slack function surface. But the fact that SGD is an constant-memory algorithm is very attractive. 
+In fact, the entire arsenal of stochastic convex optimization comes into play theoretically and practically 
+-- the slack function is a sum of i.i.d. random variables. 
+As such, it has a natural limiting object $\evp{\left[ \abs{x^\top \sigma} - 1 \right]_{+}}{x \sim \cD} - b^\top \sigma$ 
+amenable to standard optimization techniques. 
+
+
+
+
+\iffalse
+
+\subsection{Algorithm Overview}
+We first define some statistical learning notation quantifying the parameters of the problem. 
+
+We define the \emph{limiting slack function} as 
+$\gamma_\infty (\sigma) = \evp{\left[ \abs{x^\top \sigma} - 1 \right]_{+}}{x \sim \cD} - b^\top \sigma$, 
+and the associated \emph{limiting optimal prediction/value} as $\sigma_{\infty}^* = \argmin_{\sigma \geq 0^p} \gamma_\infty (\sigma)$ 
+and $V_{\infty} = - \gamma_\infty (\sigma_{\infty}^*)$. 
+Our algorithm processes examples incrementally to approximately minimize $\gamma_\infty$ 
+by forming unbiased estimates of the limiting slack function: 
+$\gamma^m (\sigma) = \frac{1}{m} \sum_{j=1}^m \left[ \abs{x_{j}^\top \sigma} - 1 \right]_{+} - b^\top \sigma$ 
+for i.i.d. data $x_1, \dots, x_m \in \RR^d$. 
+
+The algorithm proceeds in epochs $t = 1, 2, \dots$. 
+During epoch $t$, incoming unlabeled examples are processed one at a time. 
+The algorithm selectively stores only some informative examples in a set $S_t$, 
+and merely keeps aggregated statistics 
+about the rest, in the form of a count $q_t$ and a vector $\mu_t \in \RR^p$. 
+This goes on until $\abs{S_t} = k$, 
+at which point the algorithm stops processing data for epoch $t$, 
+having drawn $\abs{S_t} + q_t$ examples that epoch. 
+
+The decision of whether to sample is made by tracking  
+a small region $C_t \subset \RR_+^p$ of ``good" weightings; 
+by construction, this always contains $\sigma_{\infty}^*$ and defines the scope of our attention. 
+When $x_t$ is put in the same category (hedged, positive/negative clipped/borderline) 
+by all weightings in $C_{t-1}$, 
+its contribution to the gradient is effectively fixed for the optimization. 
+So in this case, $x_t$ can be exactly accounted for by adding it to the sum $\mu_t$, 
+and it is safe to deem $x_t$ non-informative thereafter. 
+In this manner, the $k$ examples $S_t$ are selected 
+such that they -- along with $\mu_t, q_t$ -- 
+exactly describe $\gamma^{\abs{S_t} + q_t} (\sigma)$ within $C_{t-1}$.
+
+
+To discuss this with more rigor, 
+we introduce a form of the slack function that is explicitly written only in terms of informative examples. 
+\begin{defn}
+\label{def:approxslack}[\textbf{Shorthand Slack Function}]
+For a set of examples $S$, define the \emph{shorthand slack function}
+\begin{align*}
+\gamhat (\sigma, S, \mu, q) 
+&= \frac{1}{|S| + q} 
+\lrp{ \sum_{x \in S} \left[ \abs{x^\top \sigma} - 1 \right]_{+} } 
++ \lrp{\frac{\mu}{|S| + q} - b}^\top \sigma - \frac{q}{|S| + q} 
+\end{align*}
+and write $\gamhat_t (\sigma) := \gamhat (\sigma, S_t, \mu_t, q_t)$.
+\end{defn}
+\begin{lem}
+\label{lem:compressslack}
+For any $\sigma \in C_{t-1}$, $\gamhat_t (\sigma) = \gamma^{|S_t| + q_t} (\sigma)$.
+\end{lem}
+
+Lemma \ref{lem:compressslack} tells us that we can simulate an SGD minibatch update 
+of \emph{effective batch size} $|S_t| + q_t \geq k$ on epoch $t$ with storage for just $\cO(k)$ examples. 
+Accordingly, our algorithm each epoch runs the subroutine \texttt{GDUpdate}, 
+which performs a minibatch update using the shorthand slack function. 
+%Since $\gamma^{|S_t| + q_t} (\sigma)$ and its gradient are unbiased estimators of 
+%$\gamma_{\infty} (\sigma)$ and its gradient, 
+So just as mini-batch SGD produces a $\sigma_t$ that converges to $\sigma_{\infty}^*$, 
+ours does as well. 
+In particular, we will find a bound on this convergence useful. 
+(We do not attempt to optimize for constants in what follows.)
+\begin{prop}[\cite{DGBSX12}]
+\label{prop:sgdconvrate}
+For some finite $C > 0$, w.p. $\geq 1-\delta$, for all $t$, 
+$$ \vnorm{\sigma_t - \sigma_{\infty}^*}^2 \leq C \sqrt{\frac{\log (t/\delta)}{t}} \;:= (r_t^\delta)^2 $$ 
+\end{prop}
+\akshay{Find minibatch-size-dependent bound.}
+Here $C$ depends on the diameter of the feasible set. 
+For ease of computation, we set $C_t$ as the Euclidean ball $\lrsetb{ \sigma : \vnorm{\sigma_t - \sigma}^2 \leq r_t^\delta}$. 
+
+%Finally, in guaranteeing $(1-\delta)$-a.s. results about the algorithm's output, 
+%we define a deviation bound for epoch $t$ that is computable from the $t-1$ previous epochs: 
+%\begin{align}
+%\label{eq:defofdelta}
+%\Delta_t^{\delta} = \Delta(t,\delta,p,|S_t|+q_t) := K_t \sqrt{ \frac{\log (p / \delta)}{|S_t| + q_t} } 
+%\end{align}
+%This will serve as a uniform deviation bound (Lemma \ref{lem:unlabucbgamma}) 
+%over all $C_{t-1}$ between $\gamhat_t$ and $\gamma_{\infty}$. 
+
+\begin{algorithm2e}[htp]
+\label{alg:unlablearn}
+\SetKwInput{Input}{Given}
+\SetKwInput{Output}{Output}
+\SetKwFunction{StoreExample}{StoreExample}
+\SetKwFunction{GDUpdate}{GDUpdate}
+\SetKwFunction{UpdateRegion}{UpdateRegion}
+
+\KwIn{Source of unlabeled data with distribution $\cD$ over $[-1,+1]^p$; 
+confidence parameter $\delta$; \\ 
+hypothesis correlations $\vb < \vone^p$} 
+\Output{Weight vector $\sigma_t$; confidence radius $r_t^\delta$}%; deviation bound $\Delta_t^{\delta}$}
+\For{$t=1,2,\dots$}{ 
+\lIf{$r_t^\delta = r_{t-1}^\delta$ and $t > 1$}{break}
+$S_t \gets \emptyset$ \tcp*{$S_t$ will store $k$
+    examples. $S_{t-1}$ is discarded.}
+$\mu_t \gets 0^p$\;
+$q_t \gets 0$\tcp*{Number of examples seen but not stored this epoch}
+\While{$|S_t| < k\;\;$}{
+Draw $x \sim \cD$\;
+\If{$\abs{\abs{x^\top \sigma_t} - 1} \geq r_t^\delta$}
+{
+$q_t \gets q_t + 1$\;
+$\mu_t \gets \mu_t + x \sgn(x^\top \sigma_t)$
+}
+{\lElse{  %else
+Add $x$ to $S_t$
+}}
+}
+$\sigma_t \gets \GDUpdate{$\sigma_{t-1}, S_t, \mu_t, q_t$}$\;
+}
+%$\Delta_t^{\delta} \gets \Delta(t,\delta,p,|S_t|+q_t)$\;}
+\Return $\sigma_t, r_t^{\delta}$
+\caption{Unsupervised Selective Sampling for Learning $\sigma^*$}
+\end{algorithm2e}
+\begin{function}
+\label{func:GDUpdate}
+\KwIn{$\sigma_{t-1}, S_t, \mu_t, q_t$; given learning rate $\eta_t \propto \frac{1}{\sqrt{t}}$}
+\KwOut{Best weight vector $\sigma_t$}
+$ \displaystyle \sigma_t \gets \sigma_{t-1} + \eta_t 
+\lrp{ \frac{1}{|S_t| + q_t} 
+\lrp{ \mu_t + \sum_{x \in S_t} x \sgn (x^\top \sigma) \ifn( | x^\top \sigma | > 1) } 
+- \vb }$ \;
+\Return{$\sigma_t$}
+\caption{GDUpdate()}
+\end{function}
+
+\fi
+
+
+\iffalse
+
+\subsection{Analysis of Algorithm} 
+Before any proofs, we pause for a couple of observations. 
+First, note that $r_t^\delta$ decreases as the 
+
+Also, recall that the number of discarded examples $q_t$ in a favorable limiting case in which $q_t$ grows
+
+The fundamental property of the algorithm that we prove is that it converges to the correct result. 
+%This non-selective algorithm finds the optimum within $\cO (\Delta (t, \delta, p, k))$, by definition.
+Therefore, we prove that the algorithm returns a good answer $\sigma_t$ and confidence set $C_t$.  
+\begin{thm}
+\label{thm:algcorrect}
+For any time $t \geq 1$, 
+with probability at least $1-\delta$, $- \gamma_\infty (\sigma_t) \geq V_\infty - 2 \Delta_t^{\delta}$.
+\end{thm}
+\begin{proof}[Proof of Theorem \ref{thm:algcorrect}]
+Note that 
+\begin{align*}
+\gamma_\infty (\sigma_t) - \gamma_\infty (\sigma_{\infty}^*) 
+&= \lrb{ \gamma_\infty (\sigma_t) - \gamhat_t (\sigma_t) } 
++ \lrb{ \gamhat_t (\sigma_t) - \gamhat_t (\sigma_{\infty}^*) }
++ \lrb{ \gamhat_t (\sigma_{\infty}^*) - \gamma_\infty (\sigma_{\infty}^*) } \\
+&\stackrel{(a)}{\leq } \Delta_t^{\delta} + 0 + \Delta_t^{\delta} = 2 \Delta_t^{\delta}
+\end{align*}
+where $(a)$ follows by two applications of a uniform deviation bound (Lemma \ref{lem:unlabucbgamma}) 
+and by definition of $\sigma_t$ (to bound the middle term). 
+\end{proof}
+
+In this connection, a natural baseline is naive SGD. 
+The first part of Theorem \ref{thm:algcorrect} means that the algorithm performs better than the non-selective one, 
+because its performance gap $\Delta_t^{\delta} = \Delta (\cdot, \cdot, \cdot, k + q_t) < \Delta (\cdot, \cdot, \cdot, k)$.
+
+%The proof uses the fact that $\gamma^{|S_t| + q_t} (\sigma)$ 
+%converges uniformly to $\gamma_\infty (\sigma)$, within $C_{t-1}$, 
+%which for a fixed $\sigma$ is an immediate consequence of a Hoeffding bound:
+%\begin{lem}
+%\label{lem:unlabucbgamma}
+%With probability at least $1-\delta$,
+%$$ \max_{\sigma \in C_{t-1}} |\gamma_{\infty} (\sigma) - \gamhat_t(\sigma)| \leq \Delta_t^{\delta} $$
+%\end{lem}
+
+Another fundamental question to be asked is when this selective sampling scheme actually helps. 
+To aid in answering this question, 
+
+The structure of the slack function allows us 
+to process unlabeled data \emph{exponentially} fast 
+from a large class of data distributions $\cD$, 
+which we identify and parametrize with a measure of difficulty called the doubt coefficient. 
+
+\begin{defn}[Doubt Coefficient]
+Let the level sets of $\gamma_{\infty} (\cdot)$ be defined as 
+$\cS (\Delta) = \lrsetb{ \gamma_{\infty} (\sigma) \leq \gamma_{\infty} (\sigma_{\infty}^*) + \Delta}$, 
+and the bounding box of $\cS (\Delta)$ be the interval $[\valpha, \vbeta]$ as defined 
+with . 
+Also let 
+$$\pdis{C_t} = \prp{\exists \sigma_1, \sigma_2, \in C_t : \abs{x^\top \sigma_1} > 1 \;\text{and}\; \abs{x^\top \sigma_2} < 1 }{\cD}$$
+The \emph{doubt coefficient} of ($\cH, \cD, \vb$) at resolution $\epsilon$ is 
+\begin{align*}
+\kappa (\cH, \cD, \vb, \epsilon) := \kappa (\epsilon) = \sup_{r \geq \epsilon} \frac{\pdis{\cS (r)}}{r}
+\end{align*}
+\end{defn}
+
+\akshay{Finished highlighting naive algorithm in previous subsection. 
+Now am writing the definitions and example in this section, though I still need to work out that the example fits the doubt coeff. condition.}
+
+Scenarios in which $\kappa (\epsilon) < \infty$ are amenable to our selective sampling approach, 
+which in such cases converges to $V_{\infty}$ up to accuracy $\epsilon$ with exponentially fewer labels than typically required. 
+To motivate when this might occur, 
+consider the following scenario. 
+
+\begin{examp}
+\normalfont
+Suppose $\cH$ is comprised of an odd number $v$ of low-correlation \emph{guessers}, each with $b_i = \frac{1}{p}$;  
+and $p - v$ higher-correlation \emph{pundits}, with $b_i = \pi \gg \frac{1}{p}$. 
+Each example $\vx_i$ is predicted on correctly by $\frac{v+1}{2}$ guessers and incorrectly by $\frac{v-1}{2}$. 
+An unknown fixed subset of test data $\cX_w \subseteq T$ of fraction $\frac{1- \pi}{2}$ is predicted upon wrongly by all pundits, 
+who predict correctly on the remaining test data.
+It is clear that the optimum $\sigma^*$ puts uniform weight on the guessers and none on the pundits, 
+incurring zero error.  
+\end{examp}
+
+\fi
+
+
+\section{Related Work}
+\label{sec:relwork}
+Our duality-based formulation would incorporate constraints far beyond the linear ones we have imposed so far, 
+since all our results hold essentially without change in a general convex analysis context. 
+Possible extensions in this vein include other loss functions as in multiclass and abstaining settings, specialist experts, 
+and more discussed in the next section.
+
+%A hard core related to the one we describe has arisen repeatedly in the literature on boosting (\cite{I95, T13}), 
+%though in a more restrictive form because such setups give the predictor player the ability to adaptively react to Nature. 
+
+Weighted majority votes are a nontrivial ensemble aggregation method 
+that has received focused theoretical attention for classification. 
+Of particular note is the literature on boosting for forming ensembles, 
+in which the classic work of \cite{SFBL98} shows general bounds 
+on the error of a weighted majority vote $\epsilon_{\wmv} (\sighat)$ under any distribution $\sighat$,
+based purely on the distribution of a version of the margin on labeled data. 
+
+%\akshay{Without Observation \ref{obs:slacksubopt}, I don't see the point of citing any of the WMV literature.}
+Our worst-case formulation here gives direct bounds on (expected) test error $\epsilon_{\wmv} (\sighat)$ as well, 
+since in our transductive setting, these are equivalent to lower bounds on the slack function value by Observation \ref{obs:slacksubopt}. 
+%through the relation $\epsilon_{\wmv} (\sigma) = \frac{1}{2} \lrp{1 - \vz^\top \vg_{\wmv} (\sigma)}$.
+As we have abstracted away the labeled data information into $\vb$, our results depend only on $\vb$ and 
+the distribution of margins $\abs{x^\top \sigma}$ among the unlabeled data. 
+Interestingly, \cite{AUL09} take a related approach to prove bounds on $\epsilon_{\wmv} (\sighat)$  
+in a transductive setting, as a function of the average ensemble error $\vb^\top \sighat$ and the test data margin distribution; 
+but their budgeting is looser and purely deals with majority votes, 
+in contrast to our $\vg$ in a hypercube. 
+The transductive setting has general benefits for averaging-based bounds also (\cite{BL03}).
+
+One class of philosophically related methods to ours uses moments of labeled data 
+in the statistical learning setting to find a minimax optimal classifier; 
+notably among linear separators (\cite{LGBJ01}) and conditional label distributions under log loss (\cite{LZ14}). 
+Our formulation instead uses only one such moment and focuses on unlabeled data, and is able to handle 
+a rich class of dependence structure among classifier predictions, not just low-order moments. 
+
+There is also a long tradition of analyzing worst-case binary prediction of online sequences, 
+from which we highlight \cite{FMG92}, 
+which shows universal optimality for bit prediction of a piecewise linear function similar to Fig. \ref{fig:optstrats}. 
+The work of \cite{CBFHHSW93} demonstrated this to result in optimal prediction error 
+in the experts setting as well, and similar results have been shown in related settings (\cite{V90, AP13}). 
+
+Our emphasis on the benefit of considering global effects (our transductive setting) even when data are i.i.d. 
+is in the spirit of the idea of shrinkage estimators, well known in statistical literature since the James-Stein estimator (\cite{EM77}).
+\fi
+
+
+\bibliography{gameRootArxiv}{}
+
+
+\end{document}
+
+

@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.0.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.0.2}{Preliminaries}{}% 2
+\BOOKMARK [1][-]{section.0.3}{The Transductive Binary Classification Game}{}% 3
+\BOOKMARK [1][-]{section.0.4}{Bounding the Correlation Vector}{}% 4
+\BOOKMARK [1][-]{section.0.5}{Discussion}{}% 5
+\BOOKMARK [2][-]{subsection.0.5.1}{Subgradient Conditions}{section.0.5}% 6
+\BOOKMARK [2][-]{subsection.0.5.2}{Better than ERM Without Clipping}{section.0.5}% 7
+\BOOKMARK [2][-]{subsection.0.5.3}{Independent Label Noise}{section.0.5}% 8
+\BOOKMARK [1][-]{section.0.6}{Computational Issues}{}% 9
+\BOOKMARK [1][-]{section.0.7}{Related Work}{}% 10
+\BOOKMARK [1][-]{section.0.8}{Conclusions and Open Problems}{}% 11
+\BOOKMARK [1][-]{section.0.A}{Proof of Theorem 3}{}% 12
+\BOOKMARK [2][-]{subsection.0.A.1}{Value of the Game}{section.0.A}% 13
+\BOOKMARK [2][-]{subsection.0.A.2}{Minimax Optimal Strategies}{section.0.A}% 14
+\BOOKMARK [2][-]{subsection.0.A.3}{Supporting Proofs}{section.0.A}% 15
+\BOOKMARK [1][-]{section.0.B}{Miscellaneous Proofs}{}% 16
