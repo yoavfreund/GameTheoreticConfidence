@@ -1,0 +1,194 @@
+\documentclass{article}
+\usepackage{fullpage}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{natbib}
+
+\def\R{{\mathbb{R}}}
+\def\pr{{\rm Pr}}
+\def\E{{\mathbb E}}
+\def\X{{\mathcal X}}
+\def\Y{{\mathcal Y}}
+\def\H{{\mathcal H}}
+\def\G{{\mathcal G}}
+\def\B{{\mathcal B}}
+\def\bias{{\rm bias}}
+\def\supp{{\rm supp}}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{claim}[thm]{Claim}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{assump}{Assumption}
+\newtheorem{open}{Open problem}
+\newenvironment{proof}{\noindent {\sc Proof:}}{$\Box$ \medskip}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title{An adaptive nearest neighbor rule for classification}
+
+\begin{document}
+
+\maketitle
+
+\section{An adaptive nearest neighbor rule}
+
+Let $(\X,d)$ be any separable metric space and let $\Y = \{0,1\}$. Suppose we are given a labeled data set $(x^{(1)}, y^{(1)}), \ldots, (x^{(n)}, y^{(n)}) \in \X \times \Y$.
+
+For any set $S \subset \X$, define the empirical mass of $S$ to be
+\begin{equation}
+  \mu_n(S) = \frac{|\{x^{(i)} \in S\}|}{n} ,
+\label{eq:empirical-mass}
+\end{equation}
+and define the empirical label bias of $S$ as
+\begin{equation}
+  \bias_n(S) = \frac{|\{x^{(i)} \in S: y^{(i)} = 1\}| - |\{x^{(i)} \in S: y^{(i)} = 0\}|}{n \mu_n(S)}.
+\label{eq:empirical-bias}
+\end{equation}
+
+Given a query point $x$, we make a prediction $\{0,1,?\}$, where $?$ denotes ``don't know'', according to the following rule:
+\begin{itemize}
+\item Find the smallest radius $r$ such that the ball $B = B(x,r)$ has empirical bias $|\bias_n(B)| > \Delta(n, \mu_n(B))$, where we define
+$$ \Delta(n,p) = c_1 \sqrt{\frac{d_o \log n + \log (1/\delta)}{np}} $$
+for some absolute constant $c_1$ from Lemma~\ref{lemma:bias} below.
+\item If no such $r$ exists: predict ?.
+\item If the empirical bias is positive: predict 1. Else predict 0.
+\end{itemize}
+Let $g_n: \X \rightarrow \{0,1,?\}$ denote this classifier.
+
+\section{Large deviation bounds}
+
+Suppose that all data $(x,y)$ is obtained by independent draws from an underlying distribution $P$ on $\X \times \Y$. For $(X,Y) \sim P$, define $\mu$ to be the marginal distribution of $X$, that is,
+$$ \mu(S) = \pr(X \in S) $$
+for measurable sets $S$. Let $\eta$ be the conditional probability distribution of $Y$ given $x$,
+$$ \eta(x) = \pr(Y = 1| X = x) .$$
+For measurable $S$, let $\eta(S)$ denote the average $\eta$-value, that is,
+$$ \eta(S) = \pr(Y = 1| X \in S) = \frac{1}{\mu(S)} \int_S \eta \ d \mu .$$
+The Bayes-optimal classifier is given by
+$$ g*(x) = 
+\left\{
+\begin{array}{ll}
+1 & \mbox{$\eta(x) > 1/2$} \\
+0 & \mbox{otherwise}
+\end{array}
+\right.
+$$
+
+Suppose we draw $n$ points $(x^{(1)}, y^{(1)}), \ldots, (x^{(n)}, y^{(n)})$ from $P$. If $n$ is reasonably large, we would expect the empirical mass $\mu_n(S)$ of any set $S \subset \X$, as defined in (\ref{eq:empirical-mass}), to be close to its probability mass under $\mu$. The following lemma, from Chaudhuri-Dasgupta (2010), quantifies one particular aspect of this.
+\begin{lemma}
+There is a universal constant $c_o$ such that the following holds. Let $\B$ be any class of measurable subsets of $\X$ of VC dimension $d_o$. Pick any $0 < \delta < 1$. Then with probability at least $1-\delta^2/2$ over the choice of $(x^{(1)}, y^{(1)}), \ldots, (x^{(n)}, y^{(n)})$, for all $B \in \B$ and for any integer $k$, we have
+$$ \mu(B) \geq \frac{k}{n} + \frac{c_o}{n} \max \left( k, d_o \log \frac{n}{\delta} \right)
+\ \ \implies \ \ 
+\mu_n(B) \geq \frac{k}{n} .$$
+\label{lemma:points-in-balls}
+\end{lemma}
+
+Likewise, we would expect the empirical bias of a set $S \subset \X$, as defined in (\ref{eq:empirical-bias}), to be close to its true bias,
+$$ \bias(S) = \frac{\pr(Y = 1, X \in S) - \pr(Y = 0, X \in S)}{\pr(X \in S)} .$$
+This is defined when $\mu(S) > 0$ and lies in the range $[-1,1]$.
+
+\begin{lemma}[Shay's bound]
+There is a universal constant $c_1$ for which the following holds. Let $\B$ be a class of subsets of $\X$ with VC dimension $d_o$. Pick any $0 < \delta < 1$. Then with probability at least $1-\delta^2/2$ over the choice of $(x^{(1)}, y^{(1)}), \ldots, (x^{(n)}, y^{(n)})$, for all $B \in \B$,
+  $$ \left| \bias_n(B) - \bias(B) \right| \ \leq \ \Delta(n, k(B)) $$
+where $k(B)$ is the number of points inside $B$ and 
+\begin{equation}
+\Delta(n,k) = c_1 \sqrt{\frac{d_o \log n + \log (1/\delta)}{k}} .
+\label{eq:delta-defn}
+\end{equation}
+\label{lemma:bias}
+\end{lemma}
+
+\section{Fine-grained analysis and universal consistency}
+
+Define the support of the marginal distribution $\mu$ to be
+$$ \supp(\mu) = \{x \in \X: \mbox{$\mu(B(x,r)) > 0$ for all $r > 0$}\} .$$
+
+For any $x \in \supp(\mu)$ and $p > 0$, let $r_p(x)$ denote the smallest radius such that the probability mass of $B(x, r_p(x))$ is at least $p$:
+$$ r_p(x) = \inf \{r: \mu(B(x,r)) \geq p \} .$$
+Then $\mu(B(x,r_p(x))) \geq p$.
+
+We now characterize the region of $\X$ that the adaptive rule is likely to correctly classify as having label $1$, given $n$ training points. It is the set $\X^+_n$ of points $x \in \supp(\mu)$, with $\eta(x) > 1/2$, for which there exists $p_x > 0$ such that:
+\begin{itemize}
+\item $\eta(B(x,r_{p_x}(x))) \geq \frac{1}{2} + c_2 \sqrt{\frac{\log (n/\delta)}{np_x}}$, where $c_2 = \max(c_1, 1/2) \sqrt{1+c_o}$. 
+\item $\eta(B(x,r)) \geq 1/2$ for all $r \leq r_{p_x}(x)$. 
+\end{itemize}
+The set $\X^-_n$ can be defined symmetrically, as consisting of $x \in \supp(\mu)$ with $\eta(x) < 1/2$, and for which there exists $p_x > 0$ such that:
+\begin{itemize}
+\item $\eta(B(x,r_{p_x}(x))) \leq \frac{1}{2} - c_2 \sqrt{\frac{\log (n/\delta)}{np_x}}$. 
+\item $\eta(B(x,r)) \leq 1/2$ for all $r \leq r_{p_x}(x)$. 
+\end{itemize}
+
+\begin{lemma}
+Pick any $x \in \X^+_n \cup \X^-_n$. Pick $n$ training points at random from $P$. With probability at least $1-\delta^2$ over the choice of training data, the adaptive $k$-NN rule will predict predict 1 if $x \in \X^+_n$, or $0$ if $x \in \X^-_n$.
+\label{lemma:good-sets}
+\end{lemma}
+\begin{proof}
+Fix any $x \in \X^+_n$; the case of $x \in \X^-_n$ is symmetric. Let $\B$ consist of all balls centered at $x$; this has VC dimension 1. Apply Lemmas~\ref{lemma:points-in-balls} and \ref{lemma:bias} to these sets. With probability at least $1-\delta^2$, we have that for all balls $B$ centered at $x$:
+\begin{enumerate}
+\item For any integer $k$, we have $\mu_n(B) \geq k/n$ whenever $n \mu(B) \geq k + c_o \max(k, \log (n/\delta))$.
+\item $|\bias_n(B) - \bias(B)| \leq \Delta(n, \mu_n(B))$.
+\end{enumerate}
+Assume henceforth that these hold.
+
+Let $p = p_x$ be as specified in the definition of $\X^+_n$.
+
+Set $k = np/(1 + c_o)$. We first observe that $k \geq \log (n/\delta)$. This is because the definition of $p$ implies $c_2 \sqrt{\log (n/\delta)/(np)} \leq 1/2$ and thus $np \geq 4 c_2^2 \log (n/\delta) \geq (1+c_o) \log (n/\delta)$.
+
+As a result, $np \geq k + c_o \max(k, \log (n/\delta))$. Thus, by Lemma~\ref{lemma:points-in-balls}, the ball $B = B(x, r_p(x))$ has $\mu_n(B) \geq k/n$. This means, in turn, that by Lemma~\ref{lemma:bias},
+\begin{align*}
+\bias_n(B) &\geq \bias(B) - \Delta(n, k/n) \\
+&\geq 2c_2 \sqrt{\frac{\log (n/\delta)}{np}} - c_1 \sqrt{\frac{\log (n/\delta)}{k}} \\
+&\geq 2c_1 \sqrt{\frac{\log (n/\delta)}{k}} - c_1 \sqrt{\frac{\log (n/\delta)}{k}} \\
+&= c_1 \sqrt{\frac{\log (n/\delta)}{k}} \geq \Delta(n, \mu_n(B)) .
+\end{align*}
+Thus ball $B$ would trigger a prediction of $1$.
+
+At the same time, for any ball $B' = B(x, r)$ with $r < r_p(x)$,
+$$ \bias_n(B') \geq \bias(B') - \Delta(n, \mu_n(B')) > -\Delta(n, \mu_n(B')) $$
+and thus no such ball will trigger a prediction of $0$. Therefore, the prediction at $x$ will be $1$.
+\end{proof}
+
+Based on this result, it makes sense to define the {\it effective boundary} when there are $n$ data points as 
+$$ \partial_n = \X \setminus (\X^+_n \cup \X^-_n) .$$
+Then we have the following bound on the error rate of the adaptive nearest neighbor classifier.
+\begin{thm}
+Pick any $0 < \delta < 1$. With probability at least $1-\delta$ over the choice of training points,
+$$ \pr_{X}(g_n(X) \neq g^*(X)) \ \leq \ \delta + \mu(\partial_n) .$$
+Here $g_n$ is the adaptive nearest neighbor classifier based on the $n$ training points and $g^*$ is the Bayes-optimal classifier. 
+\label{thm:general-error-bound}
+\end{thm}
+\begin{proof}
+From Lemma~\ref{lemma:good-sets}, we have that for any $x \in \X^+_n \cup \X^-_n$, 
+$$ \pr_n(g_n(x) \neq g^*(x)) \leq \delta^2 ,$$
+where $\pr_n$ denotes probability over the choice of training points. Thus, for $X \sim \mu$,
+$$ \E_n \E_X 1(g_n(X) \neq g^*(X) | X \in \X^+_n \cup \X^-_n) \leq \delta^2 ,$$
+and by Markov's inequality,
+$$ \pr_n [\pr_X (g_n(X) \neq g^*(X) |  X \in \X^+_n \cup \X^-_n) \geq \delta] \leq \delta.$$
+Thus, with probability at least $1-\delta$ over the training set,
+$$\pr_X (g_n(X) \neq g^*(X) |  X \in \X^+_n \cup \X^-_n) \leq \delta$$
+and
+$$ \pr_X(g_n(X) \neq g^*(X)) 
+\ \leq \ \delta \ \pr(X \in \X^+_n \cup X^-_n) + \pr(X \not\in \X^+_n \cup X^-_n)
+\ \leq \ \delta + \mu(\partial_n) .$$
+\end{proof}
+
+It follows, using the same argument as in Chaudhuri-Dasgupta (2014), that the adaptive nearest neighbor rule is universally consistent as long as the metric space $(\X, d, \mu)$ satisfies Lebesgue's differentiation condition: that is, for any bounded measurable $f: \X \rightarrow \R$,
+$$ \lim_{r \downarrow 0} \frac{1}{\mu(B(x,r))} \int_{B(x,r)} f \ d\mu = f(x) .$$
+This hods for any finite-dimensional normed space, or any doubling metric space.
+
+\section{rates of convergence}
+
+In order that the point $x$ be classified correctly for a small value of $n$ it that there is a ball $B$ centered at $x$ with significant bias and significant probability. More precisely, if there is a ball of probability $p$ around $x$ for which there is a uniform bias of $\gamma$ then probability that the adaptive NN rule is incorrect 
+on $x$ is $\exp(-c k \gamma^2) \approx \exp(-c p n \gamma^2)$
+
+We formalize this as follows.
+
+Let $\X_{\alpha}^+$ be the set of points $x \in \X$ such that there exist $p,\gamma>0$ such that $p \gamma^2 \geq \alpha$ and  $\forall x' \in B(x,p)$ $\eta(x')\geq \gamma$. $\X_{\alpha}^-$ is defined similarly.
+
+Then we have the following theorem:
+\begin{thm}
+For all $\alpha>0$ and all $x \in \X_{\alpha}^+ \cup \X_{\alpha}^-$ the probability that AKNN predicts incorrectly on $x$ is upper bounded by $\exp(-c n \alpha)$.
+\end{thm}
+
+\end{document}
