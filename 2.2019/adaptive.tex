@@ -3,6 +3,7 @@
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{natbib}
+\usepackage[colorinlistoftodos]{todonotes}
 
 \def\R{{\mathbb{R}}}
 \def\pr{{\rm Pr}}
@@ -26,6 +27,10 @@
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
+\newcommand{\new}[1]{{\color{red} #1}}
+\newcommand{\shay}[1]{{\color{purple} {\bf Shay:} #1}}
+
+
 \title{An adaptive nearest neighbor rule for classification}
 
 \begin{document}
@@ -46,7 +51,8 @@ and define the empirical label bias of $S$ as
   \bias_n(S) = \frac{|\{x^{(i)} \in S: y^{(i)} = 1\}| - |\{x^{(i)} \in S: y^{(i)} = 0\}|}{n \mu_n(S)}.
 \label{eq:empirical-bias}
 \end{equation}
-
+\shay{This equation is unintuitive. I suggest to introduce a notation for conditional empirical probability $\mu_n(\cdot \bar S)$
+and use it.}
 Given a query point $x$, we make a prediction $\{0,1,?\}$, where $?$ denotes ``don't know'', according to the following rule:
 \begin{itemize}
 \item Find the smallest radius $r$ such that the ball $B = B(x,r)$ has empirical bias $|\bias_n(B)| > \Delta(n, \mu_n(B))$, where we define
