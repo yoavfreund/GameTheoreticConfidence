@@ -58,6 +58,7 @@ Given a query point $x$, we make a prediction $\{0,1,?\}$, where $?$ denotes ``d
 \item Find the smallest radius $r$ such that the ball $B = B(x,r)$ has empirical bias $|\bias_n(B)| > \Delta(n, \mu_n(B))$, where we define
 $$ \Delta(n,p) = c_1 \sqrt{\frac{d_o \log n + \log (1/\delta)}{np}} $$
 for some absolute constant $c_1$ from Lemma~\ref{lemma:bias} below.
+\shay{What is $p$? How is it chosen?}
 \item If no such $r$ exists: predict ?.
 \item If the empirical bias is positive: predict 1. Else predict 0.
 \end{itemize}
