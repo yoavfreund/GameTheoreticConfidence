@@ -118,6 +118,7 @@ Then $\mu(B(x,r_p(x))) \geq p$.
 We now characterize the region of $\X$ that the adaptive rule is likely to correctly classify as having label $1$, given $n$ training points. It is the set $\X^+_n$ of points $x \in \supp(\mu)$, with $\eta(x) > 1/2$, for which there exists $p_x > 0$ such that:
 \begin{itemize}
 \item $\eta(B(x,r_{p_x}(x))) \geq \frac{1}{2} + c_2 \sqrt{\frac{\log (n/\delta)}{np_x}}$, where $c_2 = \max(c_1, 1/2) \sqrt{1+c_o}$. 
+\shay{Should it be $\eta$ here?} 
 \item $\eta(B(x,r)) \geq 1/2$ for all $r \leq r_{p_x}(x)$. 
 \end{itemize}
 The set $\X^-_n$ can be defined symmetrically, as consisting of $x \in \supp(\mu)$ with $\eta(x) < 1/2$, and for which there exists $p_x > 0$ such that:
